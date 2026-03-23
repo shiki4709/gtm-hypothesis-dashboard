@@ -4,54 +4,260 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GTM Hypothesis Dashboard</title>
-  <link rel="stylesheet" href="./css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #fafafa;
+      color: #111;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* --- Header --- */
+    .header { margin-bottom: 40px; }
+    .header h1 { font-size: 22px; font-weight: 700; }
+    .header .sub { color: #888; font-size: 13px; margin-top: 4px; }
+
+    /* --- Score Cards --- */
+    .scores {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    .score {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .score .num { font-size: 32px; font-weight: 700; }
+    .score .label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+    .score .detail { font-size: 11px; color: #10b981; margin-top: 2px; }
+
+    /* --- Section --- */
+    .section { margin-bottom: 40px; }
+    .section h2 { font-size: 15px; font-weight: 600; margin-bottom: 16px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* --- Experiment Cards --- */
+    .experiments { display: flex; flex-direction: column; gap: 8px; }
+
+    .exp-card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .exp-card.queued { opacity: 0.5; }
+
+    .exp-name { font-weight: 600; font-size: 14px; }
+    .exp-variant { font-size: 12px; color: #888; margin-top: 2px; }
+
+    .exp-metric {
+      text-align: center;
+      min-width: 70px;
+    }
+    .exp-metric .num { font-size: 18px; font-weight: 700; }
+    .exp-metric .label { font-size: 10px; color: #888; text-transform: uppercase; }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge.yes { background: #d1fae5; color: #065f46; }
+    .badge.weak { background: #fef3c7; color: #92400e; }
+    .badge.early { background: #f3f4f6; color: #6b7280; }
+    .badge.running { background: #dbeafe; color: #1e40af; }
+    .badge.queued { background: #f3f4f6; color: #9ca3af; }
+
+    .verdict { font-size: 12px; color: #555; max-width: 200px; text-align: right; }
+
+    /* --- Chart --- */
+    .chart-card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .chart-container { height: 200px; }
+
+    /* --- Insight --- */
+    .insight {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .insight h3 { font-size: 13px; font-weight: 600; color: #92400e; margin-bottom: 8px; }
+    .insight p { font-size: 13px; color: #78350f; line-height: 1.6; }
+
+    /* --- Responsive --- */
+    @media (max-width: 640px) {
+      .scores { grid-template-columns: repeat(2, 1fr); }
+      .exp-card { grid-template-columns: 1fr; gap: 8px; }
+      .exp-metric { text-align: left; }
+      .verdict { text-align: left; max-width: 100%; }
+    }
+  </style>
 </head>
 <body>
 
   <div class="header">
-    <h1 id="header-title">GTM Experiments</h1>
-    <p id="header-subtitle"></p>
-    <div class="pillar-legend">
-      <span><span class="pillar-dot p1"></span> P1: Signal Outbound</span>
-      <span><span class="pillar-dot p2"></span> P2: Content Trust</span>
-      <span><span class="pillar-dot p3"></span> P3: Inbound</span>
+    <h1 id="title">GTM Experiments</h1>
+    <div class="sub" id="subtitle"></div>
+  </div>
+
+  <div class="scores" id="scores"></div>
+
+  <div class="section">
+    <h2>What's Working</h2>
+    <div class="chart-card">
+      <div class="chart-container">
+        <canvas id="chart"></canvas>
+      </div>
     </div>
   </div>
 
-  <div class="metrics" id="metrics"></div>
-
-  <div class="grid">
-    <div class="card">
-      <h2>Response Rate by Experiment</h2>
-      <div class="chart-container">
-        <canvas id="responseRateChart"></canvas>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Cost per Demo</h2>
-      <div class="chart-container">
-        <canvas id="costPerDemoChart"></canvas>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Experiments by Channel</h2>
-      <div class="chart-container">
-        <canvas id="channelBreakdownChart"></canvas>
-      </div>
-    </div>
-
-    <div class="card" id="insight"></div>
-
-    <div class="card full-width">
-      <h2>All Experiments</h2>
-      <div id="experiment-table"></div>
-    </div>
+  <div class="section">
+    <h2>This Week</h2>
+    <div class="experiments" id="active-experiments"></div>
   </div>
 
-  <script type="module" src="./js/app.js"></script>
+  <div class="section">
+    <h2>Coming Up</h2>
+    <div class="experiments" id="queued-experiments"></div>
+  </div>
+
+  <div class="section" id="insight-section"></div>
+
+<script type="module">
+async function init() {
+  const res = await fetch('./data/experiments.json');
+  const data = await res.json();
+  const { meta, insight, experiments } = data;
+
+  // Header
+  document.getElementById('title').textContent = `${meta.company} GTM Experiments`;
+  document.getElementById('subtitle').textContent = `Week ${meta.week} \u2014 ${meta.weekOf}`;
+
+  // Compute metrics
+  const active = experiments.filter(e => e.status !== 'queued');
+  const done = experiments.filter(e => e.status === 'done');
+  const totalDemos = done.reduce((s, e) => s + (e.demos || 0), 0);
+  const totalCost = done.reduce((s, e) => s + (e.cost || 0), 0);
+  const signals = experiments.filter(e => e.signal === 'yes' || e.signal === 'weak').length;
+  const costPerDemo = totalDemos > 0 ? (totalCost / totalDemos).toFixed(0) : 0;
+
+  // Score cards
+  document.getElementById('scores').innerHTML = [
+    { num: active.length, label: 'Experiments', detail: `${done.length} completed` },
+    { num: signals, label: 'Signals', detail: `${experiments.filter(e => e.signal === 'yes').length} strong` },
+    { num: totalDemos, label: 'Demos Booked', detail: '$0 ad spend' },
+    { num: `$${costPerDemo}`, label: 'Cost / Demo', detail: `$${totalCost} total spend` },
+  ].map(c => `
+    <div class="score">
+      <div class="num">${c.num}</div>
+      <div class="label">${c.label}</div>
+      <div class="detail">${c.detail}</div>
+    </div>
+  `).join('');
+
+  // Chart — horizontal bar, sorted by response rate
+  const chartData = experiments
+    .filter(e => e.responseRate !== null && e.status !== 'queued')
+    .sort((a, b) => b.responseRate - a.responseRate);
+
+  new Chart(document.getElementById('chart'), {
+    type: 'bar',
+    data: {
+      labels: chartData.map(e => e.variant || e.name),
+      datasets: [{
+        data: chartData.map(e => e.responseRate),
+        backgroundColor: chartData.map(e =>
+          e.signal === 'yes' ? '#059669' :
+          e.signal === 'weak' ? '#d97706' : '#9ca3af'
+        ),
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { beginAtZero: true, ticks: { callback: v => v + '%' }, grid: { color: '#f5f5f5' } },
+        y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+      }
+    }
+  });
+
+  // Experiment cards — active
+  const activeExps = experiments.filter(e => e.status !== 'queued');
+  document.getElementById('active-experiments').innerHTML = activeExps.map(renderCard).join('');
+
+  // Experiment cards — queued
+  const queuedExps = experiments.filter(e => e.status === 'queued');
+  document.getElementById('queued-experiments').innerHTML = queuedExps.map(e => renderCard(e, true)).join('');
+
+  // Insight
+  document.getElementById('insight-section').innerHTML = `
+    <div class="insight">
+      <h3>${insight.title}</h3>
+      <p>${insight.body}</p>
+      <p style="margin-top: 8px"><strong>Next:</strong> ${insight.recommendation}</p>
+    </div>
+  `;
+}
+
+function renderCard(e, isQueued = false) {
+  const signalBadge = e.signal
+    ? `<span class="badge ${e.signal}">${
+        e.signal === 'yes' ? 'Signal: YES' :
+        e.signal === 'weak' ? 'Signal: WEAK' :
+        e.signal === 'early' ? 'Too Early' : e.signal
+      }</span>`
+    : e.status === 'running'
+      ? '<span class="badge running">Running</span>'
+      : '<span class="badge queued">Week ' + e.week + '</span>';
+
+  return `
+    <div class="exp-card ${isQueued ? 'queued' : ''}">
+      <div>
+        <div class="exp-name">${e.name}</div>
+        <div class="exp-variant">${e.variant || e.channel}</div>
+      </div>
+      <div class="exp-metric">
+        <div class="num">${e.responseRate !== null ? e.responseRate + '%' : '\u2014'}</div>
+        <div class="label">Response</div>
+      </div>
+      <div class="exp-metric">
+        <div class="num">${e.demos !== null ? e.demos : '\u2014'}</div>
+        <div class="label">Demos</div>
+      </div>
+      <div style="text-align: right;">
+        ${signalBadge}
+        ${e.verdict ? `<div class="verdict">${e.verdict}</div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+init();
+</script>
 
 </body>
 </html>

@@ -244,7 +244,7 @@
   <div class="modal-overlay" id="modal">
     <div class="modal">
       <h2>Paste bot output</h2>
-      <textarea id="bot-input" placeholder="Idea: ...&#10;Hypothesis: ...&#10;KPI: ...&#10;This week's test: ..."></textarea>
+      <textarea id="bot-input" placeholder="Name: Autopilot Outbound&#10;Idea: LinkedIn prospecting via Sales Nav + Dripify&#10;Goal: Generate demos from cold outbound&#10;Platform: LinkedIn, Sales Nav, Dripify&#10;Flywheel: Find & Reach&#10;KPI: >25% accept, >10% reply&#10;Scope: 200 requests · 7 days · Check Fri"></textarea>
       <div class="parse-msg error" id="pe">Needs at least an Idea line.</div>
       <div class="parse-msg success" id="ps">Added!</div>
       <div class="modal-actions">
@@ -389,13 +389,27 @@ function closeModal(){document.getElementById('modal').classList.remove('open');
 function addFromBot(){
   const t=document.getElementById('bot-input').value, r={};
   t.split('\n').forEach(l=>{const s=l.replace(/\*\*/g,'').trim();
-    if(/^idea:/i.test(s))r.idea=s.replace(/^idea:\s*/i,'');
-    else if(/^kpi:/i.test(s))r.kpi=s.replace(/^kpi:\s*/i,'');
-    else if(/^this week/i.test(s))r.test=s.replace(/^this week'?s? test:\s*/i,'');
+    if(/^name:/i.test(s)) r.name=s.replace(/^name:\s*/i,'');
+    else if(/^idea:/i.test(s)) r.idea=s.replace(/^idea:\s*/i,'');
+    else if(/^goal:/i.test(s)) r.goal=s.replace(/^goal:\s*/i,'');
+    else if(/^platform:/i.test(s)) r.platform=s.replace(/^platform:\s*/i,'');
+    else if(/^flywheel:/i.test(s)) r.flywheel=s.replace(/^flywheel:\s*/i,'');
+    else if(/^kpi:/i.test(s)) r.kpi=s.replace(/^kpi:\s*/i,'');
+    else if(/^scope:/i.test(s)) r.scope=s.replace(/^scope:\s*/i,'');
   });
-  if(!r.idea){document.getElementById('pe').style.display='block';document.getElementById('ps').style.display='none';return;}
+  if(!r.idea && !r.name){document.getElementById('pe').style.display='block';document.getElementById('ps').style.display='none';return;}
   const exps=load(), id=exps.reduce((m,e)=>Math.max(m,e.id),0)+1;
-  exps.push({id, wk:"New", name:"New Test", idea:r.idea, goal:"", platform:"TBD", flywheel:"", kpi:r.kpi||"", scope:"TBD", signal:"", next:""});
+  exps.push({
+    id, wk:"New",
+    name: r.name || r.idea?.split(' ').slice(0,3).join(' ') || "New Test",
+    idea: r.idea || r.name || "",
+    goal: r.goal || "",
+    platform: r.platform || "",
+    flywheel: r.flywheel || "",
+    kpi: r.kpi || "",
+    scope: r.scope || "",
+    signal: "", next: ""
+  });
   save(exps);
   document.getElementById('pe').style.display='none';document.getElementById('ps').style.display='block';
   setTimeout(()=>{closeModal();render();setTimeout(()=>{const row=document.getElementById('exp-'+id);if(row){row.classList.add('highlight');row.scrollIntoView({behavior:'smooth',block:'center'});}},100);},400);

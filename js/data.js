@@ -1,10 +1,5 @@
 /* ================================================================
-   Data — Minimal experiment structure
-
-   Experiment: { id, ch, name, idea, tools, variations[] }
-   Variation:  { id, name, started, stopped, changedStep, rateIdx, stages[] }
-   Stage:      { label, val }
-   Optional stage fields added by user: note, source, owner, connType
+   Data — Seed experiments with methods pre-filled
    ================================================================ */
 
 var D = [
@@ -13,7 +8,14 @@ var D = [
     tools:'Sales Nav → Dripify',
     variations:[
       {id:'1a', name:'Default ICP filter', started:'Mar 24', stopped:false, rateIdx:[4,1],
-        stages:[{label:'ICP filtered',val:500},{label:'Connections sent',val:200},{label:'Accepted',val:85},{label:'In Dripify',val:85},{label:'Replied',val:17},{label:'Signed up',val:3}]}
+        stages:[
+          {label:'ICP filtered',val:500, method:'Sales Nav → Saved Search → AE title + B2B SaaS'},
+          {label:'Connections sent',val:200, method:'Sales Nav → Send 200/wk (LinkedIn cap)'},
+          {label:'Accepted',val:85, method:'Auto-tracked via LinkedIn notifications'},
+          {label:'In Dripify',val:85, method:'Dripify → Add accepted to drip campaign'},
+          {label:'Replied',val:17, method:'Dripify → Campaign stats → Reply count'},
+          {label:'Signed up',val:3, method:'CRM → Track signups from LinkedIn source'}
+        ]}
     ]},
 
   {id:2, ch:'lead_lists', name:'Post Engager Lead Lists',
@@ -21,7 +23,14 @@ var D = [
     tools:'Phantom → Sheets',
     variations:[
       {id:'2a', name:'All engagers, Template A', started:'Mar 24', stopped:false, rateIdx:[4,3],
-        stages:[{label:'Posts found',val:12},{label:'Engagers scraped',val:680},{label:'ICP filtered',val:340},{label:'DMs sent',val:340},{label:'Replied',val:48},{label:'Signed up',val:8}]}
+        stages:[
+          {label:'Posts found',val:12, method:'LinkedIn Search → "sales" OR "GTM" → filter past week'},
+          {label:'Engagers scraped',val:680, method:'Phantom Buster → Post Likers/Commenters → CSV'},
+          {label:'ICP filtered',val:340, method:'Filter CSV → title contains "AE" OR "Account Exec"'},
+          {label:'DMs sent',val:340, method:'Dripify Template A: "Hey {name}, saw you on {post}..."'},
+          {label:'Replied',val:48, method:'LinkedIn inbox → count replies from this batch'},
+          {label:'Signed up',val:8, method:'CRM → track signups'}
+        ]}
     ]},
 
   {id:3, ch:'li_outreach', name:'Referral Post DMs',
@@ -29,7 +38,13 @@ var D = [
     tools:'LinkedIn Search',
     variations:[
       {id:'3a', name:'Direct DM approach', started:'Mar 24', stopped:false, rateIdx:[3,2],
-        stages:[{label:'Posts found',val:8},{label:'People identified',val:20},{label:'DMs sent',val:20},{label:'Replied',val:7},{label:'Signed up',val:2}]}
+        stages:[
+          {label:'Posts found',val:8, method:'LinkedIn Search → "calling on my network" + past week'},
+          {label:'People identified',val:20, method:'Read comments → find people asking for tool recs'},
+          {label:'DMs sent',val:20, method:'Manual DM: "Saw your post — Nevara might help because..."'},
+          {label:'Replied',val:7, method:'LinkedIn inbox'},
+          {label:'Signed up',val:2, method:'CRM'}
+        ]}
     ]},
 
   {id:4, ch:'li_outreach', name:'Influencer Monitor',
@@ -37,7 +52,13 @@ var D = [
     tools:'LinkedIn',
     variations:[
       {id:'4a', name:'Cold DM after engagement', started:'Mar 24', stopped:false, rateIdx:[3,2],
-        stages:[{label:'Influencers tracked',val:5},{label:'AEs surfaced',val:45},{label:'DMs sent',val:30},{label:'Replied',val:4},{label:'Signed up',val:1}]}
+        stages:[
+          {label:'Influencers tracked',val:5, method:'Follow Mark Roberge, Jason Lemkin, etc.'},
+          {label:'AEs surfaced',val:45, method:'Check who likes/comments on their posts'},
+          {label:'DMs sent',val:30, method:'DM: "Saw you follow {influencer} — thought you\'d find this useful"'},
+          {label:'Replied',val:4, method:'LinkedIn inbox'},
+          {label:'Signed up',val:1, method:'CRM'}
+        ]}
     ]},
 
   {id:5, ch:'warm_intros', name:'Network Mining',
@@ -45,7 +66,13 @@ var D = [
     tools:'LinkedIn',
     variations:[
       {id:'5a', name:'Standard intro ask', started:'Mar 25', stopped:false, rateIdx:[3,2],
-        stages:[{label:'Target accounts',val:25},{label:'Mutual connections',val:15},{label:'Intro asks',val:10},{label:'Meetings',val:5},{label:'Signed up',val:3}]}
+        stages:[
+          {label:'Target accounts',val:25, method:'CRM target list → high-growth B2B SaaS'},
+          {label:'Mutual connections',val:15, method:'LinkedIn → each target → check shared connections'},
+          {label:'Intro asks',val:10, method:'Message mutual: "Could you intro me to {name}?"'},
+          {label:'Meetings',val:5, method:'Calendar → booked from intros'},
+          {label:'Signed up',val:3, method:'CRM'}
+        ]}
     ]},
 
   {id:6, ch:'gifts', name:'Personalized Gifts',
@@ -53,7 +80,13 @@ var D = [
     tools:'LinkedIn → Sendoso',
     variations:[
       {id:'6a', name:'Book + handwritten note', started:'Mar 25', stopped:false, rateIdx:[3,2],
-        stages:[{label:'AEs contacted',val:25},{label:'Replied',val:8},{label:'Gifts sent',val:6},{label:'Meetings',val:2},{label:'Signed up',val:1}]}
+        stages:[
+          {label:'AEs contacted',val:25, method:'LinkedIn DM → start conversation about their work'},
+          {label:'Replied',val:8, method:'LinkedIn inbox → anyone who responds'},
+          {label:'Gifts sent',val:6, method:'Sendoso → book + handwritten note based on convo'},
+          {label:'Meetings',val:2, method:'Calendar'},
+          {label:'Signed up',val:1, method:'CRM'}
+        ]}
     ]},
 
   {id:7, ch:'events', name:'Coffee Events',
@@ -61,7 +94,12 @@ var D = [
     tools:'Meetup → in-person',
     variations:[
       {id:'7a', name:'Standard approach', started:'Mar 26', stopped:false, rateIdx:[3,1],
-        stages:[{label:'Events',val:3},{label:'Conversations',val:40},{label:'Contacts',val:18},{label:'Signed up',val:3}]}
+        stages:[
+          {label:'Events',val:3, method:'Meetup.com → search "sales" events in area'},
+          {label:'Conversations',val:40, method:'In-person → ask about their sales stack'},
+          {label:'Contacts',val:18, method:'Exchange LinkedIn/cards at the event'},
+          {label:'Signed up',val:3, method:'Follow up within 24hrs → CRM'}
+        ]}
     ]},
 
   {id:17, ch:'li_content', name:'LinkedIn Content',
@@ -69,7 +107,13 @@ var D = [
     tools:'LinkedIn',
     variations:[
       {id:'17a', name:'Text posts, daily', started:'Mar 24', stopped:false, rateIdx:[2,1],
-        stages:[{label:'Posts',val:12},{label:'Impressions',val:2400},{label:'Engagements',val:86},{label:'Followers',val:12},{label:'Inbound DMs',val:3}]}
+        stages:[
+          {label:'Posts',val:12, method:'Write 1 post/day → sales AI tips, AE workflows'},
+          {label:'Impressions',val:2400, method:'LinkedIn analytics → post impressions'},
+          {label:'Engagements',val:86, method:'LinkedIn analytics → likes + comments + shares'},
+          {label:'Followers',val:12, method:'LinkedIn → Analytics → Followers → net new'},
+          {label:'Inbound DMs',val:3, method:'LinkedIn inbox → unsolicited messages'}
+        ]}
     ]},
 
   {id:13, ch:'content_seo', name:'AI SEO Sprint',
@@ -77,7 +121,12 @@ var D = [
     tools:'AI writer → WordPress',
     variations:[
       {id:'13a', name:'Initial', started:'—', stopped:false, rateIdx:[3,2],
-        stages:[{label:'Pages published',val:0},{label:'Indexed',val:0},{label:'Site visits',val:0},{label:'Signed up',val:0}]}
+        stages:[
+          {label:'Pages published',val:0, method:'AI writer → target "sales AI tools" keywords'},
+          {label:'Indexed',val:0, method:'Google Search Console → check indexing'},
+          {label:'Site visits',val:0, method:'Google Analytics → organic traffic'},
+          {label:'Signed up',val:0, method:'CRM'}
+        ]}
     ]},
 
   {id:10, ch:'product', name:'Churn/Retention',
@@ -85,7 +134,12 @@ var D = [
     tools:'Product analytics',
     variations:[
       {id:'10a', name:'Initial', started:'—', stopped:false, rateIdx:[2,1],
-        stages:[{label:'Churned identified',val:0},{label:'Re-engaged',val:0},{label:'Returned',val:0},{label:'Retained',val:0}]}
+        stages:[
+          {label:'Churned identified',val:0, method:'Product DB → inactive >30 days'},
+          {label:'Re-engaged',val:0, method:'Email/Slack → win-back campaign'},
+          {label:'Returned',val:0, method:'Product DB → logged in after re-engage'},
+          {label:'Retained',val:0, method:'Product DB → active 7 days after return'}
+        ]}
     ]},
 
   {id:11, ch:'product', name:'Slack + In-App Messaging',
@@ -93,7 +147,12 @@ var D = [
     tools:'Slack → in-app',
     variations:[
       {id:'11a', name:'Initial', started:'—', stopped:false, rateIdx:[2,1],
-        stages:[{label:'Messages sent',val:0},{label:'Opened',val:0},{label:'Engaged',val:0},{label:'Activated',val:0}]}
+        stages:[
+          {label:'Messages sent',val:0, method:'Slack → broadcast to #general'},
+          {label:'Opened',val:0, method:'Slack analytics → message views'},
+          {label:'Engaged',val:0, method:'Track clicks on feature links'},
+          {label:'Activated',val:0, method:'Product DB → used the feature'}
+        ]}
     ]}
 ];
 

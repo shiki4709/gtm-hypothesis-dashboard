@@ -8,166 +8,182 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #fafafa; color: #111;
-      max-width: 1100px; margin: 0 auto; padding: 32px 24px;
+      background: #f5f5f7; color: #1d1d1f;
+      max-width: 1000px; margin: 0 auto; padding: 32px 20px;
     }
 
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .header h1 { font-size: 20px; font-weight: 700; }
-    .header .sub { font-size: 12px; color: #999; }
+    /* Header */
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+    .header .sub { font-size: 12px; color: #86868b; margin-top: 2px; }
     .header-btns { display: flex; gap: 8px; }
     .btn-h {
-      background: #111; color: #fff; border: none;
-      padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;
+      padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: none;
+      transition: all 0.15s;
     }
-    .btn-h:hover { background: #333; }
-    .btn-h.sec { background: #fff; color: #111; border: 1px solid #ddd; }
-    .btn-h.sec:hover { background: #f5f5f5; }
+    .btn-h.primary { background: #0071e3; color: #fff; }
+    .btn-h.primary:hover { background: #0077ed; }
+    .btn-h.secondary { background: #e8e8ed; color: #1d1d1f; }
+    .btn-h.secondary:hover { background: #d2d2d7; }
 
-    /* How it works — simplified */
+    /* Summary */
+    .summary {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px;
+    }
+    .stat {
+      background: #fff; border-radius: 12px; padding: 16px; text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .stat .num { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+    .stat .num.green { color: #34c759; }
+    .stat .label { font-size: 11px; color: #86868b; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
+
+    /* How it works */
     .how {
-      background: #fff; border: 1px solid #eee; border-radius: 10px;
-      margin-bottom: 24px; overflow: hidden; display: none;
+      background: #fff; border-radius: 12px; margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden; display: none;
     }
     .how.open { display: block; }
     .how-inner { padding: 20px; }
-    .how-close { float: right; background: none; border: none; font-size: 18px; color: #aaa; cursor: pointer; }
+    .how-close { float: right; background: none; border: none; font-size: 18px; color: #86868b; cursor: pointer; }
 
-    .flywheel {
-      display: flex; align-items: center; justify-content: center;
-      gap: 0; margin-bottom: 16px;
-    }
+    .flywheel { display: flex; align-items: stretch; gap: 0; margin-bottom: 16px; }
     .fw-step {
-      text-align: center; padding: 12px 16px; border-radius: 8px; min-width: 120px;
+      flex: 1; padding: 14px; text-align: center; position: relative;
     }
-    .fw-step .icon { font-size: 20px; margin-bottom: 4px; }
-    .fw-step .label { font-size: 12px; font-weight: 600; }
-    .fw-step .desc { font-size: 10px; color: #888; margin-top: 2px; }
-    .fw-step.p1 { background: #dbeafe; }
-    .fw-step.p1 .label { color: #1e40af; }
-    .fw-step.p2 { background: #d1fae5; }
-    .fw-step.p2 .label { color: #065f46; }
-    .fw-step.p3 { background: #ede9fe; }
-    .fw-step.p3 .label { color: #5b21b6; }
-    .fw-arr { font-size: 16px; color: #ccc; padding: 0 6px; }
+    .fw-step:first-child { border-radius: 10px 0 0 10px; }
+    .fw-step:last-child { border-radius: 0 10px 10px 0; }
+    .fw-step.s1 { background: #e3f2fd; }
+    .fw-step.s2 { background: #e8f5e9; }
+    .fw-step.s3 { background: #f3e5f5; }
+    .fw-step .fw-title { font-size: 13px; font-weight: 700; }
+    .fw-step.s1 .fw-title { color: #1565c0; }
+    .fw-step.s2 .fw-title { color: #2e7d32; }
+    .fw-step.s3 .fw-title { color: #7b1fa2; }
+    .fw-step .fw-desc { font-size: 11px; color: #666; margin-top: 4px; }
+    .fw-arr { display: flex; align-items: center; font-size: 14px; color: #ccc; padding: 0 4px; }
 
-    .how-rules {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    .how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .how-box { background: #f9f9fb; border-radius: 8px; padding: 14px; }
+    .how-box h4 { font-size: 11px; font-weight: 700; color: #86868b; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
+    .how-box p { font-size: 12px; color: #555; line-height: 1.6; }
+    .how-box .go { color: #34c759; font-weight: 600; }
+    .how-box .maybe { color: #ff9f0a; font-weight: 600; }
+    .how-box .park { color: #86868b; font-weight: 600; }
+    .how-box .kill { color: #ff3b30; font-weight: 600; }
+
+    /* Experiment cards */
+    .cards { display: flex; flex-direction: column; gap: 10px; }
+
+    .card {
+      background: #fff; border-radius: 12px; padding: 18px 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: box-shadow 0.15s;
     }
-    .how-rule {
-      padding: 12px; border-radius: 6px; background: #f9fafb; border: 1px solid #eee;
-    }
-    .how-rule h4 { font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 6px; }
-    .how-rule-items { font-size: 12px; color: #666; line-height: 1.6; }
-    .how-rule-items .go { color: #059669; font-weight: 600; }
-    .how-rule-items .maybe { color: #d97706; font-weight: 600; }
-    .how-rule-items .park { color: #999; font-weight: 600; }
+    .card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .card.highlight { box-shadow: 0 0 0 2px #0071e3; animation: fadeHL 3s ease-out forwards; }
+    @keyframes fadeHL { to { box-shadow: 0 1px 3px rgba(0,0,0,0.04); } }
 
-    /* Tags */
-    .tag {
-      display: inline-block; padding: 1px 7px; border-radius: 4px;
-      font-size: 10px; font-weight: 600; margin-right: 3px;
-    }
-    .tag.linkedin { background: #dbeafe; color: #1e40af; }
-    .tag.reddit { background: #fce7f3; color: #9d174d; }
-    .tag.twitter { background: #e0e7ff; color: #3730a3; }
-    .tag.events { background: #fef3c7; color: #92400e; }
-    .tag.email { background: #d1fae5; color: #065f46; }
-    .tag.product { background: #ede9fe; color: #5b21b6; }
-    .tag.content { background: #f3f4f6; color: #555; }
-    .tag.p1 { background: #dbeafe; color: #1e40af; }
-    .tag.p2 { background: #d1fae5; color: #065f46; }
-    .tag.p3 { background: #ede9fe; color: #5b21b6; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .card-name { font-size: 15px; font-weight: 700; }
+    .card-idea { font-size: 12px; color: #86868b; margin-top: 2px; }
 
-    /* Table */
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th {
-      text-align: left; padding: 8px 10px;
-      font-size: 10px; font-weight: 600; color: #aaa;
-      text-transform: uppercase; letter-spacing: 0.4px;
-      border-bottom: 2px solid #eee; background: #fafafa;
-    }
-    td { padding: 10px; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
-    tr:hover td { background: #f9f9f9; }
-    tr.queued td { opacity: 0.4; }
-    tr.highlight td { background: #eff6ff; animation: hl 3s ease-out forwards; }
-    @keyframes hl { to { background: transparent; } }
-
-    .name-cell { font-weight: 700; font-size: 13px; white-space: nowrap; color: #111; }
-    .idea-cell { font-size: 12px; color: #555; max-width: 180px; }
-    .goal-cell { font-size: 12px; color: #555; max-width: 150px; }
-    .platform-cell { font-size: 11px; color: #777; max-width: 130px; }
-    .scope-cell { font-size: 11px; color: #777; white-space: nowrap; }
-    .tags-cell { white-space: nowrap; }
-    .kpi-cell { font-family: 'SF Mono', monospace; font-size: 12px; color: #333; }
-    .test-cell { font-size: 12px; color: #666; max-width: 220px; }
-
-    /* Signal badge */
     .signal-badge {
-      display: inline-block; padding: 2px 8px;
-      border-radius: 10px; font-size: 10px; font-weight: 700; cursor: pointer;
+      padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;
+      cursor: pointer; user-select: none; position: relative;
     }
-    .signal-badge.yes { background: #d1fae5; color: #065f46; }
-    .signal-badge.no { background: #fee2e2; color: #991b1b; }
-    .signal-badge.weak { background: #fef3c7; color: #92400e; }
-    .signal-badge.early { background: #e0e7ff; color: #3730a3; }
-    .signal-badge.pending { background: #f3f4f6; color: #bbb; }
+    .signal-badge.yes { background: #e8f8ef; color: #1a7f37; }
+    .signal-badge.weak { background: #fff8e1; color: #b45309; }
+    .signal-badge.unclear { background: #e8eaf6; color: #3949ab; }
+    .signal-badge.no { background: #ffeef0; color: #cf222e; }
+    .signal-badge.pending { background: #f0f0f5; color: #aaa; }
 
-    /* Editable cells */
-    .editable {
-      cursor: pointer; min-height: 20px; min-width: 60px;
-      border-radius: 4px; padding: 2px 4px; transition: background 0.15s;
+    .card-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+      margin-bottom: 10px;
     }
-    .editable:hover { background: #eef2ff; }
-    .editable input {
-      font-family: inherit; font-size: 12px; border: 1px solid #3b82f6;
-      border-radius: 4px; padding: 4px 8px; outline: none; width: 100%;
-      min-width: 140px;
-    }
-    .editable select {
-      font-family: inherit; font-size: 12px; border: 1px solid #3b82f6;
-      border-radius: 4px; padding: 2px 4px; outline: none;
-      min-width: 240px; background: #fff;
-      position: absolute; z-index: 10;
-    }
-    .editable select option { padding: 4px 8px; }
-    .editable { position: relative; }
 
-    .next-cell { font-size: 12px; color: #444; }
+    .card-field {}
+    .card-field .f-label { font-size: 10px; color: #86868b; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px; }
+    .card-field .f-value { font-size: 12px; color: #1d1d1f; }
 
+    .fw-tag {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 10px; font-weight: 600;
+    }
+    .fw-tag.find { background: #e3f2fd; color: #1565c0; }
+    .fw-tag.aware { background: #e8f5e9; color: #2e7d32; }
+    .fw-tag.retain { background: #f3e5f5; color: #7b1fa2; }
+
+    .card-next {
+      padding-top: 10px; border-top: 1px solid #f0f0f5;
+      font-size: 12px; color: #555;
+      cursor: pointer; min-height: 20px;
+    }
+    .card-next:hover { color: #0071e3; }
+    .card-next .placeholder { color: #ccc; }
+
+    .card-next input {
+      width: 100%; border: 1px solid #0071e3; border-radius: 6px;
+      padding: 6px 10px; font-size: 12px; font-family: inherit; outline: none;
+    }
+
+    /* Signal dropdown */
+    .sig-dropdown {
+      position: absolute; top: 100%; right: 0; z-index: 20;
+      background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      padding: 6px; min-width: 260px; margin-top: 4px;
+    }
+    .sig-option {
+      padding: 8px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .sig-option:hover { background: #f5f5f7; }
+    .sig-option .sig-label { font-weight: 600; }
+    .sig-option .sig-hint { font-size: 11px; color: #86868b; }
+
+    /* Save notice */
     .save-notice {
       position: fixed; bottom: 20px; right: 20px;
-      background: #065f46; color: #fff; padding: 8px 16px;
-      border-radius: 8px; font-size: 12px; font-weight: 600;
-      opacity: 0; transition: opacity 0.3s;
+      background: #1d1d1f; color: #fff; padding: 10px 18px;
+      border-radius: 20px; font-size: 12px; font-weight: 600;
+      opacity: 0; transition: opacity 0.3s; pointer-events: none;
     }
     .save-notice.show { opacity: 1; }
 
     /* Modal */
     .modal-overlay {
       display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.4); z-index: 100; justify-content: center; align-items: center;
+      background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);
+      z-index: 100; justify-content: center; align-items: center;
     }
     .modal-overlay.open { display: flex; }
-    .modal { background: #fff; border-radius: 12px; padding: 24px; width: 500px; max-width: 90vw; }
-    .modal h2 { font-size: 16px; margin-bottom: 12px; }
-    .modal textarea {
-      width: 100%; height: 160px; border: 1px solid #ddd; border-radius: 6px;
-      padding: 10px; font-size: 12px; font-family: monospace; outline: none; resize: vertical;
+    .modal {
+      background: #fff; border-radius: 16px; padding: 28px; width: 520px; max-width: 90vw;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
     }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
-    .btn { padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; }
-    .btn-p { background: #111; color: #fff; }
-    .btn-s { background: #f3f4f6; color: #555; }
+    .modal h2 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .modal .modal-desc { font-size: 12px; color: #86868b; margin-bottom: 16px; }
+    .modal textarea {
+      width: 100%; height: 180px; border: 1px solid #d2d2d7; border-radius: 10px;
+      padding: 12px; font-size: 12px; font-family: 'SF Mono', monospace; outline: none; resize: vertical;
+    }
+    .modal textarea:focus { border-color: #0071e3; box-shadow: 0 0 0 3px rgba(0,113,227,0.15); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+    .btn { padding: 8px 18px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; }
+    .btn-p { background: #0071e3; color: #fff; }
+    .btn-p:hover { background: #0077ed; }
+    .btn-s { background: #e8e8ed; color: #1d1d1f; }
     .parse-msg { font-size: 11px; margin-top: 6px; }
-    .parse-msg.error { color: #dc2626; display: none; }
-    .parse-msg.success { color: #059669; display: none; }
+    .parse-msg.error { color: #ff3b30; display: none; }
+    .parse-msg.success { color: #34c759; display: none; }
 
-    @media (max-width: 768px) {
-      .flywheel { flex-direction: column; gap: 4px; }
-      .fw-arr { transform: rotate(90deg); }
-      .how-rules { grid-template-columns: 1fr; }
-      .test-cell { display: none; }
+    @media (max-width: 640px) {
+      .summary { grid-template-columns: repeat(2, 1fr); }
+      .card-grid { grid-template-columns: repeat(2, 1fr); }
+      .flywheel { flex-direction: column; }
+      .fw-arr { transform: rotate(90deg); justify-content: center; }
+      .how-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -176,109 +192,97 @@
   <div class="header">
     <div>
       <h1>Nevara GTM</h1>
-      <div class="sub">Hypothesis Tracker</div>
+      <div class="sub">Hypothesis Tracker — 14 experiments</div>
     </div>
     <div class="header-btns">
-      <button class="btn-h sec" onclick="toggleHow()">How it works</button>
-      <button class="btn-h" onclick="openModal()">+ Add from Bot</button>
+      <button class="btn-h secondary" onclick="toggleHow()">How it works</button>
+      <button class="btn-h primary" onclick="openModal()">+ Add from Bot</button>
     </div>
   </div>
 
-  <!-- How it works -->
+  <div class="summary" id="summary"></div>
+
   <div class="how" id="how">
     <div class="how-inner">
       <button class="how-close" onclick="toggleHow()">&times;</button>
-
       <div class="flywheel">
-        <div class="fw-step p1">
-          <div class="icon">&#127919;</div>
-          <div class="label">Find & Reach</div>
-          <div class="desc">Go out and contact prospects directly — LinkedIn DMs, events, social replies</div>
+        <div class="fw-step s1">
+          <div class="fw-title">Find & Reach</div>
+          <div class="fw-desc">Go contact prospects — DMs, events, intros, outbound</div>
         </div>
-        <div class="fw-arr">&#8594;</div>
-        <div class="fw-step p2">
-          <div class="icon">&#128172;</div>
-          <div class="label">Build Awareness</div>
-          <div class="desc">Make prospects see Nevara before you DM them — content, replies, SEO</div>
+        <div class="fw-arr">&rarr;</div>
+        <div class="fw-step s2">
+          <div class="fw-title">Build Awareness</div>
+          <div class="fw-desc">They see Nevara before the DM — content, replies, SEO</div>
         </div>
-        <div class="fw-arr">&#8594;</div>
-        <div class="fw-step p3">
-          <div class="icon">&#127793;</div>
-          <div class="label">Attract & Retain</div>
-          <div class="desc">Pull people in and keep them — product, docs, re-engagement</div>
+        <div class="fw-arr">&rarr;</div>
+        <div class="fw-step s3">
+          <div class="fw-title">Attract & Retain</div>
+          <div class="fw-desc">Pull them in and keep them — product, docs, re-engagement</div>
         </div>
         <div class="fw-arr">&#8635;</div>
       </div>
-      <p style="font-size:11px;color:#999;text-align:center;margin-bottom:14px;">Each stage feeds the next. Awareness makes outreach convert better. Outreach generates users. Retention creates word-of-mouth.</p>
-
-      <div class="how-rules">
-        <div class="how-rule">
-          <h4>Idea Filter (3 questions)</h4>
-          <div class="how-rule-items">
-            1. Signal in under 1 week?<br>
-            2. Touches ICP directly?<br>
-            3. No new paid tool needed?<br><br>
-            <span class="go">3/3 = Run</span> &nbsp;
-            <span class="maybe">2/3 = Review</span> &nbsp;
-            <span class="park">0-1 = Park</span>
-          </div>
+      <p style="font-size:11px;color:#86868b;text-align:center;margin-bottom:14px;">Each stage feeds the next. Awareness makes outreach warmer. Outreach generates users. Retention creates word-of-mouth.</p>
+      <div class="how-grid">
+        <div class="how-box">
+          <h4>Idea Filter</h4>
+          <p>1. Signal in under 1 week?<br>2. Touches ICP directly?<br>3. No new paid tool?<br><br>
+          <span class="go">3/3 Run</span> &middot; <span class="maybe">2/3 Review</span> &middot; <span class="park">0-1 Park</span></p>
         </div>
-        <div class="how-rule">
-          <h4>Signal (Friday check)</h4>
-          <div class="how-rule-items">
-            <span class="go">YES</span> — hit &gt;150% of KPI &rarr; scale it<br>
-            <span class="maybe">WEAK</span> — hit 80-150% &rarr; iterate<br>
-            UNCLEAR — mixed data &rarr; run 1 more week<br>
-            <span style="color:#dc2626;font-weight:600">NO</span> — below 50% &rarr; kill it<br><br>
-            Every experiment gets max 2 weeks. Then decide.
-          </div>
+        <div class="how-box">
+          <h4>Friday Signal Check</h4>
+          <p><span class="go">YES</span> hit &gt;150% of KPI &rarr; scale<br>
+          <span class="maybe">WEAK</span> 80-150% &rarr; iterate<br>
+          UNCLEAR mixed data &rarr; 1 more week<br>
+          <span class="kill">NO</span> below 50% &rarr; kill<br><br>
+          Max 2 weeks per test. Then decide.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <div id="list"></div>
+  <div class="cards" id="cards"></div>
   <div class="save-notice" id="saved">Saved</div>
 
-  <!-- Modal -->
   <div class="modal-overlay" id="modal">
     <div class="modal">
-      <h2>Paste bot output</h2>
+      <h2>Add from Bot</h2>
+      <div class="modal-desc">Paste the bot's structured output. All fields auto-fill except Signal and Next Step.</div>
       <textarea id="bot-input" placeholder="Name: Autopilot Outbound&#10;Idea: LinkedIn prospecting via Sales Nav + Dripify&#10;Goal: Generate demos from cold outbound&#10;Platform: LinkedIn, Sales Nav, Dripify&#10;Flywheel: Find & Reach&#10;KPI: >25% accept, >10% reply&#10;Scope: 200 requests · 7 days · Check Fri"></textarea>
-      <div class="parse-msg error" id="pe">Needs at least an Idea line.</div>
+      <div class="parse-msg error" id="pe">Needs at least a Name or Idea line.</div>
       <div class="parse-msg success" id="ps">Added!</div>
       <div class="modal-actions">
         <button class="btn btn-s" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-p" onclick="addFromBot()">Add</button>
+        <button class="btn btn-p" onclick="addFromBot()">Add Experiment</button>
       </div>
     </div>
   </div>
 
 <script>
-const K = 'gtm_v7';
-const SIGNALS = [
-  {v:'—', label:'— Not tested yet'},
-  {v:'YES', label:'YES — Hit target, scale it'},
-  {v:'WEAK', label:'WEAK — Close to target, iterate'},
-  {v:'UNCLEAR', label:'UNCLEAR — Need more data, run 1 more week'},
-  {v:'NO', label:'NO — Below target, kill it'},
+const K = 'gtm_v9';
+const SIGS = [
+  { v:'—', label:'Not tested', hint:'', cls:'pending' },
+  { v:'YES', label:'YES', hint:'Hit target — scale it', cls:'yes' },
+  { v:'WEAK', label:'WEAK', hint:'Close — iterate', cls:'weak' },
+  { v:'UNCLEAR', label:'UNCLEAR', hint:'Need more data', cls:'unclear' },
+  { v:'NO', label:'NO', hint:'Below target — kill it', cls:'no' },
 ];
 
 const DEFAULTS = [
-  { id:1, name:"Autopilot Outbound", idea:"LinkedIn prospecting via Sales Nav + Dripify", platform:"LinkedIn, Sales Nav, Dripify", goal:"Generate demos from cold outbound", flywheel:"Find & Reach", kpi:">25% accept, >10% reply", scope:"200 requests · 7 days · Check Fri", signal:"", next:"" },
-  { id:2, name:"Post Engagers", idea:"Scrape viral GTM post engagers → lead lists", platform:"LinkedIn, PhantomBuster", goal:"Build warm leads from content engagement", flywheel:"Find & Reach", kpi:">3x response rate vs cold", scope:"1 post · 50 leads · 7 days", signal:"", next:"" },
-  { id:3, name:"Social Listening", idea:"Reddit/Twitter listening → reply to AE pain", platform:"Reddit, Twitter/X", goal:"Find in-market AEs through complaint signals", flywheel:"Find & Reach", kpi:">20% response rate", scope:"20 replies · 10 DMs · 7 days", signal:"", next:"" },
-  { id:4, name:"Coffee Events", idea:"Coffee marketing at sales meetups", platform:"In-person events", goal:"Convert conversations into demos", flywheel:"Find & Reach", kpi:">50% conv-to-demo, >3 demos", scope:"2 events · 40 convos · 7 days", signal:"", next:"" },
-  { id:5, name:"Referral Posts", idea:"'Calling on my network' posts → DM", platform:"LinkedIn", goal:"Reach buyers actively evaluating tools", flywheel:"Find & Reach", kpi:">30% DM response", scope:"20 DMs · 7 days · Check Fri", signal:"", next:"" },
-  { id:6, name:"Influencer Monitor", idea:"Sales influencer followers → surface AEs → DM", platform:"LinkedIn", goal:"Surface in-market AEs from influencer audiences", flywheel:"Find & Reach", kpi:">20% DM response", scope:"5 influencers · 30 DMs · 7 days", signal:"", next:"" },
-  { id:7, name:"Warm Intros", idea:"Mine LinkedIn network → warm intros", platform:"LinkedIn, Sales Nav", goal:"Convert network into qualified meetings", flywheel:"Find & Reach", kpi:">40% meeting rate", scope:"10 intros · 7 days · Check Fri", signal:"", next:"" },
-  { id:8, name:"Gift Outreach", idea:"Hyper-personalized outreach + $5 gift", platform:"LinkedIn, Email, Starbucks", goal:"Test if gifting lifts response rate", flywheel:"Find & Reach", kpi:">35% meeting rate", scope:"15 AEs · $75 budget · 7 days", signal:"", next:"" },
-  { id:9, name:"Win-Back", idea:"Churned user re-engagement", platform:"Email, In-App", goal:"Reactivate churned users", flywheel:"Attract & Retain", kpi:">5% reactivation, >40% open", scope:"All churned 90d · 7-day signal · 30-day full", signal:"", next:"" },
-  { id:10, name:"Twitter Presence", idea:"Twitter reply presence building", platform:"Twitter/X", goal:"Make prospects recognize Nevara before outbound", flywheel:"Build Awareness", kpi:">5 DMs/week in 30 days", scope:"20 replies/day · 7 days · 30-day full", signal:"", next:"" },
-  { id:11, name:"In-App Nudges", idea:"Slack + in-product messaging", platform:"Slack, In-App", goal:"Increase feature adoption for existing users", flywheel:"Attract & Retain", kpi:">15% feature usage increase", scope:"3 prompts · 7 days · Check Fri", signal:"", next:"" },
-  { id:12, name:"Docs Rewrite", idea:"Product docs and enablement", platform:"Website, Help Center", goal:"Reduce time-to-value and support burden", flywheel:"Attract & Retain", kpi:">30% reduction time-to-value", scope:"3 docs · 7 days · Track tickets", signal:"", next:"" },
-  { id:13, name:"SEO Sprint", idea:"AI SEO optimization", platform:"Website, Google", goal:"Drive organic traffic from AE pain searches", flywheel:"Build Awareness", kpi:">500 impressions, >2% CTR", scope:"3 posts · 7-day signal · 60-day full", signal:"", next:"" },
-  { id:14, name:"Content Blitz", idea:"Organic content across 5 channels", platform:"LinkedIn, Twitter/X, Reddit, HN, Quora", goal:"Prospects see Nevara everywhere", flywheel:"Build Awareness", kpi:">50 imp/post, >10 leads/mo", scope:"3 posts × 5 channels · 7 days", signal:"", next:"" },
+  { id:1, name:"Autopilot Outbound", idea:"LinkedIn prospecting via Sales Nav + Dripify", platform:"LinkedIn, Sales Nav, Dripify", goal:"Generate demos from cold outbound", flywheel:"Find & Reach", kpi:">25% accept, >10% reply", scope:"200 requests · 7 days · Check Fri", signal:"YES", next:"Scale to 300/week. Test signal-based (Clay) variant vs deal-context." },
+  { id:2, name:"Post Engagers", idea:"Scrape viral GTM post engagers → lead lists", platform:"LinkedIn, PhantomBuster", goal:"Build warm leads from content engagement", flywheel:"Find & Reach", kpi:">3x response rate vs cold", scope:"1 post · 50 leads · 7 days", signal:"YES", next:"Run on 5 more viral posts. Focus on commenters only — 3x better than likers." },
+  { id:3, name:"Social Listening", idea:"Reddit/Twitter listening → reply to AE pain", platform:"Reddit, Twitter/X", goal:"Find in-market AEs through complaint signals", flywheel:"Find & Reach", kpi:">20% response rate", scope:"20 replies · 10 DMs · 7 days", signal:"UNCLEAR", next:"Reddit r/sales showing 20% reply-back. Twitter at 13%. Continue Reddit, reduce Twitter effort." },
+  { id:4, name:"Coffee Events", idea:"Coffee marketing at sales meetups", platform:"In-person events", goal:"Convert conversations into demos", flywheel:"Find & Reach", kpi:">50% conv-to-demo, >3 demos", scope:"2 events · 40 convos · 7 days", signal:"YES", next:"Book 2 events/month. Test branded cups + QR vs iPad demo at next event." },
+  { id:5, name:"Referral Posts", idea:"'Calling on my network' posts → DM", platform:"LinkedIn", goal:"Reach buyers actively evaluating tools", flywheel:"Find & Reach", kpi:">30% DM response", scope:"20 DMs · 7 days · Check Fri", signal:"YES", next:"Benchmark: 30-50% response. Set up daily search alert. DM within 4 hrs of post." },
+  { id:6, name:"Influencer Monitor", idea:"Sales influencer followers → surface AEs → DM", platform:"LinkedIn", goal:"Surface in-market AEs from influencer audiences", flywheel:"Find & Reach", kpi:">20% DM response", scope:"5 influencers · 30 DMs · 7 days", signal:"WEAK", next:"40-55% accept but lower DM conversion. Test manually before automating." },
+  { id:7, name:"Warm Intros", idea:"Mine LinkedIn network → warm intros", platform:"LinkedIn, Sales Nav", goal:"Convert network into qualified meetings", flywheel:"Find & Reach", kpi:">40% meeting rate", scope:"10 intros · 7 days · Check Fri", signal:"YES", next:"Benchmark: 40-60% meeting rate. Draft forwardable blurbs for Maruthi." },
+  { id:8, name:"Gift Outreach", idea:"Hyper-personalized outreach + $5 gift", platform:"LinkedIn, Email, Starbucks", goal:"Test if gifting lifts response rate", flywheel:"Find & Reach", kpi:">35% meeting rate", scope:"15 AEs · $75 budget · 7 days", signal:"YES", next:"Benchmark: 25-40% with gift vs 15-25% without. A/B: 8 with, 7 without." },
+  { id:9, name:"Win-Back", idea:"Churned user re-engagement", platform:"Email, In-App", goal:"Reactivate churned users", flywheel:"Attract & Retain", kpi:">5% reactivation, >40% open", scope:"All churned 90d · 7-day signal · 30-day full", signal:"UNCLEAR", next:"Benchmark: 5-12% reactivation. Need product data access first." },
+  { id:10, name:"Twitter Presence", idea:"Twitter reply presence building", platform:"Twitter/X", goal:"Make prospects recognize Nevara before outbound", flywheel:"Build Awareness", kpi:">5 DMs/week in 30 days", scope:"20 replies/day · 7 days · 30-day full", signal:"UNCLEAR", next:"Long-horizon. 60-90 days to first demos. Start now, measure at day 30." },
+  { id:11, name:"In-App Nudges", idea:"Slack + in-product messaging", platform:"Slack, In-App", goal:"Increase feature adoption for existing users", flywheel:"Attract & Retain", kpi:">15% feature usage increase", scope:"3 prompts · 7 days · Check Fri", signal:"UNCLEAR", next:"Need product analytics access to set baseline." },
+  { id:12, name:"Docs Rewrite", idea:"Product docs and enablement", platform:"Website, Help Center", goal:"Reduce time-to-value and support burden", flywheel:"Attract & Retain", kpi:">30% reduction time-to-value", scope:"3 docs · 7 days · Track tickets", signal:"UNCLEAR", next:"Need support ticket data to find top 3 pain points." },
+  { id:13, name:"SEO Sprint", idea:"AI SEO optimization", platform:"Website, Google", goal:"Drive organic traffic from AE pain searches", flywheel:"Build Awareness", kpi:">500 impressions, >2% CTR", scope:"3 posts · 7-day signal · 60-day full", signal:"NO", next:"Parked. SEO takes 2-3 months. Focus on direct outbound first." },
+  { id:14, name:"Content Blitz", idea:"Organic content across 5 channels", platform:"LinkedIn, Twitter/X, Reddit, HN, Quora", goal:"Prospects see Nevara everywhere", flywheel:"Build Awareness", kpi:">50 imp/post, >10 leads/mo", scope:"3 posts × 5 channels · 7 days", signal:"NO", next:"Parked. Content engine needs 30+ posts before breakout. Start after outbound validated." },
 ];
 
 function load() { const s=localStorage.getItem(K); if(s) return JSON.parse(s); save(DEFAULTS); return DEFAULTS; }
@@ -287,79 +291,120 @@ function flash() { const el=document.getElementById('saved'); el.classList.add('
 
 function toggleHow() { document.getElementById('how').classList.toggle('open'); }
 
-function render() {
-  const allExps = load();
-
-  let html = '';
-  {
-    html += `<table><thead><tr>
-      <th>Name</th><th>Idea</th><th>Goal</th><th>Platform</th><th>Flywheel</th><th>KPI</th><th>Scope</th><th>Signal</th><th>Next Step</th>
-    </tr></thead><tbody>`;
-    for (const e of allExps) {
-      const sc = !e.signal||e.signal==='—'?'pending': /yes/i.test(e.signal)?'yes': /no/i.test(e.signal)?'no': /weak/i.test(e.signal)?'weak': /unclear|early/i.test(e.signal)?'early':'pending';
-
-      const fwHtml = e.flywheel ? e.flywheel.split('+').map(f => {
-        const ft = f.trim().toLowerCase();
-        const cls = ft.includes('find')||ft.includes('reach')?'p1': ft.includes('aware')?'p2': ft.includes('attract')||ft.includes('retain')?'p3':'p1';
-        return `<span class="tag ${cls}">${f.trim()}</span>`;
-      }).join(' ') : '';
-
-      html += `<tr id="exp-${e.id}">
-        <td class="name-cell">${e.name || ''}</td>
-        <td class="idea-cell">${e.idea}</td>
-        <td class="goal-cell">${e.goal || ''}</td>
-        <td class="platform-cell">${e.platform || ''}</td>
-        <td class="tags-cell">${fwHtml}</td>
-        <td class="kpi-cell">${e.kpi}</td>
-        <td class="scope-cell">${e.scope || ''}</td>
-        <td>
-          <div class="editable" onclick="editSignal(${e.id}, this)">
-            <span class="signal-badge ${sc}">${e.signal || '—'}</span>
-          </div>
-        </td>
-        <td>
-          <div class="editable next-cell" onclick="editNext(${e.id}, this)">${e.next || '<span style="color:#ccc">click to add</span>'}</div>
-        </td>
-      </tr>`;
-    }
-    html += '</tbody></table>';
-  }  document.getElementById('list').innerHTML = html;
+function getFwClass(fw) {
+  if (!fw) return 'find';
+  const f = fw.toLowerCase();
+  if (f.includes('find') || f.includes('reach')) return 'find';
+  if (f.includes('aware')) return 'aware';
+  if (f.includes('attract') || f.includes('retain')) return 'retain';
+  return 'find';
 }
 
-// Inline editing — Signal (dropdown)
-let activeEdit = null;
-function editSignal(id, el) {
-  if (activeEdit === id) return;
-  activeEdit = id;
+function getSigCls(sig) {
+  if (!sig || sig === '—') return 'pending';
+  const s = sig.toUpperCase();
+  if (s === 'YES') return 'yes';
+  if (s === 'WEAK') return 'weak';
+  if (s === 'UNCLEAR') return 'unclear';
+  if (s === 'NO') return 'no';
+  return 'pending';
+}
+
+function render() {
+  const exps = load();
+
+  // Summary
+  const yes = exps.filter(e => e.signal === 'YES').length;
+  const weak = exps.filter(e => e.signal === 'WEAK').length;
+  const unclear = exps.filter(e => e.signal === 'UNCLEAR').length;
+  const no = exps.filter(e => e.signal === 'NO').length;
+
+  document.getElementById('summary').innerHTML = `
+    <div class="stat"><div class="num green">${yes}</div><div class="label">Scale (YES)</div></div>
+    <div class="stat"><div class="num" style="color:#ff9f0a">${weak}</div><div class="label">Iterate (WEAK)</div></div>
+    <div class="stat"><div class="num" style="color:#5856d6">${unclear}</div><div class="label">Need Data</div></div>
+    <div class="stat"><div class="num" style="color:#ff3b30">${no}</div><div class="label">Parked (NO)</div></div>
+  `;
+
+  // Cards
+  document.getElementById('cards').innerHTML = exps.map(e => {
+    const sigCls = getSigCls(e.signal);
+    const sigLabel = e.signal || '—';
+    const fwCls = getFwClass(e.flywheel);
+
+    return `
+    <div class="card" id="exp-${e.id}">
+      <div class="card-top">
+        <div>
+          <div class="card-name">${e.name}</div>
+          <div class="card-idea">${e.idea}</div>
+        </div>
+        <div class="signal-badge ${sigCls}" onclick="toggleSigDropdown(event, ${e.id})">${sigLabel}</div>
+      </div>
+      <div class="card-grid">
+        <div class="card-field">
+          <div class="f-label">Goal</div>
+          <div class="f-value">${e.goal}</div>
+        </div>
+        <div class="card-field">
+          <div class="f-label">Platform</div>
+          <div class="f-value">${e.platform}</div>
+        </div>
+        <div class="card-field">
+          <div class="f-label">KPI</div>
+          <div class="f-value" style="font-family:'SF Mono',monospace;font-size:11px">${e.kpi}</div>
+        </div>
+        <div class="card-field">
+          <div class="f-label">Scope</div>
+          <div class="f-value" style="font-size:11px">${e.scope}</div>
+        </div>
+      </div>
+      <div class="card-field" style="margin-bottom:10px">
+        <span class="fw-tag ${fwCls}">${e.flywheel}</span>
+      </div>
+      <div class="card-next" onclick="editNext(${e.id}, this)">
+        <span class="f-label" style="display:block;margin-bottom:2px">Next Step</span>
+        ${e.next ? e.next : '<span class="placeholder">Click to add next step...</span>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Signal dropdown
+let openSigId = null;
+function toggleSigDropdown(event, id) {
+  event.stopPropagation();
+  closeSigDropdown();
+  openSigId = id;
+  const badge = event.currentTarget;
+  const dd = document.createElement('div');
+  dd.className = 'sig-dropdown';
+  dd.id = 'sig-dd';
+  dd.innerHTML = SIGS.map(s => `
+    <div class="sig-option" onclick="pickSignal(${id}, '${s.v}')">
+      <span class="sig-label"><span class="signal-badge ${s.cls}" style="cursor:pointer">${s.label}</span></span>
+      <span class="sig-hint">${s.hint}</span>
+    </div>
+  `).join('');
+  badge.style.position = 'relative';
+  badge.appendChild(dd);
+}
+
+function pickSignal(id, val) {
   const exps = load();
   const e = exps.find(x => x.id === id);
-  const current = e.signal || '—';
-  const sel = document.createElement('select');
-  SIGNALS.forEach(s => {
-    const opt = document.createElement('option');
-    opt.value = s.v; opt.textContent = s.label;
-    if (s.v === current) opt.selected = true;
-    sel.appendChild(opt);
-  });
-  el.innerHTML = '';
-  el.appendChild(sel);
-  sel.focus();
-  sel.size = SIGNALS.length;
-
-  function commit() {
-    activeEdit = null;
-    const exps2 = load();
-    const e2 = exps2.find(x => x.id === id);
-    e2.signal = sel.value === '—' ? '' : sel.value;
-    save(exps2);
-    flash();
-    render();
-  }
-  sel.addEventListener('change', commit);
-  sel.addEventListener('blur', commit);
+  e.signal = val === '—' ? '' : val;
+  save(exps); flash(); closeSigDropdown(); render();
 }
 
-// Inline editing — Next Step (text input)
+function closeSigDropdown() {
+  const dd = document.getElementById('sig-dd');
+  if (dd) dd.remove();
+  openSigId = null;
+}
+document.addEventListener('click', closeSigDropdown);
+
+// Edit next step
 function editNext(id, el) {
   const exps = load();
   const e = exps.find(x => x.id === id);
@@ -367,23 +412,19 @@ function editNext(id, el) {
   input.type = 'text';
   input.value = e.next || '';
   input.placeholder = 'What to do next...';
-  el.innerHTML = '';
+  el.innerHTML = '<span class="f-label" style="display:block;margin-bottom:2px">Next Step</span>';
   el.appendChild(input);
   input.focus();
-
   function commit() {
     const exps2 = load();
-    const e2 = exps2.find(x => x.id === id);
-    e2.next = input.value;
-    save(exps2);
-    flash();
-    render();
+    exps2.find(x => x.id === id).next = input.value;
+    save(exps2); flash(); render();
   }
   input.addEventListener('blur', commit);
   input.addEventListener('keydown', ev => { if(ev.key==='Enter') commit(); });
 }
 
-// Add from Bot modal
+// Add from bot
 function openModal(){document.getElementById('modal').classList.add('open');document.getElementById('bot-input').value='';document.getElementById('pe').style.display='none';document.getElementById('ps').style.display='none';}
 function closeModal(){document.getElementById('modal').classList.remove('open');}
 function addFromBot(){
@@ -399,23 +440,13 @@ function addFromBot(){
   });
   if(!r.idea && !r.name){document.getElementById('pe').style.display='block';document.getElementById('ps').style.display='none';return;}
   const exps=load(), id=exps.reduce((m,e)=>Math.max(m,e.id),0)+1;
-  exps.push({
-    id, wk:"New",
-    name: r.name || r.idea?.split(' ').slice(0,3).join(' ') || "New Test",
-    idea: r.idea || r.name || "",
-    goal: r.goal || "",
-    platform: r.platform || "",
-    flywheel: r.flywheel || "",
-    kpi: r.kpi || "",
-    scope: r.scope || "",
-    signal: "", next: ""
-  });
+  exps.push({id, name:r.name||r.idea?.split(' ').slice(0,3).join(' ')||"New", idea:r.idea||"", goal:r.goal||"", platform:r.platform||"", flywheel:r.flywheel||"", kpi:r.kpi||"", scope:r.scope||"", signal:"", next:""});
   save(exps);
   document.getElementById('pe').style.display='none';document.getElementById('ps').style.display='block';
-  setTimeout(()=>{closeModal();render();setTimeout(()=>{const row=document.getElementById('exp-'+id);if(row){row.classList.add('highlight');row.scrollIntoView({behavior:'smooth',block:'center'});}},100);},400);
+  setTimeout(()=>{closeModal();render();setTimeout(()=>{const c=document.getElementById('exp-'+id);if(c){c.classList.add('highlight');c.scrollIntoView({behavior:'smooth',block:'center'});}},100);},400);
 }
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeSigDropdown();}});
 
 render();
 </script>

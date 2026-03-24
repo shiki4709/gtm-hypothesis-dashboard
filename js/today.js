@@ -30,10 +30,7 @@ function renderToday() {
 
   var items = active.filter(function(e) { return getExpStatus(e) !== null; });
 
-  var order = { needs_data: 3, needs_verdict: 0, in_progress: 1, has_next: 2 };
-  items.sort(function(a, b) {
-    return (order[getExpStatus(a)] || 5) - (order[getExpStatus(b)] || 5);
-  });
+  // No sorting — stable order. Items don't jump around.
 
   var runningCount = active.length - items.length;
 

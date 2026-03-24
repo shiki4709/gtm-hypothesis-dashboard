@@ -142,12 +142,45 @@ function renderExperiment(e) {
     else dot = '<span class="dot-low">●</span>';
   }
 
+  // Data progress — how close to enough data for a verdict
+  var ri = best.rateIdx || info.rateIdx;
+  var sample = best.stages[ri[1]] ? best.stages[ri[1]].val : 0;
+  var minSample = bm ? bm.minSample : 50;
+  var samplePct = Math.min(100, Math.round((sample / minSample) * 100));
+  var hasEnough = sample >= minSample;
+
+  // Time estimate
+  var started = best.started || '—';
+  var timeLabel = '';
+  if (started !== '—' && !hasEnough && sample > 0) {
+    // Estimate weeks remaining based on current accumulation rate
+    var startDate = new Date(started + ', 2026');
+    var weeksRunning = Math.max(1, Math.round((Date.now() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000)));
+    var ratePerWeek = sample / weeksRunning;
+    if (ratePerWeek > 0) {
+      var weeksLeft = Math.ceil((minSample - sample) / ratePerWeek);
+      timeLabel = '~' + weeksLeft + ' more week' + (weeksLeft !== 1 ? 's' : '');
+    }
+  } else if (hasEnough) {
+    timeLabel = 'ready for verdict';
+  } else if (sample === 0) {
+    timeLabel = 'not started';
+  }
+
+  var progressColor = hasEnough ? 'var(--hit)' : samplePct > 50 ? 'var(--change)' : 'var(--accent)';
+
   var html = '<div class="exp-card">' +
     '<div class="exp-row-g" onclick="toggleExp(' + e.id + ')">' +
     '<div class="exp-main"><div>' + dot + '<span class="exp-name-g">' + e.name + '</span>' +
     '<div class="exp-sub"><span class="exp-ch-label">' + info.label + '</span>' +
     (e.tools ? '<span class="exp-tools-label">' + e.tools + '</span>' : '') + '</div>' +
     (e.idea ? '<div class="exp-desc">' + e.idea + '</div>' : '') +
+    // Data progress bar
+    '<div class="exp-progress">' +
+    '<div class="exp-progress-bar"><div class="exp-progress-fill" style="width:' + samplePct + '%;background:' + progressColor + '"></div></div>' +
+    '<span class="exp-progress-label">' + formatNum(sample) + ' / ' + formatNum(minSample) + ' ' +
+    (best.stages[ri[1]] ? best.stages[ri[1]].label.toLowerCase() : '') +
+    (timeLabel ? ' · ' + timeLabel : '') + '</span></div>' +
     '</div></div>' +
     '<div class="exp-nums"><span class="exp-rate-g">' + bestRate + '</span>' +
     (contrib > 0 ? '<span class="exp-contrib">' + contrib + ' ' + (info.mode === 'outbound' ? 'signup' + (contrib !== 1 ? 's' : '') : 'gained') + '</span>' : '') +

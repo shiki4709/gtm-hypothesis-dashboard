@@ -144,6 +144,11 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
 .exp-tools-label::before { content: '·'; margin-right: var(--s-6); }
 .exp-desc { font-size: var(--fs-xs); color: var(--text-3); margin-top: var(--s-4); line-height: var(--lh-body); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
 
+.exp-progress { margin-top: var(--s-6); }
+.exp-progress-bar { height: 3px; background: var(--rule); border-radius: 2px; overflow: hidden; max-width: 10rem; }
+.exp-progress-fill { height: 100%; border-radius: 2px; transition: width 0.5s var(--ease-out); }
+.exp-progress-label { font-size: 10px; color: var(--text-4); margin-top: var(--s-2); display: block; font-variant-numeric: tabular-nums; }
+
 .exp-nums { display: flex; flex-direction: column; align-items: flex-end; gap: var(--s-2); flex-shrink: 0; }
 .exp-rate-g { font-family: var(--ff-display); font-size: var(--fs-lg); font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1; }
 .exp-contrib { font-size: var(--fs-xs); color: var(--text-3); }

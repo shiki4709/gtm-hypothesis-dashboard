@@ -209,12 +209,15 @@ function renderExperiment(e) {
       '<div class="var-rate">' + vRate + '</div>' +
       '<span class="verdict ' + vCls + '" onclick="event.stopPropagation();cycleVarVerdict(' + e.id + ',\'' + v.id + '\')">' + (v.verdict || '—') + '</span></div>';
 
-    // Pipeline
+    // Pipeline — direct editable inputs
     html += '<div class="pipe">';
     v.stages.forEach(function(stg, sIdx) {
       var isKey = v.rateIdx && (sIdx === v.rateIdx[0] || sIdx === v.rateIdx[1]);
-      html += '<div class="pipe-stage' + (isKey ? ' pipe-stage-key' : '') + '" onclick="event.stopPropagation();editVarStage(' + e.id + ',\'' + v.id + '\',' + sIdx + ',this)">' +
-        '<div class="pipe-stage-val">' + formatNum(stg.val) + '</div>' +
+      html += '<div class="pipe-stage' + (isKey ? ' pipe-stage-key' : '') + '">' +
+        '<input type="number" class="pipe-input" value="' + stg.val + '" min="0" ' +
+        'onfocus="this.select()" ' +
+        'onchange="saveStage(' + e.id + ',\'' + v.id + '\',' + sIdx + ',this.value)" ' +
+        'onclick="event.stopPropagation()">' +
         '<div class="pipe-stage-label">' + stg.label + '</div></div>';
     });
     html += '</div>';
@@ -256,6 +259,17 @@ function cycleVarVerdict(expId, varId) {
   var opts = ['', 'Keep going', 'Change variables', 'Close, iterate', 'Stop'];
   v.verdict = opts[(opts.indexOf(v.verdict) + 1) % opts.length];
   save(exps); flash(); render();
+}
+
+function saveStage(expId, varId, stgIdx, val) {
+  var exps = load();
+  var e = exps.find(function(x) { return x.id === expId; });
+  if (!e) return;
+  var v = e.variations.find(function(x) { return x.id === varId; });
+  if (!v) return;
+  v.stages[stgIdx].val = parseInt(val) || 0;
+  save(exps);
+  // Don't re-render — just save silently. Rate updates on next render.
 }
 
 function editVarStage(expId, varId, stgIdx, el) {

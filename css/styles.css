@@ -286,7 +286,24 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
 .pipe-input::-webkit-inner-spin-button,
 .pipe-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .pipe-input:focus { color: var(--accent); }
-.pipe-stage-label { font-size: 10px; color: var(--text-4); text-align: center; white-space: nowrap; }
+.pipe-stage-label { font-size: 10px; color: var(--text-4); text-align: center; white-space: nowrap; cursor: pointer; }
+.pipe-stage-label:hover { color: var(--text-2); }
+.pipe-stage-noted { border-color: var(--inbound); }
+
+.stage-panel {
+  width: 100%; padding-top: var(--s-6);
+  display: flex; flex-direction: column; gap: var(--s-4);
+}
+.stage-note, .stage-source {
+  width: 100%; font-size: 10px; font-family: var(--ff-body);
+  padding: var(--s-4) var(--s-6); border: 1px solid var(--rule);
+  border-radius: var(--radius-sm); outline: none; background: var(--bg);
+  color: var(--text); transition: border-color var(--dur-fast) var(--ease-out);
+}
+.stage-note:focus, .stage-source:focus { border-color: var(--accent); }
+.stage-note::placeholder, .stage-source::placeholder { color: var(--text-4); }
+.stage-link { font-size: 10px; color: var(--inbound); text-decoration: none; }
+.stage-link:hover { text-decoration: underline; }
 
 /* Conversion arrows between stages */
 .pipe-arrow {

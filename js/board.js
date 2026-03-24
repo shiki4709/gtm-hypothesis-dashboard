@@ -224,12 +224,22 @@ function renderExperiment(e) {
         html += '<div class="pipe-arrow ' + convCls + '">' + convText + '</div>';
       }
       var isKey = v.rateIdx && (sIdx === v.rateIdx[0] || sIdx === v.rateIdx[1]);
-      html += '<div class="pipe-stage' + (isKey ? ' pipe-stage-key' : '') + '">' +
+      var stageId = 'stg-' + e.id + '-' + v.id + '-' + sIdx;
+      var hasNote = stg.note || stg.source;
+      html += '<div class="pipe-stage' + (isKey ? ' pipe-stage-key' : '') + (hasNote ? ' pipe-stage-noted' : '') + '">' +
         '<input type="number" class="pipe-input" value="' + stg.val + '" min="0" ' +
         'onfocus="this.select()" ' +
         'onchange="saveStage(' + e.id + ',\'' + v.id + '\',' + sIdx + ',this.value)" ' +
         'onclick="event.stopPropagation()">' +
-        '<div class="pipe-stage-label">' + stg.label + '</div></div>';
+        '<div class="pipe-stage-label" onclick="event.stopPropagation();toggleStagePanel(\'' + stageId + '\')">' + stg.label +
+        (hasNote ? ' *' : '') + '</div>' +
+        '<div class="stage-panel" id="' + stageId + '" style="display:none" onclick="event.stopPropagation()">' +
+        '<input type="text" class="stage-note" placeholder="Note..." value="' + (stg.note || '').replace(/"/g, '&quot;') + '" ' +
+        'onchange="saveStageNote(' + e.id + ',\'' + v.id + '\',' + sIdx + ',this.value)">' +
+        '<input type="text" class="stage-source" placeholder="Link to source..." value="' + (stg.source || '').replace(/"/g, '&quot;') + '" ' +
+        'onchange="saveStageSource(' + e.id + ',\'' + v.id + '\',' + sIdx + ',this.value)">' +
+        (stg.source ? '<a class="stage-link" href="' + stg.source + '" target="_blank" onclick="event.stopPropagation()">Open source</a>' : '') +
+        '</div></div>';
     });
     html += '</div>';
 
@@ -295,6 +305,31 @@ function saveStage(expId, varId, stgIdx, val) {
     var rateEl = card.querySelector('.var-card:nth-child(' + (e.variations.indexOf(v) + 1) + ') .var-rate');
     if (rateEl) rateEl.textContent = expRateStr(v);
   }
+}
+
+function toggleStagePanel(stageId) {
+  var el = document.getElementById(stageId);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function saveStageNote(expId, varId, stgIdx, val) {
+  var exps = load();
+  var e = exps.find(function(x) { return x.id === expId; });
+  if (!e) return;
+  var v = e.variations.find(function(x) { return x.id === varId; });
+  if (!v) return;
+  v.stages[stgIdx].note = val;
+  save(exps);
+}
+
+function saveStageSource(expId, varId, stgIdx, val) {
+  var exps = load();
+  var e = exps.find(function(x) { return x.id === expId; });
+  if (!e) return;
+  var v = e.variations.find(function(x) { return x.id === varId; });
+  if (!v) return;
+  v.stages[stgIdx].source = val;
+  save(exps);
 }
 
 function editVarStage(expId, varId, stgIdx, el) {

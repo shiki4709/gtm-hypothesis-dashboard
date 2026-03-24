@@ -191,7 +191,7 @@
 </div>
 
 <script>
-const K='gtm_v17';
+const K='gtm_v18';
 const VERDICTS=['pending','Keep going','Change variables','Close, iterate','Stop'];
 
 const CH={
@@ -289,7 +289,7 @@ function render(){
 
     html+=`<tr class="${actualCls}" onclick="toggleExp(${e.id})" style="cursor:pointer">
       <td class="exp-name-col">${e.name}</td>
-      <td style="font-size:12px;color:var(--text-3)">${e.started||'—'}</td>
+      <td style="font-size:12px;color:var(--text-3);cursor:pointer" onclick="event.stopPropagation();editDate(${e.id},this)">${e.started||'—'}</td>
       <td class="target-col">${e.target}</td>
       <td class="actual-col ${actualCls}" onclick="event.stopPropagation();editActual(${e.id},this)">${hasData?actual:'—'}</td>
       <td class="verdict-col"><span class="verdict ${verdictCls}" onclick="event.stopPropagation();cycleVerdict(${e.id})">${e.verdict||'—'}</span></td>
@@ -360,6 +360,24 @@ function editHours(id,el){
   if(val===null)return;
   e.hours=parseFloat(val)||0;
   save(exps);flash();render();
+}
+
+function editDate(id,el){
+  const exps=load();const e=exps.find(x=>x.id===id);
+  const input=document.createElement('input');
+  input.type='date';
+  input.style.cssText='font-size:12px;font-family:DM Sans,sans-serif;border:1.5px solid var(--accent);border-radius:3px;padding:2px 4px;outline:none;background:var(--bg);color:var(--text);';
+  el.innerHTML='';el.appendChild(input);input.focus();
+  function c(){
+    if(input.value){
+      const d=new Date(input.value+'T00:00:00');
+      const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+      e.started=mo+' '+d.getDate();
+    }
+    save(exps);flash();render();
+  }
+  input.addEventListener('change',c);
+  input.addEventListener('blur',c);
 }
 
 function editNext(id,el){

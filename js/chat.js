@@ -1,79 +1,117 @@
 /* ================================================================
-   Quick Add — Inline + panel experiment creation
+   Chat — AI-guided experiment creation
+
+   Flow:
+   1. User describes their idea
+   2. AI breaks it into pipeline stages + suggests tools
+   3. User reviews, edits if needed
+   4. Creates the experiment
    ================================================================ */
 
-/* --- Quick-add panel --- */
 var qaOpen = false;
-var qaChannel = null;
+var chatMessages = [];
+var chatPending = null; // AI-generated experiment waiting to be confirmed
 
 function openModal() {
   if (qaOpen) { closeModal(); return; }
   qaOpen = true;
-
-  var outChannels = Object.entries(CH).filter(function(p) { return p[1].mode === 'outbound'; });
-  var inChannels = Object.entries(CH).filter(function(p) { return p[1].mode === 'inbound'; });
-  // Default to first channel of current mode
-  qaChannel = qaChannel || (activeMode === 'outbound' ? outChannels[0][0] : inChannels[0][0]);
+  chatMessages = [];
+  chatPending = null;
 
   document.getElementById('modal').classList.add('open');
-  document.querySelector('.chat').innerHTML =
-    '<div class="qa-panel"><div class="qa-header"><h2 class="qa-title">New Experiment</h2>' +
-    '<button class="chat-close" onclick="closeModal()">&times;</button></div>' +
-    '<div class="qa-body">' +
-    '<div class="qa-field"><label class="qa-label">Name</label>' +
-    '<input type="text" class="qa-input" id="qa-name" placeholder="What are you testing?" onkeydown="if(event.key===\'Enter\')qaSubmit()"></div>' +
-    '<div class="qa-field"><label class="qa-label">Channel</label>' +
-    '<div class="qa-mode-label">Outbound</div><div class="qa-chips">' +
-    outChannels.map(function(p) {
-      return '<button class="qa-chip ' + (p[0] === qaChannel ? 'active' : '') + '" onclick="qaPickChannel(\'' + p[0] + '\')" style="--chip-color:' + p[1].color + '">' +
-        '<span class="qa-chip-dot" style="background:' + p[1].color + '"></span>' + p[1].label + '</button>';
-    }).join('') + '</div>' +
-    '<div class="qa-mode-label" style="margin-top:var(--s-8)">Inbound</div><div class="qa-chips">' +
-    inChannels.map(function(p) {
-      return '<button class="qa-chip ' + (p[0] === qaChannel ? 'active' : '') + '" onclick="qaPickChannel(\'' + p[0] + '\')" style="--chip-color:' + p[1].color + '">' +
-        '<span class="qa-chip-dot" style="background:' + p[1].color + '"></span>' + p[1].label + '</button>';
-    }).join('') + '</div></div>' +
-    '<div class="qa-field"><label class="qa-label">What is it?</label>' +
-    '<input type="text" class="qa-input qa-input-sm" id="qa-idea" placeholder="One line description"></div>' +
-    '</div><div class="qa-footer"><button class="qa-cancel" onclick="closeModal()">Cancel</button>' +
-    '<button class="qa-submit" onclick="qaSubmit()">Add to Sprint</button></div></div>';
+  renderChat();
 
-  setTimeout(function() { var n = document.getElementById('qa-name'); if (n) n.focus(); }, 100);
+  setTimeout(function() {
+    addBotMessage("What experiment do you want to run? Describe your idea and I'll help you figure out the steps.");
+    var input = document.getElementById('chat-input');
+    if (input) input.focus();
+  }, 200);
 }
 
 function closeModal() {
   qaOpen = false;
-  qaChannel = null;
+  chatPending = null;
   document.getElementById('modal').classList.remove('open');
 }
 
-function qaPickChannel(ch) {
-  qaChannel = ch;
-  document.querySelectorAll('.qa-chip').forEach(function(c) { c.classList.remove('active'); });
-  var t = document.querySelector('.qa-chip[onclick*="' + ch + '"]');
-  if (t) t.classList.add('active');
+function renderChat() {
+  document.querySelector('.chat').innerHTML =
+    '<div class="chat-panel">' +
+    '<div class="chat-top"><span class="chat-title">New Experiment</span>' +
+    '<button class="chat-close" onclick="closeModal()">&times;</button></div>' +
+    '<div class="chat-msgs" id="chat-msgs"></div>' +
+    '<div class="chat-bottom" id="chat-bottom">' +
+    '<input type="text" class="chat-input" id="chat-input" placeholder="Describe your idea..." ' +
+    'onkeydown="if(event.key===\'Enter\')sendChat()">' +
+    '<button class="chat-send" onclick="sendChat()">Send</button></div></div>';
 }
 
-function qaSuggestTarget() {
-  var name = document.getElementById('qa-name').value.trim();
-  var idea = document.getElementById('qa-idea').value.trim();
-  var ch = qaChannel || Object.keys(CH)[0];
-  var info = CH[ch];
+function addBotMessage(text) {
+  chatMessages.push({ role: 'bot', text: text });
+  renderMessages();
+}
+
+function addUserMessage(text) {
+  chatMessages.push({ role: 'user', text: text });
+  renderMessages();
+}
+
+function renderMessages() {
+  var el = document.getElementById('chat-msgs');
+  if (!el) return;
+  el.innerHTML = chatMessages.map(function(m) {
+    return '<div class="chat-msg chat-msg-' + m.role + '">' + m.text + '</div>';
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function sendChat() {
+  var input = document.getElementById('chat-input');
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addUserMessage(text);
+
+  // If we have a pending experiment and user says something, treat as edit
+  if (chatPending) {
+    addBotMessage('Let me revise...');
+    callAI(text, true);
+    return;
+  }
+
+  // First message — ask AI to design the experiment
+  addBotMessage('Thinking...');
+  callAI(text, false);
+}
+
+function callAI(userText, isRevision) {
   var key = getAIKey();
 
-  if (!key) { showToast('Set API key in Settings first'); return; }
-  if (!name) { document.getElementById('qa-name').focus(); return; }
+  if (!key) {
+    // No API key — use a simple template approach
+    chatMessages.pop(); // remove "Thinking..."
+    noAIFallback(userText);
+    return;
+  }
 
-  var btn = document.getElementById('qa-ai-btn');
-  if (btn) { btn.textContent = '...'; btn.disabled = true; }
+  var systemPrompt = 'You are a B2B SaaS GTM experiment designer for Nevara (AI deal execution agent for AEs).\n\n' +
+    'The user wants to run a GTM experiment. Help them design it.\n\n' +
+    'Respond with ONLY a JSON object (no markdown, no explanation):\n' +
+    '{\n' +
+    '  "name": "Short experiment name",\n' +
+    '  "idea": "One line description of the approach",\n' +
+    '  "mode": "outbound or inbound",\n' +
+    '  "tools": "Tool1 → Tool2 (the workflow tools)",\n' +
+    '  "stages": ["Stage 1 name", "Stage 2 name", ...],\n' +
+    '  "rateIdx": [numerator_index, denominator_index],\n' +
+    '  "explanation": "2-3 sentences explaining the flow and why these stages"\n' +
+    '}\n\n' +
+    'Pipeline stages should represent the FULL funnel from sourcing to conversion.\n' +
+    'Each stage is a measurable step. Include 4-7 stages.\n' +
+    'rateIdx: which two stages to divide for the key conversion rate.\n' +
+    'Available modes: outbound (DMs, email, events) or inbound (content, SEO, product).';
 
-  var prompt = 'You are a B2B SaaS GTM expert. Suggest a target metric for this experiment.\n\n' +
-    'Experiment: ' + name + '\n' +
-    'Channel: ' + (info ? info.label : ch) + ' (' + (info ? info.mode : 'outbound') + ')\n' +
-    'Key metric: ' + (info ? info.metric : 'rate') + '\n' +
-    (idea ? 'Idea: ' + idea + '\n' : '') +
-    '\nRespond with ONLY a JSON object (no markdown):\n' +
-    '{"target": "<target string like >15% reply rate>", "reasoning": "<1 sentence why>"}';
+  var messages = [{ role: 'user', content: (isRevision ? 'Revise: ' : '') + userText }];
 
   var xhr = new XMLHttpRequest();
   xhr.open('POST', 'https://api.anthropic.com/v1/messages');
@@ -83,45 +121,146 @@ function qaSuggestTarget() {
   xhr.setRequestHeader('anthropic-dangerous-direct-browser-access', 'true');
 
   xhr.onload = function() {
-    if (btn) { btn.textContent = 'AI'; btn.disabled = false; }
+    chatMessages.pop(); // remove "Thinking..."
     if (xhr.status === 200) {
       try {
         var resp = JSON.parse(xhr.responseText);
         var text = resp.content[0].text;
         var json = JSON.parse(text.match(/\{[\s\S]*\}/)[0]);
-        var targetInput = document.getElementById('qa-target');
-        if (targetInput) targetInput.value = json.target;
-        var hint = document.getElementById('qa-target-hint');
-        if (hint) hint.textContent = json.reasoning;
+        chatPending = json;
+        showProposal(json);
       } catch (err) {
-        showToast('Could not parse AI response');
+        addBotMessage('Sorry, I couldn\'t parse that. Try describing your idea differently.');
       }
     } else {
-      showToast('API error: ' + xhr.status);
+      addBotMessage('API error (' + xhr.status + '). Try again or describe more simply.');
     }
   };
   xhr.onerror = function() {
-    if (btn) { btn.textContent = 'AI'; btn.disabled = false; }
-    showToast('Network error');
+    chatMessages.pop();
+    addBotMessage('Network error. Check your connection.');
   };
 
   xhr.send(JSON.stringify({
     model: 'claude-haiku-4-5-20251001',
-    max_tokens: 150,
-    messages: [{ role: 'user', content: prompt }]
+    max_tokens: 500,
+    system: systemPrompt,
+    messages: messages
   }));
 }
 
-function qaSubmit() {
-  var name = document.getElementById('qa-name').value.trim();
-  if (!name) { document.getElementById('qa-name').focus(); return; }
-  var idea = document.getElementById('qa-idea').value.trim();
-  var ch = qaChannel || Object.keys(CH)[0];
-  createExperiment(name, ch, null, null, idea, '');
-  closeModal();
+function noAIFallback(text) {
+  // Simple keyword matching without AI
+  var lower = text.toLowerCase();
+  var mode = 'outbound';
+  var ch = 'li_outreach';
+  var stages = ['Sourced', 'Contacted', 'Replied', 'Converted'];
+  var tools = '';
+  var name = text.split(' ').slice(0, 5).join(' ');
+
+  if (lower.includes('linkedin') && (lower.includes('dm') || lower.includes('outreach') || lower.includes('connection'))) {
+    ch = 'li_outreach'; stages = ['ICP filtered', 'Connections sent', 'Accepted', 'Replied', 'Signed up']; tools = 'Sales Nav → Dripify';
+  } else if (lower.includes('scrape') || lower.includes('engager') || lower.includes('lead list') || lower.includes('phantom')) {
+    ch = 'lead_lists'; stages = ['Posts found', 'Leads scraped', 'ICP filtered', 'DMs sent', 'Replied', 'Signed up']; tools = 'Phantom → Sheets';
+  } else if (lower.includes('warm') || lower.includes('intro')) {
+    ch = 'warm_intros'; stages = ['Target accounts', 'Mutual connections', 'Intro asks', 'Meetings', 'Signed up']; tools = 'LinkedIn';
+  } else if (lower.includes('gift') || lower.includes('sendoso')) {
+    ch = 'gifts'; stages = ['AEs contacted', 'Replied', 'Gifts sent', 'Meetings', 'Signed up']; tools = 'LinkedIn → Sendoso';
+  } else if (lower.includes('email') || lower.includes('cold email')) {
+    ch = 'email'; stages = ['Sent', 'Opened', 'Clicked', 'Signed up']; tools = 'Apollo';
+  } else if (lower.includes('event') || lower.includes('coffee') || lower.includes('meetup')) {
+    ch = 'events'; stages = ['Events attended', 'Conversations', 'Contacts', 'Signed up']; tools = 'Meetup';
+  } else if (lower.includes('content') || lower.includes('post') || lower.includes('linkedin post')) {
+    ch = 'li_content'; mode = 'inbound'; stages = ['Posts published', 'Impressions', 'Engagements', 'Followers', 'Inbound DMs']; tools = 'LinkedIn';
+  } else if (lower.includes('seo')) {
+    ch = 'content_seo'; mode = 'inbound'; stages = ['Pages published', 'Indexed', 'Site visits', 'Signed up']; tools = 'AI writer → WordPress';
+  }
+
+  var info = CH[ch];
+  chatPending = {
+    name: name,
+    idea: text,
+    mode: mode,
+    tools: tools,
+    stages: stages,
+    rateIdx: info ? info.rateIdx : [stages.length - 2, stages.length - 3],
+    explanation: 'Based on your description, I set up a ' + (mode === 'outbound' ? 'outbound' : 'inbound') + ' experiment with ' + stages.length + ' funnel stages. You can edit the steps before creating.',
+    ch: ch
+  };
+
+  showProposal(chatPending);
 }
 
-/* --- Sprint editor --- */
+function showProposal(p) {
+  var stagesHTML = p.stages.map(function(s, i) {
+    var isRate = (i === p.rateIdx[0] || i === p.rateIdx[1]);
+    return '<span class="chat-stage' + (isRate ? ' chat-stage-key' : '') + '">' + s + '</span>';
+  }).join('<span class="chat-arrow">→</span>');
+
+  var html = '<div class="chat-proposal">' +
+    '<div class="chat-prop-name">' + p.name + '</div>' +
+    '<div class="chat-prop-idea">' + p.idea + '</div>' +
+    '<div class="chat-prop-row"><span class="chat-prop-label">Mode</span>' + p.mode + '</div>' +
+    (p.tools ? '<div class="chat-prop-row"><span class="chat-prop-label">Tools</span>' + p.tools + '</div>' : '') +
+    '<div class="chat-prop-label" style="margin-top:var(--s-8)">Pipeline</div>' +
+    '<div class="chat-pipe">' + stagesHTML + '</div>' +
+    '<div class="chat-prop-explain">' + p.explanation + '</div>' +
+    '<div class="chat-prop-actions">' +
+    '<button class="chat-create-btn" onclick="createFromChat()">Create this experiment</button>' +
+    '</div></div>';
+
+  addBotMessage(html);
+
+  // Change input placeholder
+  var input = document.getElementById('chat-input');
+  if (input) input.placeholder = 'Want to change something? Or click Create.';
+}
+
+function createFromChat() {
+  if (!chatPending) return;
+  var p = chatPending;
+
+  // Find matching channel or default
+  var ch = p.ch || findChannel(p.mode, p.stages);
+  var info = CH[ch];
+
+  var exps = load();
+  var id = exps.reduce(function(m, e) { return Math.max(m, e.id); }, 0) + 1;
+  var now = new Date();
+
+  var stages = p.stages.map(function(label) { return { label: label, val: 0 }; });
+
+  exps.push({
+    id: id, ch: ch, name: p.name,
+    idea: p.idea || '', tools: p.tools || '',
+    variations: [{
+      id: id + 'a',
+      name: 'Initial',
+      stages: stages,
+      rateIdx: p.rateIdx || (info ? info.rateIdx : [1, 0]),
+      started: MONTHS[now.getMonth()] + ' ' + now.getDate(),
+      verdict: '', next: ''
+    }]
+  });
+
+  save(exps); flash();
+  if (info) activeMode = info.mode;
+  closeModal();
+  render();
+  showToast('Created: ' + p.name);
+}
+
+function findChannel(mode, stages) {
+  // Try to match based on mode
+  var channels = Object.entries(CH).filter(function(p) { return p[1].mode === mode; });
+  if (channels.length > 0) return channels[0][0];
+  return Object.keys(CH)[0];
+}
+
+/* ================================================================
+   Sprint editor + Settings (unchanged)
+   ================================================================ */
+
 function editSprint() {
   var sp = loadSprint();
   document.getElementById('modal').classList.add('open');
@@ -142,11 +281,9 @@ function editSprint() {
     '<button class="qa-submit" onclick="saveSprint({name:document.getElementById(\'sp-name\').value,start:document.getElementById(\'sp-start\').value,end:document.getElementById(\'sp-end\').value,year:document.getElementById(\'sp-year\').value});closeModal();render()">Save</button></div></div>';
 }
 
-/* --- Settings panel --- */
 function openSettings() {
   var key = getAIKey();
   var masked = key ? key.slice(0, 8) + '...' + key.slice(-4) : '';
-
   qaOpen = true;
   document.getElementById('modal').classList.add('open');
   document.querySelector('.chat').innerHTML =
@@ -155,13 +292,8 @@ function openSettings() {
     '<div class="qa-body">' +
     '<div class="qa-field"><label class="qa-label">Anthropic API Key</label>' +
     '<input type="password" class="qa-input qa-input-sm" id="settings-key" placeholder="sk-ant-..." value="' + key + '">' +
-    '<div style="font-size:var(--fs-xs);color:var(--text-4);margin-top:var(--s-4)">Used to generate AI benchmarks for experiments. Key is stored locally in your browser only.' +
+    '<div style="font-size:var(--fs-xs);color:var(--text-4);margin-top:var(--s-4)">Powers the AI experiment designer. Stored locally only.' +
     (masked ? ' Current: ' + masked : '') + '</div></div>' +
-    '<div class="qa-field"><label class="qa-label">AI Benchmarks</label>' +
-    '<div style="display:flex;gap:var(--s-8);flex-wrap:wrap">' +
-    '<button class="td-action-btn" onclick="runGenAll()" id="gen-all-btn">Generate benchmarks for all experiments</button>' +
-    '<button class="td-edit-btn" onclick="clearAllBenchmarks()">Reset to defaults</button></div>' +
-    '<div style="font-size:var(--fs-xs);color:var(--text-4);margin-top:var(--s-4)" id="gen-status">Uses Claude Haiku to analyze each experiment and suggest appropriate benchmarks.</div></div>' +
     '</div><div class="qa-footer"><button class="qa-submit" onclick="saveSettings()">Save</button></div></div>';
 }
 
@@ -170,75 +302,4 @@ function saveSettings() {
   setAIKey(key);
   flash();
   closeModal();
-}
-
-function runGenAll() {
-  var btn = document.getElementById('gen-all-btn');
-  var status = document.getElementById('gen-status');
-  if (btn) btn.textContent = 'Generating...';
-  if (status) status.textContent = 'Calling Claude Haiku for each experiment...';
-
-  generateAllBenchmarks(function() {
-    if (btn) btn.textContent = 'Done!';
-    if (status) status.textContent = 'Benchmarks generated. Close settings to see suggestions.';
-    render();
-  });
-}
-
-function clearAllBenchmarks() {
-  localStorage.removeItem(BM_KEY);
-  flash();
-  render();
-  var status = document.getElementById('gen-status');
-  if (status) status.textContent = 'Reset to channel defaults.';
-}
-
-/* --- Shared creation --- */
-function createExperiment(name, ch, target, targetNum, idea, tools) {
-  var exps = load();
-  var id = exps.reduce(function(m, e) { return Math.max(m, e.id); }, 0) + 1;
-  var now = new Date();
-  var info = CH[ch];
-
-  // Default target
-  if (!target && info) {
-    var defs = {
-      li_outreach: '>20% reply rate', lead_lists: '>15% reply rate',
-      warm_intros: '>40% meeting rate', gifts: '>35% response rate',
-      email: '>30% click rate', events: '>10% conv-to-signup',
-      li_content: '>3% engagement', twitter: '>2% engagement',
-      reddit: '>10% upvote rate', content_seo: '>2% visit-to-signup',
-      product: '>10% activation'
-    };
-    target = defs[ch] || 'TBD';
-  }
-
-  if (!targetNum) {
-    var match = (target || '').match(/>?\s*(\d+(?:\.\d+)?)\s*%/);
-    if (match) targetNum = parseFloat(match[1]) / 100;
-  }
-
-  // Build stages from channel defaults
-  var stages = (info ? info.defaultStages : ['Input', 'Output', 'Result']).map(function(label) {
-    return { label: label, val: 0 };
-  });
-
-  var varId = id + 'a';
-  exps.push({
-    id: id, ch: ch, name: name,
-    idea: idea || '', tools: tools || '',
-    variations: [{
-      id: varId,
-      name: 'Initial',
-      stages: stages,
-      rateIdx: info ? info.rateIdx : [1, 0],
-      started: MONTHS[now.getMonth()] + ' ' + now.getDate(),
-      verdict: '',
-      next: ''
-    }]
-  });
-
-  save(exps); flash();
-  if (info) activeMode = info.mode;
-  render();
 }

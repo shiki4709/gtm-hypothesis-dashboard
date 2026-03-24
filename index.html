@@ -102,6 +102,7 @@
     @keyframes hl { to { background: transparent; } }
 
     .idea-cell { font-weight: 600; max-width: 200px; }
+    .ch-cell { font-size: 12px; color: #555; white-space: nowrap; }
     .tags-cell { white-space: nowrap; }
     .kpi-cell { font-family: 'SF Mono', monospace; font-size: 12px; color: #333; }
     .test-cell { font-size: 12px; color: #666; max-width: 220px; }
@@ -253,20 +254,20 @@ const K = 'gtm_v6';
 const SIGNALS = ['—','YES','WEAK','UNCLEAR','NO'];
 
 const DEFAULTS = [
-  { id:1, wk:"W1", idea:"LinkedIn prospecting via Sales Nav + Dripify", kpi:">25% accept, >10% reply", test:"200 requests w/ personalization. Dripify 3-step.", signal:"", next:"", tags:["linkedin"], pillar:"P1" },
-  { id:2, wk:"W1", idea:"Scrape viral GTM post engagers → lead lists", kpi:">3x response rate vs cold", test:"Extract engagers from rmeadows post. A/B vs cold.", signal:"", next:"", tags:["linkedin","content"], pillar:"P1" },
-  { id:3, wk:"W1", idea:"Reddit/Twitter listening → reply to AE pain", kpi:">20% response rate", test:"20 threads r/sales + Twitter. Reply w/ value. DM 10.", signal:"", next:"", tags:["reddit","twitter"], pillar:"P1+P2" },
-  { id:4, wk:"W1", idea:"Coffee marketing at sales meetups", kpi:">50% conv-to-demo, >3 demos", test:"2 events. Coffee + talk. Track convos → demos.", signal:"", next:"", tags:["events"], pillar:"P1+P2" },
-  { id:5, wk:"W2", idea:"'Calling on my network' posts → DM", kpi:">30% DM response", test:"Search alert. DM 20 posters from last 7 days.", signal:"", next:"", tags:["linkedin"], pillar:"P1" },
-  { id:6, wk:"W2", idea:"Sales influencer followers → surface AEs → DM", kpi:">20% DM response", test:"Monitor 5 influencers. DM 30 engaging AEs.", signal:"", next:"", tags:["linkedin","content"], pillar:"P1" },
-  { id:7, wk:"W2", idea:"Mine LinkedIn network → warm intros", kpi:">40% meeting rate", test:"Cross-ref accounts. Request 10 intros.", signal:"", next:"", tags:["linkedin"], pillar:"P1" },
-  { id:8, wk:"W2", idea:"Hyper-personalized outreach + $5 gift", kpi:">35% meeting rate", test:"15 AEs. Research + gift.", signal:"", next:"", tags:["linkedin"], pillar:"P1+P2" },
-  { id:9, wk:"W3", idea:"Churned user re-engagement", kpi:">5% reactivation, >40% open", test:"'Here's what changed' email sequence.", signal:"", next:"", tags:["email","product"], pillar:"P3" },
-  { id:10, wk:"W3", idea:"Twitter reply presence building", kpi:">5 DMs/week in 30 days", test:"Reply to 20 tweets daily for 7 days.", signal:"", next:"", tags:["twitter"], pillar:"P2" },
-  { id:11, wk:"W3", idea:"Slack + in-product messaging", kpi:">15% feature usage increase", test:"3 in-app prompts. Before/after.", signal:"", next:"", tags:["product"], pillar:"P3" },
-  { id:12, wk:"W3", idea:"Product docs and enablement", kpi:">30% reduction time-to-value", test:"Rewrite top 3 docs. Track tickets.", signal:"", next:"", tags:["product","content"], pillar:"P3" },
-  { id:13, wk:"W4+", idea:"AI SEO optimization", kpi:">500 impressions, >2% CTR", test:"3 SEO posts on AE pain keywords.", signal:"", next:"", tags:["content"], pillar:"P2+P3" },
-  { id:14, wk:"W4+", idea:"Organic content across 5 channels", kpi:">50 imp/post, >10 leads/mo", test:"Cross-post 3 pieces. Per-channel tracking.", signal:"", next:"", tags:["linkedin","twitter","reddit","content"], pillar:"P2" },
+  { id:1, wk:"W1", idea:"LinkedIn prospecting via Sales Nav + Dripify", ch:"LinkedIn", kpi:">25% accept, >10% reply", test:"200 requests w/ personalization. Dripify 3-step.", signal:"", next:"", pillar:"P1" },
+  { id:2, wk:"W1", idea:"Scrape viral GTM post engagers → lead lists", ch:"LinkedIn", kpi:">3x response rate vs cold", test:"Extract engagers from rmeadows post. A/B vs cold.", signal:"", next:"", pillar:"P1" },
+  { id:3, wk:"W1", idea:"Reddit/Twitter listening → reply to AE pain", ch:"Reddit + Twitter", kpi:">20% response rate", test:"20 threads r/sales + Twitter. Reply w/ value. DM 10.", signal:"", next:"", pillar:"P1+P2" },
+  { id:4, wk:"W1", idea:"Coffee marketing at sales meetups", ch:"Events", kpi:">50% conv-to-demo, >3 demos", test:"2 events. Coffee + talk. Track convos → demos.", signal:"", next:"", pillar:"P1+P2" },
+  { id:5, wk:"W2", idea:"'Calling on my network' posts → DM", ch:"LinkedIn", kpi:">30% DM response", test:"Search alert. DM 20 posters from last 7 days.", signal:"", next:"", pillar:"P1" },
+  { id:6, wk:"W2", idea:"Sales influencer followers → surface AEs → DM", ch:"LinkedIn", kpi:">20% DM response", test:"Monitor 5 influencers. DM 30 engaging AEs.", signal:"", next:"", pillar:"P1" },
+  { id:7, wk:"W2", idea:"Mine LinkedIn network → warm intros", ch:"LinkedIn", kpi:">40% meeting rate", test:"Cross-ref accounts. Request 10 intros.", signal:"", next:"", pillar:"P1" },
+  { id:8, wk:"W2", idea:"Hyper-personalized outreach + $5 gift", ch:"LinkedIn + Email", kpi:">35% meeting rate", test:"15 AEs. Research + gift.", signal:"", next:"", pillar:"P1+P2" },
+  { id:9, wk:"W3", idea:"Churned user re-engagement", ch:"Email", kpi:">5% reactivation, >40% open", test:"'Here's what changed' email sequence.", signal:"", next:"", pillar:"P3" },
+  { id:10, wk:"W3", idea:"Twitter reply presence building", ch:"Twitter", kpi:">5 DMs/week in 30 days", test:"Reply to 20 tweets daily for 7 days.", signal:"", next:"", pillar:"P2" },
+  { id:11, wk:"W3", idea:"Slack + in-product messaging", ch:"In-App + Slack", kpi:">15% feature usage increase", test:"3 in-app prompts. Before/after.", signal:"", next:"", pillar:"P3" },
+  { id:12, wk:"W3", idea:"Product docs and enablement", ch:"Website", kpi:">30% reduction time-to-value", test:"Rewrite top 3 docs. Track tickets.", signal:"", next:"", pillar:"P3" },
+  { id:13, wk:"W4+", idea:"AI SEO optimization", ch:"Website", kpi:">500 impressions, >2% CTR", test:"3 SEO posts on AE pain keywords.", signal:"", next:"", pillar:"P2+P3" },
+  { id:14, wk:"W4+", idea:"Organic content across 5 channels", ch:"Multi-channel", kpi:">50 imp/post, >10 leads/mo", test:"Cross-post 3 pieces. Per-channel tracking.", signal:"", next:"", pillar:"P2" },
 ];
 
 function load() { const s=localStorage.getItem(K); if(s) return JSON.parse(s); save(DEFAULTS); return DEFAULTS; }
@@ -285,18 +286,18 @@ function render() {
   for (const wk of wkOrder) {
     html += `<div class="week-label">${wk} <div class="week-line"></div></div>`;
     html += `<table><thead><tr>
-      <th>Idea</th><th>Tags</th><th>KPI</th><th>This Week's Test</th><th>Signal</th><th>Next Step</th>
+      <th>Idea</th><th>Channel</th><th>Pillar</th><th>KPI</th><th>This Week's Test</th><th>Signal</th><th>Next Step</th>
     </tr></thead><tbody>`;
     for (const e of weeks[wk]) {
       const q = !e.signal && wk!=='W1' && wk!=='New';
       const sc = !e.signal||e.signal==='—'?'pending': /yes/i.test(e.signal)?'yes': /no/i.test(e.signal)?'no': /weak/i.test(e.signal)?'weak': /unclear|early/i.test(e.signal)?'early':'pending';
 
-      const tagHtml = (e.tags||[]).map(t => `<span class="tag ${t}">${t}</span>`).join('') +
-        (e.pillar ? e.pillar.split('+').map(p => `<span class="tag ${p.trim().toLowerCase()}">${p.trim()}</span>`).join('') : '');
+      const pillarHtml = e.pillar ? e.pillar.split('+').map(p => `<span class="tag ${p.trim().toLowerCase()}">${p.trim()}</span>`).join(' ') : '';
 
       html += `<tr class="${q?'queued':''}" id="exp-${e.id}">
         <td class="idea-cell">${e.idea}</td>
-        <td class="tags-cell">${tagHtml}</td>
+        <td class="ch-cell">${e.ch || ''}</td>
+        <td class="tags-cell">${pillarHtml}</td>
         <td class="kpi-cell">${e.kpi}</td>
         <td class="test-cell">${e.test}</td>
         <td>
@@ -378,7 +379,7 @@ function addFromBot(){
   });
   if(!r.idea){document.getElementById('pe').style.display='block';document.getElementById('ps').style.display='none';return;}
   const exps=load(), id=exps.reduce((m,e)=>Math.max(m,e.id),0)+1;
-  exps.push({id, wk:"New", idea:r.idea, kpi:r.kpi||"", test:r.test||"", signal:"", next:"", tags:["new"], pillar:""});
+  exps.push({id, wk:"New", idea:r.idea, ch:"TBD", kpi:r.kpi||"", test:r.test||"", signal:"", next:"", pillar:""});
   save(exps);
   document.getElementById('pe').style.display='none';document.getElementById('ps').style.display='block';
   setTimeout(()=>{closeModal();render();setTimeout(()=>{const row=document.getElementById('exp-'+id);if(row){row.classList.add('highlight');row.scrollIntoView({behavior:'smooth',block:'center'});}},100);},400);

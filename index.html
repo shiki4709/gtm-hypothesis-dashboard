@@ -117,11 +117,19 @@
       border-radius: 4px; padding: 2px 4px; transition: background 0.15s;
     }
     .editable:hover { background: #eef2ff; }
-    .editable input, .editable select {
-      font-family: inherit; font-size: 11px; border: 1px solid #3b82f6;
-      border-radius: 4px; padding: 3px 6px; outline: none; width: 100%;
-      min-width: 200px;
+    .editable input {
+      font-family: inherit; font-size: 12px; border: 1px solid #3b82f6;
+      border-radius: 4px; padding: 4px 8px; outline: none; width: 100%;
+      min-width: 140px;
     }
+    .editable select {
+      font-family: inherit; font-size: 12px; border: 1px solid #3b82f6;
+      border-radius: 4px; padding: 2px 4px; outline: none;
+      min-width: 240px; background: #fff;
+      position: absolute; z-index: 10;
+    }
+    .editable select option { padding: 4px 8px; }
+    .editable { position: relative; }
 
     .next-cell { font-size: 12px; color: #444; }
 
@@ -316,7 +324,10 @@ function render() {
 }
 
 // Inline editing — Signal (dropdown)
+let activeEdit = null;
 function editSignal(id, el) {
+  if (activeEdit === id) return;
+  activeEdit = id;
   const exps = load();
   const e = exps.find(x => x.id === id);
   const current = e.signal || '—';
@@ -330,8 +341,10 @@ function editSignal(id, el) {
   el.innerHTML = '';
   el.appendChild(sel);
   sel.focus();
+  sel.size = SIGNALS.length;
 
   function commit() {
+    activeEdit = null;
     const exps2 = load();
     const e2 = exps2.find(x => x.id === id);
     e2.signal = sel.value === '—' ? '' : sel.value;

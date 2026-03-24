@@ -15,11 +15,88 @@
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .header h1 { font-size: 20px; font-weight: 700; }
     .header .sub { font-size: 12px; color: #999; }
-    .add-btn {
+    .header-btns { display: flex; gap: 8px; }
+    .btn-h {
       background: #111; color: #fff; border: none;
       padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;
     }
-    .add-btn:hover { background: #333; }
+    .btn-h:hover { background: #333; }
+    .btn-h.secondary { background: #fff; color: #111; border: 1px solid #ddd; }
+    .btn-h.secondary:hover { background: #f5f5f5; }
+
+    /* Framework section */
+    .framework {
+      background: #fff; border: 1px solid #eee; border-radius: 10px;
+      margin-bottom: 28px; overflow: hidden;
+    }
+    .framework-toggle {
+      padding: 14px 18px; cursor: pointer; display: flex;
+      justify-content: space-between; align-items: center;
+      font-size: 13px; font-weight: 600; color: #555;
+    }
+    .framework-toggle:hover { background: #fafafa; }
+    .framework-toggle .arrow { font-size: 11px; color: #aaa; transition: transform 0.2s; }
+    .framework-toggle .arrow.open { transform: rotate(180deg); }
+    .framework-body {
+      display: none; padding: 0 18px 18px;
+    }
+    .framework-body.open { display: block; }
+
+    .flow {
+      display: flex; align-items: stretch; gap: 0; margin-bottom: 16px;
+    }
+    .flow-step {
+      flex: 1; padding: 14px; text-align: center; position: relative;
+      background: #f9fafb; border: 1px solid #eee;
+    }
+    .flow-step:first-child { border-radius: 8px 0 0 8px; }
+    .flow-step:last-child { border-radius: 0 8px 8px 0; }
+    .flow-step .step-num {
+      font-size: 10px; font-weight: 700; color: #aaa;
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;
+    }
+    .flow-step .step-title { font-size: 13px; font-weight: 600; }
+    .flow-step .step-desc { font-size: 11px; color: #888; margin-top: 4px; }
+    .flow-arrow {
+      display: flex; align-items: center; font-size: 16px; color: #ccc; padding: 0 2px;
+    }
+
+    .filter-rules {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+    }
+    .filter-rule {
+      padding: 12px; border-radius: 6px; font-size: 12px;
+    }
+    .filter-rule .q { font-weight: 600; margin-bottom: 4px; }
+    .filter-rule .a { color: #666; }
+    .filter-rule.pass { background: #d1fae5; }
+    .filter-rule.pass .q { color: #065f46; }
+    .filter-rule.fail { background: #fee2e2; }
+    .filter-rule.fail .q { color: #991b1b; }
+    .filter-rule.neutral { background: #f3f4f6; }
+
+    .filter-outcomes {
+      margin-top: 12px; display: flex; gap: 12px; font-size: 12px;
+    }
+    .filter-outcome { padding: 8px 14px; border-radius: 6px; }
+    .filter-outcome.go { background: #d1fae5; color: #065f46; font-weight: 600; }
+    .filter-outcome.maybe { background: #fef3c7; color: #92400e; font-weight: 600; }
+    .filter-outcome.park { background: #f3f4f6; color: #999; font-weight: 600; }
+
+    .signal-rules {
+      margin-top: 16px; padding-top: 14px; border-top: 1px solid #eee;
+    }
+    .signal-rules h4 { font-size: 12px; font-weight: 600; color: #555; margin-bottom: 8px; }
+    .signal-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+    .signal-def {
+      padding: 8px; border-radius: 6px; text-align: center; font-size: 11px;
+    }
+    .signal-def .sig-label { font-weight: 700; margin-bottom: 2px; }
+    .signal-def.s-yes { background: #d1fae5; color: #065f46; }
+    .signal-def.s-weak { background: #fef3c7; color: #92400e; }
+    .signal-def.s-unclear { background: #e0e7ff; color: #3730a3; }
+    .signal-def.s-no { background: #fee2e2; color: #991b1b; }
+    .signal-def.s-tbd { background: #f3f4f6; color: #999; }
 
     /* Week dividers */
     .week-label {
@@ -27,7 +104,6 @@
       letter-spacing: 0.5px; margin: 28px 0 10px;
       display: flex; align-items: center; gap: 8px;
     }
-    .week-label:first-child { margin-top: 0; }
     .week-line { flex: 1; height: 1px; background: #e5e7eb; }
 
     /* Table */
@@ -45,10 +121,10 @@
     tr.highlight td { background: #eff6ff; animation: hl 3s ease-out forwards; }
     @keyframes hl { to { background: transparent; } }
 
-    .idea-cell { font-weight: 600; max-width: 240px; }
-    .hyp-cell { color: #555; font-size: 12px; max-width: 200px; }
-    .kpi-cell { font-family: 'SF Mono', monospace; font-size: 12px; color: #333; white-space: nowrap; }
-    .test-cell { font-size: 12px; color: #666; max-width: 260px; }
+    .idea-cell { font-weight: 600; max-width: 220px; }
+    .hyp-cell { color: #555; font-size: 12px; max-width: 180px; }
+    .kpi-cell { font-family: 'SF Mono', monospace; font-size: 12px; color: #333; }
+    .test-cell { font-size: 12px; color: #666; max-width: 240px; }
 
     .signal-badge {
       display: inline-block; padding: 2px 8px;
@@ -83,7 +159,10 @@
     .parse-msg.success { color: #059669; display: none; }
 
     @media (max-width: 768px) {
-      table { font-size: 12px; }
+      .flow { flex-direction: column; }
+      .flow-arrow { transform: rotate(90deg); justify-content: center; }
+      .filter-rules { grid-template-columns: 1fr; }
+      .signal-grid { grid-template-columns: repeat(3, 1fr); }
       .test-cell, .hyp-cell { display: none; }
     }
   </style>
@@ -95,11 +174,105 @@
       <h1>Nevara GTM</h1>
       <div class="sub">Hypothesis Tracker</div>
     </div>
-    <button class="add-btn" onclick="openModal()">+ Add from Bot</button>
+    <div class="header-btns">
+      <button class="btn-h secondary" onclick="toggleFramework()">How it works</button>
+      <button class="btn-h" onclick="openModal()">+ Add from Bot</button>
+    </div>
+  </div>
+
+  <!-- Judgment Framework (collapsed by default) -->
+  <div class="framework" id="framework">
+    <div class="framework-toggle" onclick="toggleFramework()">
+      <span>How an idea becomes an experiment</span>
+      <span class="arrow" id="fw-arrow">&#9660;</span>
+    </div>
+    <div class="framework-body" id="fw-body">
+
+      <div class="flow">
+        <div class="flow-step">
+          <div class="step-num">Step 1</div>
+          <div class="step-title">Drop idea</div>
+          <div class="step-desc">Tell the bot any GTM idea, raw is fine</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="step-num">Step 2</div>
+          <div class="step-title">Bot refines</div>
+          <div class="step-desc">1-2 questions, then structures it</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="step-num">Step 3</div>
+          <div class="step-title">Filter</div>
+          <div class="step-desc">3 questions decide: run, review, or park</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="step-num">Step 4</div>
+          <div class="step-title">Run 1 week</div>
+          <div class="step-desc">Execute the test, measure the KPI</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="step-num">Step 5</div>
+          <div class="step-title">Signal check</div>
+          <div class="step-desc">Yes → scale. No → kill. Next batch.</div>
+        </div>
+      </div>
+
+      <h4 style="font-size:12px; font-weight:600; color:#555; margin-bottom:8px;">Step 3: The 3-Question Filter</h4>
+      <div class="filter-rules">
+        <div class="filter-rule neutral">
+          <div class="q">Q1: Signal in under 1 week?</div>
+          <div class="a">Can we get a yes/no answer within 7 days?</div>
+        </div>
+        <div class="filter-rule neutral">
+          <div class="q">Q2: Touches ICP directly?</div>
+          <div class="a">Does it reach AEs at B2B startups — not adjacent personas?</div>
+        </div>
+        <div class="filter-rule neutral">
+          <div class="q">Q3: No new paid tool needed?</div>
+          <div class="a">Can we run it with free tools or what we already have?</div>
+        </div>
+      </div>
+      <div class="filter-outcomes">
+        <div class="filter-outcome go">3/3 → Run it</div>
+        <div class="filter-outcome maybe">2/3 → Review</div>
+        <div class="filter-outcome park">0-1/3 → Park it</div>
+      </div>
+
+      <div class="signal-rules">
+        <h4>Step 5: Reading the Signal</h4>
+        <div class="signal-grid">
+          <div class="signal-def s-yes">
+            <div class="sig-label">YES</div>
+            Hit &gt;150% of KPI target
+          </div>
+          <div class="signal-def s-weak">
+            <div class="sig-label">WEAK</div>
+            Hit 80-150% of target
+          </div>
+          <div class="signal-def s-unclear">
+            <div class="sig-label">UNCLEAR</div>
+            Mixed or insufficient data
+          </div>
+          <div class="signal-def s-no">
+            <div class="sig-label">NO</div>
+            Below 50% of target
+          </div>
+          <div class="signal-def s-tbd">
+            <div class="sig-label">—</div>
+            Not yet measured
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <div id="list"></div>
 
+  <!-- Modal -->
   <div class="modal-overlay" id="modal">
     <div class="modal">
       <h2>Paste bot output</h2>
@@ -114,115 +287,91 @@
   </div>
 
 <script>
-const K = 'gtm_v4';
+const K = 'gtm_v5';
 
 const DEFAULTS = [
-  { id:1, wk:"W1", idea:"Auto-pilot LinkedIn prospecting → Sales Nav → Dripify", hyp:"Personalized connection requests + drip sequences convert AEs at Series B+", kpi:">25% accept, >10% reply", test:"Send 200 requests with deal-context personalization. Dripify 3-step sequence.", signal:"", next:"" },
-  { id:2, wk:"W1", idea:"Scrape engagements from viral GTM posts → lead lists", hyp:"Post engagers are 3x more likely to respond than cold leads", kpi:">3x response rate delta", test:"Extract engagers from rmeadows post. Split-test engaged vs cold list.", signal:"", next:"" },
-  { id:3, wk:"W1", idea:"Reddit/Twitter listening → reply to AE pain posts", hyp:"AEs posting about competitor pain respond to helpful replies >20%", kpi:">20% response rate", test:"Find 20 complaint threads on r/sales + Twitter. Reply with value. DM 10.", signal:"", next:"" },
-  { id:4, wk:"W1", idea:"Coffee marketing at sales meetups", hyp:"Face-to-face + free coffee converts to demos at >50%", kpi:">50% conv-to-demo, >3 demos/event", test:"Attend 2 events. Coffee + conversations. Track convos → emails → demos.", signal:"", next:"" },
-  { id:5, wk:"W2", idea:"'Calling on my network' referral posts → DM", hyp:"Sales leaders asking for recs respond >30%", kpi:">30% DM response rate", test:"Search alert. DM 20 posters from last 7 days.", signal:"", next:"" },
-  { id:6, wk:"W2", idea:"Follow sales influencers → surface engaging AEs → DM", hyp:"AEs engaging with thought leaders are in-market", kpi:">20% DM response rate", test:"Monitor top 5 influencers. DM 30 AEs who engaged.", signal:"", next:"" },
-  { id:7, wk:"W2", idea:"Mine own LinkedIn network → warm intros", hyp:"Warm intros convert >40% vs <5% cold", kpi:">40% meeting rate", test:"Cross-reference target accounts against connections. Request 10 intros.", signal:"", next:"" },
-  { id:8, wk:"W2", idea:"Hyper-personalized outreach + gift", hyp:"Personal-interest messages convert >35%", kpi:">35% meeting rate", test:"Pick 15 AEs. Research each. Send personalized message/gift.", signal:"", next:"" },
-  { id:9, wk:"W3", idea:"Churned user re-engagement", hyp:"Churned users reactivate >5%", kpi:">5% reactivation, >40% open rate", test:"Send 'here's what changed' email. Measure opens + reactivation.", signal:"", next:"" },
-  { id:10, wk:"W3", idea:"Twitter reply presence building", hyp:"Consistent replies generate inbound DMs", kpi:">5 inbound DMs/week in 30 days", test:"Reply to 20 tweets daily for 7 days. Track engagement + DMs.", signal:"", next:"" },
-  { id:11, wk:"W3", idea:"Slack broadcasts + in-product messaging", hyp:"In-product prompts increase adoption >15%", kpi:">15% feature usage increase", test:"Launch 3 in-app prompts. Measure adoption before/after.", signal:"", next:"" },
-  { id:12, wk:"W3", idea:"Product docs and enablement", hyp:"Better docs reduce time-to-value >30%", kpi:">30% reduction in time-to-value", test:"Rewrite top 3 docs. Measure ticket volume before/after.", signal:"", next:"" },
-  { id:13, wk:"W4+", idea:"AI SEO optimization", hyp:"AE pain point content drives >100 visits/month", kpi:">500 impressions, >2% CTR", test:"Publish 3 SEO posts targeting AE pain keywords.", signal:"", next:"" },
-  { id:14, wk:"W4+", idea:"Organic content across LinkedIn/Twitter/Reddit/HN/Quora", hyp:"Cross-posted content generates >10 leads/month", kpi:">50 impressions/post, >10 leads/month", test:"Cross-post 3 pieces. Track per-channel engagement.", signal:"", next:"" },
+  { id:1, wk:"W1", idea:"LinkedIn prospecting → Sales Nav → Dripify", hyp:"Personalized drip sequences convert AEs at Series B+", kpi:">25% accept, >10% reply", test:"200 requests with deal-context personalization. Dripify 3-step.", signal:"", next:"" },
+  { id:2, wk:"W1", idea:"Scrape viral GTM post engagers → lead lists", hyp:"Post engagers respond 3x vs cold leads", kpi:">3x response rate delta", test:"Extract engagers from rmeadows post. Split-test vs cold.", signal:"", next:"" },
+  { id:3, wk:"W1", idea:"Reddit/Twitter listening → reply to AE pain", hyp:"Helpful replies to complaints get >20% response", kpi:">20% response rate", test:"20 threads on r/sales + Twitter. Reply with value. DM 10.", signal:"", next:"" },
+  { id:4, wk:"W1", idea:"Coffee marketing at sales meetups", hyp:"Coffee conversations convert to demos >50%", kpi:">50% conv-to-demo, >3 demos", test:"2 events. Coffee + talk to AEs. Track convos → demos.", signal:"", next:"" },
+  { id:5, wk:"W2", idea:"'Calling on my network' posts → DM", hyp:"Leaders asking for recs respond >30%", kpi:">30% DM response", test:"Search alert. DM 20 posters from last 7 days.", signal:"", next:"" },
+  { id:6, wk:"W2", idea:"Sales influencer followers → surface AEs → DM", hyp:"AEs engaging with leaders are in-market", kpi:">20% DM response", test:"Monitor 5 influencers. DM 30 engaging AEs.", signal:"", next:"" },
+  { id:7, wk:"W2", idea:"Mine LinkedIn network → warm intros", hyp:"Warm intros convert >40% vs <5% cold", kpi:">40% meeting rate", test:"Cross-ref target accounts. Request 10 intros.", signal:"", next:"" },
+  { id:8, wk:"W2", idea:"Hyper-personalized outreach + $5 gift", hyp:"Personal interest + gift converts >35%", kpi:">35% meeting rate", test:"15 AEs. Research each. Personalized message + gift.", signal:"", next:"" },
+  { id:9, wk:"W3", idea:"Churned user re-engagement", hyp:"Churned users reactivate >5%", kpi:">5% reactivation, >40% open", test:"'Here's what changed' email. Measure reactivation.", signal:"", next:"" },
+  { id:10, wk:"W3", idea:"Twitter reply presence building", hyp:"Consistent replies generate inbound DMs", kpi:">5 DMs/week in 30 days", test:"Reply to 20 tweets daily for 7 days.", signal:"", next:"" },
+  { id:11, wk:"W3", idea:"Slack + in-product messaging", hyp:"Prompts increase feature adoption >15%", kpi:">15% usage increase", test:"3 in-app prompts. Measure before/after.", signal:"", next:"" },
+  { id:12, wk:"W3", idea:"Product docs and enablement", hyp:"Better docs reduce time-to-value >30%", kpi:">30% reduction", test:"Rewrite top 3 docs. Measure ticket volume.", signal:"", next:"" },
+  { id:13, wk:"W4+", idea:"AI SEO optimization", hyp:"AE pain content drives >100 visits/mo", kpi:">500 impressions, >2% CTR", test:"3 SEO posts on AE pain keywords.", signal:"", next:"" },
+  { id:14, wk:"W4+", idea:"Organic content across 5 channels", hyp:"Cross-posting generates >10 leads/mo", kpi:">50 imp/post, >10 leads", test:"Cross-post 3 pieces. Track per-channel.", signal:"", next:"" },
 ];
 
-function load() { const s = localStorage.getItem(K); if(s) return JSON.parse(s); save(DEFAULTS); return DEFAULTS; }
+function load() { const s=localStorage.getItem(K); if(s) return JSON.parse(s); save(DEFAULTS); return DEFAULTS; }
 function save(d) { localStorage.setItem(K, JSON.stringify(d)); }
+
+// Framework toggle
+function toggleFramework() {
+  const body = document.getElementById('fw-body');
+  const arrow = document.getElementById('fw-arrow');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
 
 function render() {
   const exps = load();
-
-  // Group by week
   const weeks = {};
   exps.forEach(e => { if(!weeks[e.wk]) weeks[e.wk]=[]; weeks[e.wk].push(e); });
-
-  // Sort week keys
   const weekOrder = Object.keys(weeks).sort((a,b) => {
-    const na = a.replace(/\D/g,'') || '99';
-    const nb = b.replace(/\D/g,'') || '99';
-    return parseInt(na) - parseInt(nb);
+    const na = parseInt(a.replace(/\D/g,'')) || 99;
+    const nb = parseInt(b.replace(/\D/g,'')) || 99;
+    return na - nb;
   });
 
   let html = '';
   for (const wk of weekOrder) {
     html += `<div class="week-label">${wk} <div class="week-line"></div></div>`;
     html += `<table><thead><tr>
-      <th>Idea</th>
-      <th>Hypothesis</th>
-      <th>KPI</th>
-      <th>This Week's Test</th>
-      <th>Signal?</th>
-      <th>Next Step</th>
+      <th>Idea</th><th>Hypothesis</th><th>KPI</th><th>This Week's Test</th><th>Signal?</th><th>Next Step</th>
     </tr></thead><tbody>`;
-
     for (const e of weeks[wk]) {
-      const isQueued = !e.signal && !e.next;
-      const sigClass = e.signal
-        ? (e.signal.toLowerCase().includes('yes') ? 'yes'
-          : e.signal.toLowerCase().includes('no') ? 'no'
-          : e.signal.toLowerCase().includes('weak') ? 'weak'
-          : e.signal.toLowerCase().includes('early') ? 'early'
-          : 'pending')
-        : 'pending';
-
-      html += `<tr class="${isQueued && wk !== 'W1' ? 'queued' : ''}" id="exp-${e.id}">
+      const q = !e.signal && !e.next && wk !== 'W1';
+      const sc = e.signal ? (
+        /yes/i.test(e.signal)?'yes': /no/i.test(e.signal)?'no': /weak/i.test(e.signal)?'weak': /early|unclear/i.test(e.signal)?'early':'pending'
+      ) : 'pending';
+      html += `<tr class="${q?'queued':''}" id="exp-${e.id}">
         <td class="idea-cell">${e.idea}</td>
         <td class="hyp-cell">${e.hyp}</td>
         <td class="kpi-cell">${e.kpi}</td>
         <td class="test-cell">${e.test}</td>
-        <td>${e.signal ? `<span class="signal-badge ${sigClass}">${e.signal}</span>` : '<span class="signal-badge pending">—</span>'}</td>
-        <td class="next-cell">${e.next || ''}</td>
+        <td>${e.signal?`<span class="signal-badge ${sc}">${e.signal}</span>`:'<span class="signal-badge pending">\u2014</span>'}</td>
+        <td class="next-cell">${e.next||''}</td>
       </tr>`;
     }
-    html += `</tbody></table>`;
+    html += '</tbody></table>';
   }
-
   document.getElementById('list').innerHTML = html;
 }
 
 // Modal
-function openModal() { document.getElementById('modal').classList.add('open'); document.getElementById('bot-input').value=''; document.getElementById('pe').style.display='none'; document.getElementById('ps').style.display='none'; }
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-
-function addFromBot() {
-  const t = document.getElementById('bot-input').value;
-  const r = {};
-  t.split('\n').forEach(l => {
-    const s = l.replace(/\*\*/g,'').trim();
-    if(/^idea:/i.test(s)) r.idea = s.replace(/^idea:\s*/i,'');
-    else if(/^hypothesis:/i.test(s)) r.hyp = s.replace(/^hypothesis:\s*/i,'');
-    else if(/^kpi:/i.test(s)) r.kpi = s.replace(/^kpi:\s*/i,'');
-    else if(/^this week/i.test(s)) r.test = s.replace(/^this week'?s? test:\s*/i,'');
+function openModal(){document.getElementById('modal').classList.add('open');document.getElementById('bot-input').value='';document.getElementById('pe').style.display='none';document.getElementById('ps').style.display='none';}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function addFromBot(){
+  const t=document.getElementById('bot-input').value,r={};
+  t.split('\n').forEach(l=>{const s=l.replace(/\*\*/g,'').trim();
+    if(/^idea:/i.test(s))r.idea=s.replace(/^idea:\s*/i,'');
+    else if(/^hypothesis:/i.test(s))r.hyp=s.replace(/^hypothesis:\s*/i,'');
+    else if(/^kpi:/i.test(s))r.kpi=s.replace(/^kpi:\s*/i,'');
+    else if(/^this week/i.test(s))r.test=s.replace(/^this week'?s? test:\s*/i,'');
   });
-  if(!r.idea){ document.getElementById('pe').style.display='block'; document.getElementById('ps').style.display='none'; return; }
-
-  const exps = load();
-  const id = exps.reduce((m,e) => Math.max(m,e.id),0) + 1;
-  exps.push({
-    id, wk: "New", idea: r.idea, hyp: r.hyp || "", kpi: r.kpi || "",
-    test: r.test || "", signal: "", next: ""
-  });
+  if(!r.idea){document.getElementById('pe').style.display='block';document.getElementById('ps').style.display='none';return;}
+  const exps=load(),id=exps.reduce((m,e)=>Math.max(m,e.id),0)+1;
+  exps.push({id,wk:"New",idea:r.idea,hyp:r.hyp||"",kpi:r.kpi||"",test:r.test||"",signal:"",next:""});
   save(exps);
-  document.getElementById('pe').style.display='none';
-  document.getElementById('ps').style.display='block';
-  setTimeout(() => {
-    closeModal(); render();
-    setTimeout(() => {
-      const row = document.getElementById('exp-'+id);
-      if(row){ row.classList.add('highlight'); row.scrollIntoView({behavior:'smooth',block:'center'}); }
-    }, 100);
-  }, 400);
+  document.getElementById('pe').style.display='none';document.getElementById('ps').style.display='block';
+  setTimeout(()=>{closeModal();render();setTimeout(()=>{const row=document.getElementById('exp-'+id);if(row){row.classList.add('highlight');row.scrollIntoView({behavior:'smooth',block:'center'});}},100);},400);
 }
-
-document.getElementById('modal').addEventListener('click', function(e){ if(e.target===this)closeModal(); });
-document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
 render();
 </script>

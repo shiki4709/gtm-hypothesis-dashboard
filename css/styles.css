@@ -181,9 +181,11 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
 }
 .var-step-btn:hover { border-color: var(--rule); }
 .var-step-btn.active { border-color: var(--accent); background: var(--accent-bg); color: var(--text); }
-.var-step-name { font-weight: 500; flex: 1; }
+.var-step-top { display: flex; align-items: center; gap: var(--s-6); width: 100%; }
+.var-step-name { font-weight: 500; flex: 1; text-align: left; }
 .var-step-conv { font-size: var(--fs-xs); color: var(--text-4); min-width: 2.5rem; text-align: right; }
 .var-step-val { font-family: var(--ff-display); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text-4); min-width: 2.5rem; text-align: right; }
+.var-step-method { font-size: var(--fs-xs); color: var(--text-3); margin-top: var(--s-2); text-align: left; line-height: var(--lh-body); }
 
 /* ================================================================
    GOAL — Hero card
@@ -372,6 +374,7 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
 .pipe-input:focus { color: var(--accent); }
 .pipe-stage-label { font-size: 10px; color: var(--text-4); text-align: center; white-space: nowrap; cursor: pointer; }
 .pipe-stage-label:hover { color: var(--text-2); }
+.pipe-stage-method { font-size: 9px; color: var(--text-4); text-align: center; margin-top: var(--s-2); max-width: 6rem; line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .pipe-stage-noted { border-color: var(--inbound); }
 
 .stage-panel {

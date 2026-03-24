@@ -192,11 +192,14 @@ function renderExperimentPage(exps) {
       var isKey = v.rateIdx && (sIdx === v.rateIdx[0] || sIdx === v.rateIdx[1]);
       var isChanged = v.changedStep === sIdx;
       var hasConn = stg.source || stg.note || stg.owner;
+      var hasMethod = stg.method;
       html += '<div class="pipe-stage' + (isKey ? ' pipe-stage-key' : '') + (isChanged ? ' pipe-stage-changed' : '') + (hasConn ? ' pipe-stage-noted' : '') + '">' +
         '<input type="number" class="pipe-input" value="' + stg.val + '" min="0" ' +
         'onfocus="this.select()" onchange="saveStage(' + e.id + ',\'' + v.id + '\',' + sIdx + ',this.value)">' +
         '<div class="pipe-stage-label" onclick="openStagePanel(' + e.id + ',\'' + v.id + '\',' + sIdx + ')">' +
-        stg.label + (hasConn ? ' *' : '') + '</div></div>';
+        stg.label + '</div>' +
+        (hasMethod ? '<div class="pipe-stage-method">' + stg.method + '</div>' : '') +
+        '</div>';
     });
     html += '</div>';
 
@@ -295,6 +298,9 @@ function openStagePanel(expId, varId, stgIdx) {
       return '<button class="qa-chip ' + (connType === t ? 'active' : '') + '" onclick="pickConn(this,\'' + t + '\')" data-type="' + t + '">' + label + '</button>';
     }).join('') + '</div></div>' +
     '<div class="qa-field"><div style="font-size:var(--fs-xs);color:var(--text-3);padding:var(--s-6);background:var(--bg-sub);border-radius:var(--radius-sm);border-left:2px solid var(--inbound)">' + hint + '</div></div>' +
+    '<div class="qa-field"><label class="qa-label">Method / Prompt</label>' +
+    '<input type="text" class="qa-input qa-input-sm" id="stg-method" value="' + (stg.method || '').replace(/"/g, '&quot;') + '" placeholder="How is this step done? e.g. LinkedIn Search → filter \'sales\' + past week"></div>' +
+
     '<div class="qa-field"><label class="qa-label">Source URL</label><input type="text" class="qa-input qa-input-sm" id="stg-source" value="' + (stg.source || '').replace(/"/g, '&quot;') + '" placeholder="https://..."></div>' +
     '<div class="qa-field"><label class="qa-label">Owner</label><input type="text" class="qa-input qa-input-sm" id="stg-owner" value="' + (stg.owner || '').replace(/"/g, '&quot;') + '" placeholder="Who updates this?"></div>' +
     '<div class="qa-field"><label class="qa-label">Note</label><input type="text" class="qa-input qa-input-sm" id="stg-note" value="' + (stg.note || '').replace(/"/g, '&quot;') + '" placeholder="Optional note"></div>' +
@@ -311,6 +317,7 @@ function saveStagePanel(expId, varId, stgIdx) {
   var exps = load();
   var v = exps.find(function(x) { return x.id === expId; }).variations.find(function(x) { return x.id === varId; });
   var stg = v.stages[stgIdx];
+  stg.method = document.getElementById('stg-method').value.trim();
   stg.note = document.getElementById('stg-note').value.trim();
   stg.source = document.getElementById('stg-source').value.trim();
   stg.owner = document.getElementById('stg-owner').value.trim();
@@ -390,9 +397,11 @@ function addVariation(expId) {
         if (prev > 0) conv = ((stg.val / prev) * 100).toFixed(0) + '%';
       }
       return '<button class="var-step-btn" onclick="pickVarStep(this,' + i + ')" data-idx="' + i + '">' +
-        '<span class="var-step-name">' + stg.label + '</span>' +
+        '<div class="var-step-top"><span class="var-step-name">' + stg.label + '</span>' +
         '<span class="var-step-conv">' + (conv || '') + '</span>' +
-        '<span class="var-step-val">' + formatNum(stg.val) + '</span></button>';
+        '<span class="var-step-val">' + formatNum(stg.val) + '</span></div>' +
+        (stg.method ? '<div class="var-step-method">' + stg.method + '</div>' : '') +
+        '</button>';
     }).join('') + '</div></div>' +
 
     '<div class="qa-field" id="var-change-field" style="display:none">' +

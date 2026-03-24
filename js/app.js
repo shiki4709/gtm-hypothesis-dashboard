@@ -1,50 +1,19 @@
-/* ========================================
-   GTM Hypothesis Dashboard — App Entry Point
-   ======================================== */
+/* ================================================================
+   App — Event listeners and boot
+   ================================================================ */
 
-import { renderResponseRateChart, renderCostPerDemoChart, renderChannelBreakdown } from './charts.js';
-import { renderTable } from './table.js';
-import { computeMetrics, renderMetrics } from './metrics.js';
+// Close modal on overlay click
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
 
-async function loadData() {
-  const res = await fetch('./data/experiments.json');
-  return res.json();
-}
+// Close modal on Escape, cancel inline add
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    if (qaOpen) closeModal();
+    inlineAddCancel();
+  }
+});
 
-function renderInsight(containerId, insight) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = `
-    <div class="insight-box">
-      <h3>${insight.title}</h3>
-      <p><strong>${insight.body}</strong></p>
-      <p style="margin-top: 8px;"><strong>Recommendation:</strong> ${insight.recommendation}</p>
-    </div>
-  `;
-}
-
-async function init() {
-  const data = await loadData();
-  const { meta, summary, insight, experiments } = data;
-
-  // Header
-  document.getElementById('header-title').textContent = `${meta.company} GTM Experiments`;
-  document.getElementById('header-subtitle').textContent =
-    `Week ${meta.week} Dashboard — ${meta.weekOf} — Operated by ${meta.operator}`;
-
-  // Metrics
-  const metrics = computeMetrics(summary, experiments);
-  renderMetrics('metrics', metrics);
-
-  // Charts
-  renderResponseRateChart('responseRateChart', experiments);
-  renderCostPerDemoChart('costPerDemoChart', experiments);
-  renderChannelBreakdown('channelBreakdownChart', experiments);
-
-  // Table
-  renderTable('experiment-table', experiments);
-
-  // Insight
-  renderInsight('insight', insight);
-}
-
-init();
+// Boot
+render();

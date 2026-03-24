@@ -521,6 +521,80 @@
       color: var(--text);
     }
 
+    /* Comparison ranking */
+    .compare-rank {
+      margin-bottom: var(--s-24);
+      padding: var(--s-16);
+      background: var(--bg-sub);
+      border-radius: var(--s-6);
+    }
+    .compare-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--s-12);
+    }
+    .compare-label {
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      color: var(--text-4);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .compare-best {
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      color: var(--hit);
+    }
+    .compare-bars {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-8);
+    }
+    .compare-bar-row {
+      display: grid;
+      grid-template-columns: 140px 1fr 60px 70px;
+      align-items: center;
+      gap: var(--s-8);
+    }
+    .compare-bar-name {
+      font-family: var(--ff-display);
+      font-size: var(--fs-sm);
+      font-weight: 500;
+      color: var(--text-2);
+    }
+    .compare-bar-row.is-best .compare-bar-name {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .compare-bar-track {
+      height: 4px;
+      background: var(--surface);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .compare-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.4s var(--ease-out);
+    }
+    .compare-bar-val {
+      font-size: var(--fs-sm);
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-3);
+      text-align: right;
+    }
+    .compare-bar-val.is-best {
+      color: var(--hit);
+      font-weight: 700;
+    }
+    .compare-bar-signups {
+      font-size: var(--fs-xs);
+      color: var(--text-4);
+      text-align: right;
+    }
+
     /* Verdict buttons in expanded view */
     .verdict-group {
       grid-column: 1 / -1;
@@ -880,13 +954,42 @@ function render(){
   const active=g.filter(e=>e.verdict!=='Stop');
   const stopped=g.filter(e=>e.verdict==='Stop');
 
+  // Comparison — rank experiments by rate metric
+  const withData=g.filter(e=>e.m&&e.m[0]>0);
+  const ranked=withData.map(e=>({id:e.id,name:e.name,rate:info.calc(e),rateNum:info.calcNum(e),signups:e.m?e.m[2]:0,hours:e.hours||0})).sort((a,b)=>b.rateNum-a.rateNum);
+  const bestId=ranked.length>0?ranked[0].id:null;
+  const bestRate=ranked.length>0?ranked[0].rateNum:0;
+
   let html=`<div class="platform">
     <div class="platform-head">
       <div class="platform-dot" style="background:${info.color}"></div>
       <div class="platform-name">${info.label}</div>
       <div class="platform-meta">${g.length} experiments &middot; ${info.metric}</div>
-    </div>
-    <div class="exp-list">
+    </div>`;
+
+  // Comparison ranking
+  if(ranked.length>1){
+    html+=`<div class="compare-rank">
+      <div class="compare-header">
+        <span class="compare-label">Ranked by ${info.metric}</span>
+        ${bestId?`<span class="compare-best">Best: ${ranked[0].name} (${ranked[0].rate})</span>`:''}
+      </div>
+      <div class="compare-bars">
+        ${ranked.map(r=>{
+          const barPct=bestRate>0?Math.round((r.rateNum/bestRate)*100):0;
+          const isBest=r.id===bestId;
+          return`<div class="compare-bar-row ${isBest?'is-best':''}">
+            <div class="compare-bar-name">${r.name}</div>
+            <div class="compare-bar-track"><div class="compare-bar-fill" style="width:${barPct}%;background:${isBest?'var(--hit)':'var(--text-4)'}"></div></div>
+            <div class="compare-bar-val ${isBest?'is-best':''}">${r.rate}</div>
+            <div class="compare-bar-signups">${r.signups} signups</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+
+  html+=`<div class="exp-list">
       <div class="exp-cols">
         <div class="exp-col-label">Experiment</div>
         <div class="exp-col-label">Started</div>

@@ -9,444 +9,392 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: #f5f5f7; color: #1d1d1f;
-      max-width: 1000px; margin: 0 auto; padding: 32px 20px;
+      max-width: 880px; margin: 0 auto; padding: 32px 20px;
     }
 
-    /* Header */
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+    .header h1 { font-size: 22px; font-weight: 700; }
     .header .sub { font-size: 12px; color: #86868b; margin-top: 2px; }
     .header-btns { display: flex; gap: 8px; }
-    .btn-h {
-      padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: none;
-      transition: all 0.15s;
-    }
+    .btn-h { padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; }
     .btn-h.primary { background: #0071e3; color: #fff; }
     .btn-h.primary:hover { background: #0077ed; }
     .btn-h.secondary { background: #e8e8ed; color: #1d1d1f; }
     .btn-h.secondary:hover { background: #d2d2d7; }
 
     /* Summary */
-    .summary {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px;
-    }
-    .stat {
-      background: #fff; border-radius: 12px; padding: 16px; text-align: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-    .stat .num { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
-    .stat .num.green { color: #34c759; }
-    .stat .label { font-size: 11px; color: #86868b; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
+    .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+    .stat { background: #fff; border-radius: 12px; padding: 14px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .stat .num { font-size: 26px; font-weight: 700; }
+    .stat .label { font-size: 10px; color: #86868b; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
 
     /* How it works */
-    .how {
-      background: #fff; border-radius: 12px; margin-bottom: 24px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden; display: none;
-    }
-    .how.open { display: block; }
-    .how-inner { padding: 20px; }
-    .how-close { float: right; background: none; border: none; font-size: 18px; color: #86868b; cursor: pointer; }
+    .how { background:#fff; border-radius:12px; margin-bottom:24px; box-shadow:0 1px 3px rgba(0,0,0,0.04); overflow:hidden; display:none; }
+    .how.open { display:block; }
+    .how-inner { padding:20px; }
+    .how-close { float:right; background:none; border:none; font-size:18px; color:#86868b; cursor:pointer; }
+    .flywheel { display:flex; align-items:stretch; gap:0; margin-bottom:14px; }
+    .fw-step { flex:1; padding:12px; text-align:center; }
+    .fw-step:first-child { border-radius:10px 0 0 10px; }
+    .fw-step:last-child { border-radius:0 10px 10px 0; }
+    .fw-step.s1 { background:#e3f2fd; } .fw-step.s1 .fw-t { color:#1565c0; }
+    .fw-step.s2 { background:#e8f5e9; } .fw-step.s2 .fw-t { color:#2e7d32; }
+    .fw-step.s3 { background:#f3e5f5; } .fw-step.s3 .fw-t { color:#7b1fa2; }
+    .fw-t { font-size:13px; font-weight:700; }
+    .fw-d { font-size:10px; color:#666; margin-top:3px; }
+    .fw-arr { display:flex; align-items:center; font-size:14px; color:#ccc; padding:0 4px; }
+    .how-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:10px; }
+    .how-box { background:#f9f9fb; border-radius:8px; padding:12px; font-size:12px; color:#555; line-height:1.6; }
+    .how-box h4 { font-size:10px; font-weight:700; color:#86868b; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:6px; }
+    .go { color:#34c759; font-weight:600; } .maybe { color:#ff9f0a; font-weight:600; } .park { color:#86868b; font-weight:600; } .kill { color:#ff3b30; font-weight:600; }
 
-    .flywheel { display: flex; align-items: stretch; gap: 0; margin-bottom: 16px; }
-    .fw-step {
-      flex: 1; padding: 14px; text-align: center; position: relative;
-    }
-    .fw-step:first-child { border-radius: 10px 0 0 10px; }
-    .fw-step:last-child { border-radius: 0 10px 10px 0; }
-    .fw-step.s1 { background: #e3f2fd; }
-    .fw-step.s2 { background: #e8f5e9; }
-    .fw-step.s3 { background: #f3e5f5; }
-    .fw-step .fw-title { font-size: 13px; font-weight: 700; }
-    .fw-step.s1 .fw-title { color: #1565c0; }
-    .fw-step.s2 .fw-title { color: #2e7d32; }
-    .fw-step.s3 .fw-title { color: #7b1fa2; }
-    .fw-step .fw-desc { font-size: 11px; color: #666; margin-top: 4px; }
-    .fw-arr { display: flex; align-items: center; font-size: 14px; color: #ccc; padding: 0 4px; }
+    /* Experiment rows */
+    .exps { display: flex; flex-direction: column; gap: 6px; }
 
-    .how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
-    .how-box { background: #f9f9fb; border-radius: 8px; padding: 14px; }
-    .how-box h4 { font-size: 11px; font-weight: 700; color: #86868b; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
-    .how-box p { font-size: 12px; color: #555; line-height: 1.6; }
-    .how-box .go { color: #34c759; font-weight: 600; }
-    .how-box .maybe { color: #ff9f0a; font-weight: 600; }
-    .how-box .park { color: #86868b; font-weight: 600; }
-    .how-box .kill { color: #ff3b30; font-weight: 600; }
-
-    /* Experiment cards */
-    .cards { display: flex; flex-direction: column; gap: 10px; }
-
-    .card {
-      background: #fff; border-radius: 12px; padding: 18px 20px;
+    .exp {
+      background: #fff; border-radius: 12px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      transition: box-shadow 0.15s;
+      overflow: hidden; transition: box-shadow 0.15s;
     }
-    .card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    .card.highlight { box-shadow: 0 0 0 2px #0071e3; animation: fadeHL 3s ease-out forwards; }
-    @keyframes fadeHL { to { box-shadow: 0 1px 3px rgba(0,0,0,0.04); } }
+    .exp:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .exp.highlight { box-shadow: 0 0 0 2px #0071e3; }
 
-    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-    .card-name { font-size: 15px; font-weight: 700; }
-    .card-idea { font-size: 12px; color: #86868b; margin-top: 2px; }
-
-    .signal-badge {
-      padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;
-      cursor: pointer; user-select: none; position: relative;
-    }
-    .signal-badge.yes { background: #e8f8ef; color: #1a7f37; }
-    .signal-badge.weak { background: #fff8e1; color: #b45309; }
-    .signal-badge.unclear { background: #e8eaf6; color: #3949ab; }
-    .signal-badge.no { background: #ffeef0; color: #cf222e; }
-    .signal-badge.pending { background: #f0f0f5; color: #aaa; }
-
-    .card-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
-      margin-bottom: 10px;
+    /* Main row — always visible */
+    .exp-row {
+      display: grid;
+      grid-template-columns: 50px 1fr 70px 70px auto;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      cursor: pointer;
     }
 
-    .card-field {}
-    .card-field .f-label { font-size: 10px; color: #86868b; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px; }
-    .card-field .f-value { font-size: 12px; color: #1d1d1f; }
-
-    .fw-tag {
-      display: inline-block; padding: 2px 8px; border-radius: 4px;
-      font-size: 10px; font-weight: 600;
+    .priority {
+      font-size: 11px; font-weight: 700; text-align: center;
+      padding: 3px 0; border-radius: 4px; cursor: pointer;
     }
-    .fw-tag.find { background: #e3f2fd; color: #1565c0; }
-    .fw-tag.aware { background: #e8f5e9; color: #2e7d32; }
-    .fw-tag.retain { background: #f3e5f5; color: #7b1fa2; }
+    .priority.p0 { background: #ff3b30; color: #fff; }
+    .priority.p1 { background: #ff9f0a; color: #fff; }
+    .priority.p2 { background: #e8e8ed; color: #86868b; }
+    .priority.new { background: #e3f2fd; color: #1565c0; }
 
-    .card-next {
-      padding-top: 10px; border-top: 1px solid #f0f0f5;
-      font-size: 12px; color: #555;
-      cursor: pointer; min-height: 20px;
+    .exp-name { font-size: 14px; font-weight: 600; }
+    .exp-kpi { font-size: 11px; font-family: 'SF Mono', monospace; color: #555; text-align: center; }
+
+    .sig {
+      padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;
+      text-align: center; cursor: pointer; position: relative;
     }
-    .card-next:hover { color: #0071e3; }
-    .card-next .placeholder { color: #ccc; }
+    .sig.yes { background:#e8f8ef; color:#1a7f37; }
+    .sig.weak { background:#fff8e1; color:#b45309; }
+    .sig.unclear { background:#e8eaf6; color:#3949ab; }
+    .sig.no { background:#ffeef0; color:#cf222e; }
+    .sig.pending { background:#f0f0f5; color:#aaa; }
 
-    .card-next input {
+    .exp-next {
+      font-size: 12px; color: #555; max-width: 260px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .exp-next .ph { color: #ccc; }
+
+    /* Detail panel — shown on click */
+    .exp-detail {
+      display: none; padding: 0 16px 14px;
+      border-top: 1px solid #f0f0f5;
+    }
+    .exp-detail.open { display: block; }
+
+    .detail-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+      padding-top: 10px;
+    }
+    .d-field .d-label { font-size: 9px; color: #86868b; text-transform: uppercase; letter-spacing: 0.3px; }
+    .d-field .d-value { font-size: 12px; color: #1d1d1f; margin-top: 1px; }
+
+    .fw-tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:600; }
+    .fw-tag.find { background:#e3f2fd; color:#1565c0; }
+    .fw-tag.aware { background:#e8f5e9; color:#2e7d32; }
+    .fw-tag.retain { background:#f3e5f5; color:#7b1fa2; }
+
+    .detail-next {
+      margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0f0f5;
+    }
+    .detail-next .d-label { font-size: 9px; color: #86868b; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px; }
+    .detail-next-text {
+      font-size: 12px; color: #555; cursor: pointer; min-height: 20px;
+      padding: 6px 10px; border-radius: 6px; transition: background 0.1s;
+    }
+    .detail-next-text:hover { background: #f5f5f7; }
+    .detail-next-text .ph { color: #ccc; }
+    .detail-next-text input {
       width: 100%; border: 1px solid #0071e3; border-radius: 6px;
       padding: 6px 10px; font-size: 12px; font-family: inherit; outline: none;
     }
 
     /* Signal dropdown */
-    .sig-dropdown {
-      position: absolute; top: 100%; right: 0; z-index: 20;
-      background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-      padding: 6px; min-width: 260px; margin-top: 4px;
+    .sig-dd {
+      position:absolute; top:100%; right:0; z-index:20;
+      background:#fff; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.15);
+      padding:4px; min-width:240px; margin-top:4px;
     }
-    .sig-option {
-      padding: 8px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .sig-option:hover { background: #f5f5f7; }
-    .sig-option .sig-label { font-weight: 600; }
-    .sig-option .sig-hint { font-size: 11px; color: #86868b; }
+    .sig-opt { padding:7px 10px; border-radius:6px; font-size:12px; cursor:pointer; display:flex; justify-content:space-between; }
+    .sig-opt:hover { background:#f5f5f7; }
+    .sig-opt .sl { font-weight:600; }
+    .sig-opt .sh { font-size:11px; color:#86868b; }
 
-    /* Save notice */
-    .save-notice {
-      position: fixed; bottom: 20px; right: 20px;
-      background: #1d1d1f; color: #fff; padding: 10px 18px;
-      border-radius: 20px; font-size: 12px; font-weight: 600;
-      opacity: 0; transition: opacity 0.3s; pointer-events: none;
+    /* Priority dropdown */
+    .pri-dd {
+      position:absolute; top:100%; left:0; z-index:20;
+      background:#fff; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.15);
+      padding:4px; min-width:120px; margin-top:4px;
     }
-    .save-notice.show { opacity: 1; }
+    .pri-opt { padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer; }
+    .pri-opt:hover { background:#f5f5f7; }
+
+    .save-notice {
+      position:fixed; bottom:20px; right:20px;
+      background:#1d1d1f; color:#fff; padding:10px 18px;
+      border-radius:20px; font-size:12px; font-weight:600;
+      opacity:0; transition:opacity 0.3s; pointer-events:none;
+    }
+    .save-notice.show { opacity:1; }
 
     /* Modal */
     .modal-overlay {
-      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);
-      z-index: 100; justify-content: center; align-items: center;
+      display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+      background:rgba(0,0,0,0.3); backdrop-filter:blur(4px);
+      z-index:100; justify-content:center; align-items:center;
     }
-    .modal-overlay.open { display: flex; }
+    .modal-overlay.open { display:flex; }
     .modal {
-      background: #fff; border-radius: 16px; padding: 28px; width: 520px; max-width: 90vw;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      background:#fff; border-radius:16px; padding:28px; width:520px; max-width:90vw;
+      box-shadow:0 20px 60px rgba(0,0,0,0.2);
     }
-    .modal h2 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
-    .modal .modal-desc { font-size: 12px; color: #86868b; margin-bottom: 16px; }
+    .modal h2 { font-size:17px; font-weight:700; margin-bottom:4px; }
+    .modal .mdesc { font-size:12px; color:#86868b; margin-bottom:16px; }
     .modal textarea {
-      width: 100%; height: 180px; border: 1px solid #d2d2d7; border-radius: 10px;
-      padding: 12px; font-size: 12px; font-family: 'SF Mono', monospace; outline: none; resize: vertical;
+      width:100%; height:180px; border:1px solid #d2d2d7; border-radius:10px;
+      padding:12px; font-size:12px; font-family:'SF Mono',monospace; outline:none; resize:vertical;
     }
-    .modal textarea:focus { border-color: #0071e3; box-shadow: 0 0 0 3px rgba(0,113,227,0.15); }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
-    .btn { padding: 8px 18px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; }
-    .btn-p { background: #0071e3; color: #fff; }
-    .btn-p:hover { background: #0077ed; }
-    .btn-s { background: #e8e8ed; color: #1d1d1f; }
-    .parse-msg { font-size: 11px; margin-top: 6px; }
-    .parse-msg.error { color: #ff3b30; display: none; }
-    .parse-msg.success { color: #34c759; display: none; }
+    .modal textarea:focus { border-color:#0071e3; }
+    .modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:14px; }
+    .btn { padding:8px 18px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; border:none; }
+    .btn-p { background:#0071e3; color:#fff; }
+    .btn-s { background:#e8e8ed; color:#1d1d1f; }
+    .pmsg { font-size:11px; margin-top:6px; }
+    .pmsg.err { color:#ff3b30; display:none; }
+    .pmsg.ok { color:#34c759; display:none; }
 
-    @media (max-width: 640px) {
-      .summary { grid-template-columns: repeat(2, 1fr); }
-      .card-grid { grid-template-columns: repeat(2, 1fr); }
-      .flywheel { flex-direction: column; }
-      .fw-arr { transform: rotate(90deg); justify-content: center; }
-      .how-grid { grid-template-columns: 1fr; }
+    @media (max-width:640px) {
+      .summary { grid-template-columns: repeat(2,1fr); }
+      .exp-row { grid-template-columns: 40px 1fr 60px; }
+      .exp-kpi, .exp-next { display: none; }
+      .detail-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div>
-      <h1>Nevara GTM</h1>
-      <div class="sub">Hypothesis Tracker — 14 experiments</div>
+<div class="header">
+  <div>
+    <h1>Nevara GTM</h1>
+    <div class="sub">Hypothesis Tracker</div>
+  </div>
+  <div class="header-btns">
+    <button class="btn-h secondary" onclick="toggleHow()">How it works</button>
+    <button class="btn-h primary" onclick="openModal()">+ New Experiment</button>
+  </div>
+</div>
+
+<div class="summary" id="summary"></div>
+
+<div class="how" id="how">
+  <div class="how-inner">
+    <button class="how-close" onclick="toggleHow()">&times;</button>
+    <div class="flywheel">
+      <div class="fw-step s1"><div class="fw-t">Find & Reach</div><div class="fw-d">Contact prospects directly</div></div>
+      <div class="fw-arr">&rarr;</div>
+      <div class="fw-step s2"><div class="fw-t">Build Awareness</div><div class="fw-d">They see you before the DM</div></div>
+      <div class="fw-arr">&rarr;</div>
+      <div class="fw-step s3"><div class="fw-t">Attract & Retain</div><div class="fw-d">Pull in and keep users</div></div>
+      <div class="fw-arr">&#8635;</div>
     </div>
-    <div class="header-btns">
-      <button class="btn-h secondary" onclick="toggleHow()">How it works</button>
-      <button class="btn-h primary" onclick="openModal()">+ Add from Bot</button>
+    <div class="how-grid">
+      <div class="how-box"><h4>Idea Filter</h4>Signal in 1 week? Touches ICP? No paid tool?<br><span class="go">3/3 Run</span> · <span class="maybe">2/3 Review</span> · <span class="park">0-1 Park</span></div>
+      <div class="how-box"><h4>Friday Signal Check</h4><span class="go">YES</span> &gt;150% → scale · <span class="maybe">WEAK</span> 80-150% → iterate<br>UNCLEAR → 1 more week · <span class="kill">NO</span> &lt;50% → kill</div>
     </div>
   </div>
+</div>
 
-  <div class="summary" id="summary"></div>
+<div class="exps" id="exps"></div>
+<div class="save-notice" id="saved">Saved</div>
 
-  <div class="how" id="how">
-    <div class="how-inner">
-      <button class="how-close" onclick="toggleHow()">&times;</button>
-      <div class="flywheel">
-        <div class="fw-step s1">
-          <div class="fw-title">Find & Reach</div>
-          <div class="fw-desc">Go contact prospects — DMs, events, intros, outbound</div>
-        </div>
-        <div class="fw-arr">&rarr;</div>
-        <div class="fw-step s2">
-          <div class="fw-title">Build Awareness</div>
-          <div class="fw-desc">They see Nevara before the DM — content, replies, SEO</div>
-        </div>
-        <div class="fw-arr">&rarr;</div>
-        <div class="fw-step s3">
-          <div class="fw-title">Attract & Retain</div>
-          <div class="fw-desc">Pull them in and keep them — product, docs, re-engagement</div>
-        </div>
-        <div class="fw-arr">&#8635;</div>
-      </div>
-      <p style="font-size:11px;color:#86868b;text-align:center;margin-bottom:14px;">Each stage feeds the next. Awareness makes outreach warmer. Outreach generates users. Retention creates word-of-mouth.</p>
-      <div class="how-grid">
-        <div class="how-box">
-          <h4>Idea Filter</h4>
-          <p>1. Signal in under 1 week?<br>2. Touches ICP directly?<br>3. No new paid tool?<br><br>
-          <span class="go">3/3 Run</span> &middot; <span class="maybe">2/3 Review</span> &middot; <span class="park">0-1 Park</span></p>
-        </div>
-        <div class="how-box">
-          <h4>Friday Signal Check</h4>
-          <p><span class="go">YES</span> hit &gt;150% of KPI &rarr; scale<br>
-          <span class="maybe">WEAK</span> 80-150% &rarr; iterate<br>
-          UNCLEAR mixed data &rarr; 1 more week<br>
-          <span class="kill">NO</span> below 50% &rarr; kill<br><br>
-          Max 2 weeks per test. Then decide.</p>
-        </div>
-      </div>
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h2>New Experiment</h2>
+    <div class="mdesc">Paste the bot's structured output. All fields auto-fill.</div>
+    <textarea id="bi" placeholder="Name: Autopilot Outbound&#10;Idea: LinkedIn prospecting via Sales Nav + Dripify&#10;Goal: Generate demos from cold outbound&#10;Platform: LinkedIn, Sales Nav, Dripify&#10;Flywheel: Find & Reach&#10;KPI: >25% accept, >10% reply&#10;Scope: 200 requests · 7 days · Check Fri"></textarea>
+    <div class="pmsg err" id="pe">Needs at least a Name or Idea line.</div>
+    <div class="pmsg ok" id="ps">Added!</div>
+    <div class="modal-actions">
+      <button class="btn btn-s" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-p" onclick="addFromBot()">Add</button>
     </div>
   </div>
-
-  <div class="cards" id="cards"></div>
-  <div class="save-notice" id="saved">Saved</div>
-
-  <div class="modal-overlay" id="modal">
-    <div class="modal">
-      <h2>Add from Bot</h2>
-      <div class="modal-desc">Paste the bot's structured output. All fields auto-fill except Signal and Next Step.</div>
-      <textarea id="bot-input" placeholder="Name: Autopilot Outbound&#10;Idea: LinkedIn prospecting via Sales Nav + Dripify&#10;Goal: Generate demos from cold outbound&#10;Platform: LinkedIn, Sales Nav, Dripify&#10;Flywheel: Find & Reach&#10;KPI: >25% accept, >10% reply&#10;Scope: 200 requests · 7 days · Check Fri"></textarea>
-      <div class="parse-msg error" id="pe">Needs at least a Name or Idea line.</div>
-      <div class="parse-msg success" id="ps">Added!</div>
-      <div class="modal-actions">
-        <button class="btn btn-s" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-p" onclick="addFromBot()">Add Experiment</button>
-      </div>
-    </div>
-  </div>
+</div>
 
 <script>
-const K = 'gtm_v9';
-const SIGS = [
-  { v:'—', label:'Not tested', hint:'', cls:'pending' },
-  { v:'YES', label:'YES', hint:'Hit target — scale it', cls:'yes' },
-  { v:'WEAK', label:'WEAK', hint:'Close — iterate', cls:'weak' },
-  { v:'UNCLEAR', label:'UNCLEAR', hint:'Need more data', cls:'unclear' },
-  { v:'NO', label:'NO', hint:'Below target — kill it', cls:'no' },
+const K='gtm_v10';
+const SIGS=[
+  {v:'—',l:'Not tested',h:'',c:'pending'},
+  {v:'YES',l:'YES',h:'Scale it',c:'yes'},
+  {v:'WEAK',l:'WEAK',h:'Iterate',c:'weak'},
+  {v:'UNCLEAR',l:'UNCLEAR',h:'Need more data',c:'unclear'},
+  {v:'NO',l:'NO',h:'Kill / park it',c:'no'},
+];
+const PRIS=[
+  {v:'P0',l:'P0 — Do this week',c:'p0'},
+  {v:'P1',l:'P1 — Do next',c:'p1'},
+  {v:'P2',l:'P2 — Backlog',c:'p2'},
 ];
 
-const DEFAULTS = [
-  { id:1, name:"Autopilot Outbound", idea:"LinkedIn prospecting via Sales Nav + Dripify", platform:"LinkedIn, Sales Nav, Dripify", goal:"Generate demos from cold outbound", flywheel:"Find & Reach", kpi:">25% accept, >10% reply", scope:"200 requests · 7 days · Check Fri", signal:"YES", next:"Scale to 300/week. Test signal-based (Clay) variant vs deal-context." },
-  { id:2, name:"Post Engagers", idea:"Scrape viral GTM post engagers → lead lists", platform:"LinkedIn, PhantomBuster", goal:"Build warm leads from content engagement", flywheel:"Find & Reach", kpi:">3x response rate vs cold", scope:"1 post · 50 leads · 7 days", signal:"YES", next:"Run on 5 more viral posts. Focus on commenters only — 3x better than likers." },
-  { id:3, name:"Social Listening", idea:"Reddit/Twitter listening → reply to AE pain", platform:"Reddit, Twitter/X", goal:"Find in-market AEs through complaint signals", flywheel:"Find & Reach", kpi:">20% response rate", scope:"20 replies · 10 DMs · 7 days", signal:"UNCLEAR", next:"Reddit r/sales showing 20% reply-back. Twitter at 13%. Continue Reddit, reduce Twitter effort." },
-  { id:4, name:"Coffee Events", idea:"Coffee marketing at sales meetups", platform:"In-person events", goal:"Convert conversations into demos", flywheel:"Find & Reach", kpi:">50% conv-to-demo, >3 demos", scope:"2 events · 40 convos · 7 days", signal:"YES", next:"Book 2 events/month. Test branded cups + QR vs iPad demo at next event." },
-  { id:5, name:"Referral Posts", idea:"'Calling on my network' posts → DM", platform:"LinkedIn", goal:"Reach buyers actively evaluating tools", flywheel:"Find & Reach", kpi:">30% DM response", scope:"20 DMs · 7 days · Check Fri", signal:"YES", next:"Benchmark: 30-50% response. Set up daily search alert. DM within 4 hrs of post." },
-  { id:6, name:"Influencer Monitor", idea:"Sales influencer followers → surface AEs → DM", platform:"LinkedIn", goal:"Surface in-market AEs from influencer audiences", flywheel:"Find & Reach", kpi:">20% DM response", scope:"5 influencers · 30 DMs · 7 days", signal:"WEAK", next:"40-55% accept but lower DM conversion. Test manually before automating." },
-  { id:7, name:"Warm Intros", idea:"Mine LinkedIn network → warm intros", platform:"LinkedIn, Sales Nav", goal:"Convert network into qualified meetings", flywheel:"Find & Reach", kpi:">40% meeting rate", scope:"10 intros · 7 days · Check Fri", signal:"YES", next:"Benchmark: 40-60% meeting rate. Draft forwardable blurbs for Maruthi." },
-  { id:8, name:"Gift Outreach", idea:"Hyper-personalized outreach + $5 gift", platform:"LinkedIn, Email, Starbucks", goal:"Test if gifting lifts response rate", flywheel:"Find & Reach", kpi:">35% meeting rate", scope:"15 AEs · $75 budget · 7 days", signal:"YES", next:"Benchmark: 25-40% with gift vs 15-25% without. A/B: 8 with, 7 without." },
-  { id:9, name:"Win-Back", idea:"Churned user re-engagement", platform:"Email, In-App", goal:"Reactivate churned users", flywheel:"Attract & Retain", kpi:">5% reactivation, >40% open", scope:"All churned 90d · 7-day signal · 30-day full", signal:"UNCLEAR", next:"Benchmark: 5-12% reactivation. Need product data access first." },
-  { id:10, name:"Twitter Presence", idea:"Twitter reply presence building", platform:"Twitter/X", goal:"Make prospects recognize Nevara before outbound", flywheel:"Build Awareness", kpi:">5 DMs/week in 30 days", scope:"20 replies/day · 7 days · 30-day full", signal:"UNCLEAR", next:"Long-horizon. 60-90 days to first demos. Start now, measure at day 30." },
-  { id:11, name:"In-App Nudges", idea:"Slack + in-product messaging", platform:"Slack, In-App", goal:"Increase feature adoption for existing users", flywheel:"Attract & Retain", kpi:">15% feature usage increase", scope:"3 prompts · 7 days · Check Fri", signal:"UNCLEAR", next:"Need product analytics access to set baseline." },
-  { id:12, name:"Docs Rewrite", idea:"Product docs and enablement", platform:"Website, Help Center", goal:"Reduce time-to-value and support burden", flywheel:"Attract & Retain", kpi:">30% reduction time-to-value", scope:"3 docs · 7 days · Track tickets", signal:"UNCLEAR", next:"Need support ticket data to find top 3 pain points." },
-  { id:13, name:"SEO Sprint", idea:"AI SEO optimization", platform:"Website, Google", goal:"Drive organic traffic from AE pain searches", flywheel:"Build Awareness", kpi:">500 impressions, >2% CTR", scope:"3 posts · 7-day signal · 60-day full", signal:"NO", next:"Parked. SEO takes 2-3 months. Focus on direct outbound first." },
-  { id:14, name:"Content Blitz", idea:"Organic content across 5 channels", platform:"LinkedIn, Twitter/X, Reddit, HN, Quora", goal:"Prospects see Nevara everywhere", flywheel:"Build Awareness", kpi:">50 imp/post, >10 leads/mo", scope:"3 posts × 5 channels · 7 days", signal:"NO", next:"Parked. Content engine needs 30+ posts before breakout. Start after outbound validated." },
+const DEFAULTS=[
+  {id:1,pri:"P0",name:"Autopilot Outbound",idea:"LinkedIn prospecting via Sales Nav + Dripify",platform:"LinkedIn, Sales Nav, Dripify",goal:"Generate demos from cold outbound",flywheel:"Find & Reach",kpi:">25% accept, >10% reply",scope:"200 requests · 7 days",signal:"YES",next:"Scale to 300/week. Test signal-based (Clay) variant vs deal-context."},
+  {id:2,pri:"P0",name:"Post Engagers",idea:"Scrape viral GTM post engagers → lead lists",platform:"LinkedIn, PhantomBuster",goal:"Build warm leads from content engagement",flywheel:"Find & Reach",kpi:">3x response vs cold",scope:"1 post · 50 leads · 7 days",signal:"YES",next:"Run on 5 more posts. Commenters only — 3x better than likers."},
+  {id:3,pri:"P1",name:"Social Listening",idea:"Reddit/Twitter listening → reply to AE pain",platform:"Reddit, Twitter/X",goal:"Find in-market AEs through complaint signals",flywheel:"Find & Reach",kpi:">20% response rate",scope:"20 replies · 10 DMs · 7 days",signal:"UNCLEAR",next:"Reddit 20% reply-back, Twitter 13%. Focus Reddit, reduce Twitter."},
+  {id:4,pri:"P0",name:"Coffee Events",idea:"Coffee marketing at sales meetups",platform:"In-person events",goal:"Convert conversations into demos",flywheel:"Find & Reach",kpi:">50% conv-to-demo",scope:"2 events · 40 convos",signal:"YES",next:"Book 2/month. Test branded cups + QR vs iPad demo."},
+  {id:5,pri:"P0",name:"Referral Posts",idea:"'Calling on my network' posts → DM",platform:"LinkedIn",goal:"Reach buyers actively evaluating tools",flywheel:"Find & Reach",kpi:">30% DM response",scope:"20 DMs · 7 days",signal:"YES",next:"30-50% response benchmark. Set up daily alert. DM within 4 hrs."},
+  {id:6,pri:"P1",name:"Influencer Monitor",idea:"Sales influencer followers → surface AEs → DM",platform:"LinkedIn",goal:"Surface in-market AEs from influencer audiences",flywheel:"Find & Reach",kpi:">20% DM response",scope:"5 influencers · 30 DMs · 7 days",signal:"WEAK",next:"40-55% accept but lower DM conversion. Test manually first."},
+  {id:7,pri:"P0",name:"Warm Intros",idea:"Mine LinkedIn network → warm intros",platform:"LinkedIn, Sales Nav",goal:"Convert network into qualified meetings",flywheel:"Find & Reach",kpi:">40% meeting rate",scope:"10 intros · 7 days",signal:"YES",next:"40-60% benchmark. Draft forwardable blurbs for Maruthi."},
+  {id:8,pri:"P1",name:"Gift Outreach",idea:"Hyper-personalized outreach + $5 gift",platform:"LinkedIn, Email, Starbucks",goal:"Test if gifting lifts response rate",flywheel:"Find & Reach",kpi:">35% meeting rate",scope:"15 AEs · $75 · 7 days",signal:"YES",next:"25-40% with gift vs 15-25% without. A/B: 8 with, 7 without."},
+  {id:9,pri:"P1",name:"Win-Back",idea:"Churned user re-engagement",platform:"Email, In-App",goal:"Reactivate churned users",flywheel:"Attract & Retain",kpi:">5% reactivation, >40% open",scope:"All churned 90d · 30 days",signal:"UNCLEAR",next:"5-12% benchmark. Need product data access first."},
+  {id:10,pri:"P2",name:"Twitter Presence",idea:"Twitter reply presence building",platform:"Twitter/X",goal:"Prospects recognize Nevara before outbound",flywheel:"Build Awareness",kpi:">5 DMs/week in 30 days",scope:"20 replies/day · 30 days",signal:"UNCLEAR",next:"60-90 days to first demos. Start now, measure day 30."},
+  {id:11,pri:"P1",name:"In-App Nudges",idea:"Slack + in-product messaging",platform:"Slack, In-App",goal:"Increase feature adoption",flywheel:"Attract & Retain",kpi:">15% usage increase",scope:"3 prompts · 7 days",signal:"UNCLEAR",next:"Need product analytics access to set baseline."},
+  {id:12,pri:"P1",name:"Docs Rewrite",idea:"Product docs and enablement",platform:"Website, Help Center",goal:"Reduce time-to-value",flywheel:"Attract & Retain",kpi:">30% reduction",scope:"3 docs · 7 days",signal:"UNCLEAR",next:"Need support ticket data for top 3 pain points."},
+  {id:13,pri:"P2",name:"SEO Sprint",idea:"AI SEO optimization",platform:"Website, Google",goal:"Organic traffic from AE pain searches",flywheel:"Build Awareness",kpi:">500 imp, >2% CTR",scope:"3 posts · 60 days",signal:"NO",next:"Parked. SEO takes 2-3 months. Focus outbound first."},
+  {id:14,pri:"P2",name:"Content Blitz",idea:"Organic content across 5 channels",platform:"LinkedIn, Twitter/X, Reddit, HN, Quora",goal:"Prospects see Nevara everywhere",flywheel:"Build Awareness",kpi:">50 imp/post, >10 leads/mo",scope:"3 posts × 5 channels",signal:"NO",next:"Parked. Needs 30+ posts before breakout. Start after outbound."},
 ];
 
-function load() { const s=localStorage.getItem(K); if(s) return JSON.parse(s); save(DEFAULTS); return DEFAULTS; }
-function save(d) { localStorage.setItem(K, JSON.stringify(d)); }
-function flash() { const el=document.getElementById('saved'); el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1200); }
+function load(){const s=localStorage.getItem(K);if(s)return JSON.parse(s);save(DEFAULTS);return DEFAULTS;}
+function save(d){localStorage.setItem(K,JSON.stringify(d));}
+function flash(){const el=document.getElementById('saved');el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1200);}
+function toggleHow(){document.getElementById('how').classList.toggle('open');}
 
-function toggleHow() { document.getElementById('how').classList.toggle('open'); }
+function getSigCls(s){if(!s||s==='—')return'pending';const u=s.toUpperCase();return u==='YES'?'yes':u==='WEAK'?'weak':u==='UNCLEAR'?'unclear':u==='NO'?'no':'pending';}
+function getFwCls(f){if(!f)return'find';const l=f.toLowerCase();return l.includes('aware')?'aware':(l.includes('attract')||l.includes('retain'))?'retain':'find';}
+function getPriCls(p){if(!p)return'new';return p.toLowerCase()==='p0'?'p0':p.toLowerCase()==='p1'?'p1':'p2';}
 
-function getFwClass(fw) {
-  if (!fw) return 'find';
-  const f = fw.toLowerCase();
-  if (f.includes('find') || f.includes('reach')) return 'find';
-  if (f.includes('aware')) return 'aware';
-  if (f.includes('attract') || f.includes('retain')) return 'retain';
-  return 'find';
-}
+function render(){
+  const exps=load();
+  // Sort by priority
+  const order={P0:0,P1:1,P2:2};
+  exps.sort((a,b)=>(order[a.pri]??3)-(order[b.pri]??3));
 
-function getSigCls(sig) {
-  if (!sig || sig === '—') return 'pending';
-  const s = sig.toUpperCase();
-  if (s === 'YES') return 'yes';
-  if (s === 'WEAK') return 'weak';
-  if (s === 'UNCLEAR') return 'unclear';
-  if (s === 'NO') return 'no';
-  return 'pending';
-}
+  const yes=exps.filter(e=>e.signal==='YES').length;
+  const weak=exps.filter(e=>e.signal==='WEAK').length;
+  const unclear=exps.filter(e=>e.signal==='UNCLEAR').length;
+  const no=exps.filter(e=>e.signal==='NO').length;
 
-function render() {
-  const exps = load();
-
-  // Summary
-  const yes = exps.filter(e => e.signal === 'YES').length;
-  const weak = exps.filter(e => e.signal === 'WEAK').length;
-  const unclear = exps.filter(e => e.signal === 'UNCLEAR').length;
-  const no = exps.filter(e => e.signal === 'NO').length;
-
-  document.getElementById('summary').innerHTML = `
-    <div class="stat"><div class="num green">${yes}</div><div class="label">Scale (YES)</div></div>
-    <div class="stat"><div class="num" style="color:#ff9f0a">${weak}</div><div class="label">Iterate (WEAK)</div></div>
+  document.getElementById('summary').innerHTML=`
+    <div class="stat"><div class="num" style="color:#34c759">${yes}</div><div class="label">Scale</div></div>
+    <div class="stat"><div class="num" style="color:#ff9f0a">${weak}</div><div class="label">Iterate</div></div>
     <div class="stat"><div class="num" style="color:#5856d6">${unclear}</div><div class="label">Need Data</div></div>
-    <div class="stat"><div class="num" style="color:#ff3b30">${no}</div><div class="label">Parked (NO)</div></div>
-  `;
+    <div class="stat"><div class="num" style="color:#ff3b30">${no}</div><div class="label">Parked</div></div>`;
 
-  // Cards
-  document.getElementById('cards').innerHTML = exps.map(e => {
-    const sigCls = getSigCls(e.signal);
-    const sigLabel = e.signal || '—';
-    const fwCls = getFwClass(e.flywheel);
-
-    return `
-    <div class="card" id="exp-${e.id}">
-      <div class="card-top">
+  document.getElementById('exps').innerHTML=exps.map(e=>{
+    const sc=getSigCls(e.signal);
+    const fc=getFwCls(e.flywheel);
+    const pc=getPriCls(e.pri);
+    return`
+    <div class="exp" id="exp-${e.id}">
+      <div class="exp-row" onclick="toggleDetail(${e.id})">
+        <div class="priority ${pc}" style="position:relative" onclick="event.stopPropagation();togglePri(event,${e.id})">${e.pri||'—'}</div>
         <div>
-          <div class="card-name">${e.name}</div>
-          <div class="card-idea">${e.idea}</div>
+          <div class="exp-name">${e.name}</div>
         </div>
-        <div class="signal-badge ${sigCls}" onclick="toggleSigDropdown(event, ${e.id})">${sigLabel}</div>
+        <div class="exp-kpi">${e.kpi}</div>
+        <div class="sig ${sc}" style="position:relative" onclick="event.stopPropagation();toggleSig(event,${e.id})">${e.signal||'—'}</div>
+        <div class="exp-next">${e.next||'<span class="ph">No next step</span>'}</div>
       </div>
-      <div class="card-grid">
-        <div class="card-field">
-          <div class="f-label">Goal</div>
-          <div class="f-value">${e.goal}</div>
+      <div class="exp-detail" id="detail-${e.id}">
+        <div class="detail-grid">
+          <div class="d-field"><div class="d-label">Idea</div><div class="d-value">${e.idea}</div></div>
+          <div class="d-field"><div class="d-label">Goal</div><div class="d-value">${e.goal}</div></div>
+          <div class="d-field"><div class="d-label">Platform</div><div class="d-value">${e.platform}</div></div>
+          <div class="d-field"><div class="d-label">Scope</div><div class="d-value">${e.scope}</div></div>
+          <div class="d-field"><div class="d-label">KPI</div><div class="d-value" style="font-family:monospace">${e.kpi}</div></div>
+          <div class="d-field"><div class="d-label">Flywheel</div><div class="d-value"><span class="fw-tag ${fc}">${e.flywheel}</span></div></div>
         </div>
-        <div class="card-field">
-          <div class="f-label">Platform</div>
-          <div class="f-value">${e.platform}</div>
+        <div class="detail-next">
+          <div class="d-label">Next Step</div>
+          <div class="detail-next-text" onclick="event.stopPropagation();editNext(${e.id},this)">
+            ${e.next||'<span class="ph">Click to add next step...</span>'}
+          </div>
         </div>
-        <div class="card-field">
-          <div class="f-label">KPI</div>
-          <div class="f-value" style="font-family:'SF Mono',monospace;font-size:11px">${e.kpi}</div>
-        </div>
-        <div class="card-field">
-          <div class="f-label">Scope</div>
-          <div class="f-value" style="font-size:11px">${e.scope}</div>
-        </div>
-      </div>
-      <div class="card-field" style="margin-bottom:10px">
-        <span class="fw-tag ${fwCls}">${e.flywheel}</span>
-      </div>
-      <div class="card-next" onclick="editNext(${e.id}, this)">
-        <span class="f-label" style="display:block;margin-bottom:2px">Next Step</span>
-        ${e.next ? e.next : '<span class="placeholder">Click to add next step...</span>'}
       </div>
     </div>`;
   }).join('');
 }
 
+function toggleDetail(id){
+  const el=document.getElementById('detail-'+id);
+  el.classList.toggle('open');
+}
+
 // Signal dropdown
-let openSigId = null;
-function toggleSigDropdown(event, id) {
-  event.stopPropagation();
-  closeSigDropdown();
-  openSigId = id;
-  const badge = event.currentTarget;
-  const dd = document.createElement('div');
-  dd.className = 'sig-dropdown';
-  dd.id = 'sig-dd';
-  dd.innerHTML = SIGS.map(s => `
-    <div class="sig-option" onclick="pickSignal(${id}, '${s.v}')">
-      <span class="sig-label"><span class="signal-badge ${s.cls}" style="cursor:pointer">${s.label}</span></span>
-      <span class="sig-hint">${s.hint}</span>
-    </div>
-  `).join('');
-  badge.style.position = 'relative';
+function toggleSig(event,id){
+  closeDropdowns();
+  const badge=event.currentTarget;
+  const dd=document.createElement('div');dd.className='sig-dd';dd.id='dd-sig';
+  dd.innerHTML=SIGS.map(s=>`<div class="sig-opt" onclick="event.stopPropagation();pickSig(${id},'${s.v}')"><span class="sl"><span class="sig ${s.c}" style="cursor:pointer">${s.l}</span></span><span class="sh">${s.h}</span></div>`).join('');
   badge.appendChild(dd);
 }
+function pickSig(id,v){const exps=load();exps.find(e=>e.id===id).signal=v==='—'?'':v;save(exps);flash();closeDropdowns();render();}
 
-function pickSignal(id, val) {
-  const exps = load();
-  const e = exps.find(x => x.id === id);
-  e.signal = val === '—' ? '' : val;
-  save(exps); flash(); closeSigDropdown(); render();
+// Priority dropdown
+function togglePri(event,id){
+  closeDropdowns();
+  const el=event.currentTarget;
+  const dd=document.createElement('div');dd.className='pri-dd';dd.id='dd-pri';
+  dd.innerHTML=PRIS.map(p=>`<div class="pri-opt" onclick="event.stopPropagation();pickPri(${id},'${p.v}')"><span class="priority ${p.c}" style="display:inline-block;min-width:28px;text-align:center">${p.v}</span> ${p.l.split('—')[1]||''}</div>`).join('');
+  el.appendChild(dd);
 }
+function pickPri(id,v){const exps=load();exps.find(e=>e.id===id).pri=v;save(exps);flash();closeDropdowns();render();}
 
-function closeSigDropdown() {
-  const dd = document.getElementById('sig-dd');
-  if (dd) dd.remove();
-  openSigId = null;
-}
-document.addEventListener('click', closeSigDropdown);
+function closeDropdowns(){['dd-sig','dd-pri'].forEach(id=>{const el=document.getElementById(id);if(el)el.remove();});}
+document.addEventListener('click',closeDropdowns);
 
 // Edit next step
-function editNext(id, el) {
-  const exps = load();
-  const e = exps.find(x => x.id === id);
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.value = e.next || '';
-  input.placeholder = 'What to do next...';
-  el.innerHTML = '<span class="f-label" style="display:block;margin-bottom:2px">Next Step</span>';
-  el.appendChild(input);
-  input.focus();
-  function commit() {
-    const exps2 = load();
-    exps2.find(x => x.id === id).next = input.value;
-    save(exps2); flash(); render();
-  }
-  input.addEventListener('blur', commit);
-  input.addEventListener('keydown', ev => { if(ev.key==='Enter') commit(); });
+function editNext(id,el){
+  const exps=load();const e=exps.find(x=>x.id===id);
+  const input=document.createElement('input');input.type='text';input.value=e.next||'';input.placeholder='What to do next...';
+  el.innerHTML='';el.appendChild(input);input.focus();
+  function commit(){exps.find(x=>x.id===id).next=input.value;save(exps);flash();render();}
+  input.addEventListener('blur',commit);input.addEventListener('keydown',ev=>{if(ev.key==='Enter')commit();});
 }
 
 // Add from bot
-function openModal(){document.getElementById('modal').classList.add('open');document.getElementById('bot-input').value='';document.getElementById('pe').style.display='none';document.getElementById('ps').style.display='none';}
+function openModal(){document.getElementById('modal').classList.add('open');document.getElementById('bi').value='';document.getElementById('pe').style.display='none';document.getElementById('ps').style.display='none';}
 function closeModal(){document.getElementById('modal').classList.remove('open');}
 function addFromBot(){
-  const t=document.getElementById('bot-input').value, r={};
+  const t=document.getElementById('bi').value,r={};
   t.split('\n').forEach(l=>{const s=l.replace(/\*\*/g,'').trim();
-    if(/^name:/i.test(s)) r.name=s.replace(/^name:\s*/i,'');
-    else if(/^idea:/i.test(s)) r.idea=s.replace(/^idea:\s*/i,'');
-    else if(/^goal:/i.test(s)) r.goal=s.replace(/^goal:\s*/i,'');
-    else if(/^platform:/i.test(s)) r.platform=s.replace(/^platform:\s*/i,'');
-    else if(/^flywheel:/i.test(s)) r.flywheel=s.replace(/^flywheel:\s*/i,'');
-    else if(/^kpi:/i.test(s)) r.kpi=s.replace(/^kpi:\s*/i,'');
-    else if(/^scope:/i.test(s)) r.scope=s.replace(/^scope:\s*/i,'');
+    if(/^name:/i.test(s))r.name=s.replace(/^name:\s*/i,'');
+    else if(/^idea:/i.test(s))r.idea=s.replace(/^idea:\s*/i,'');
+    else if(/^goal:/i.test(s))r.goal=s.replace(/^goal:\s*/i,'');
+    else if(/^platform:/i.test(s))r.platform=s.replace(/^platform:\s*/i,'');
+    else if(/^flywheel:/i.test(s))r.flywheel=s.replace(/^flywheel:\s*/i,'');
+    else if(/^kpi:/i.test(s))r.kpi=s.replace(/^kpi:\s*/i,'');
+    else if(/^scope:/i.test(s))r.scope=s.replace(/^scope:\s*/i,'');
   });
-  if(!r.idea && !r.name){document.getElementById('pe').style.display='block';document.getElementById('ps').style.display='none';return;}
-  const exps=load(), id=exps.reduce((m,e)=>Math.max(m,e.id),0)+1;
-  exps.push({id, name:r.name||r.idea?.split(' ').slice(0,3).join(' ')||"New", idea:r.idea||"", goal:r.goal||"", platform:r.platform||"", flywheel:r.flywheel||"", kpi:r.kpi||"", scope:r.scope||"", signal:"", next:""});
-  save(exps);
-  document.getElementById('pe').style.display='none';document.getElementById('ps').style.display='block';
+  if(!r.idea&&!r.name){document.getElementById('pe').style.display='block';document.getElementById('ps').style.display='none';return;}
+  const exps=load(),id=exps.reduce((m,e)=>Math.max(m,e.id),0)+1;
+  exps.push({id,pri:"P1",name:r.name||r.idea?.split(' ').slice(0,3).join(' ')||"New",idea:r.idea||"",goal:r.goal||"",platform:r.platform||"",flywheel:r.flywheel||"",kpi:r.kpi||"",scope:r.scope||"",signal:"",next:""});
+  save(exps);document.getElementById('pe').style.display='none';document.getElementById('ps').style.display='block';
   setTimeout(()=>{closeModal();render();setTimeout(()=>{const c=document.getElementById('exp-'+id);if(c){c.classList.add('highlight');c.scrollIntoView({behavior:'smooth',block:'center'});}},100);},400);
 }
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeSigDropdown();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeDropdowns();}});
 
 render();
 </script>

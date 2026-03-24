@@ -50,12 +50,12 @@ function snapshotWeek() {
     },
     experiments: allActive.map(function(e) {
       var best = bestVariation(e);
-      if (!best || !best.stages) return { id: e.id, name: e.name, ch: e.ch, stages: [], rateIdx: [1,0], verdict: '' };
+      if (!best || !best.stages) return { id: e.id, name: e.name, ch: e.ch, stages: [], rateIdx: [1,0], stopped: false };
       return {
         id: e.id, name: e.name, ch: e.ch,
         stages: best.stages.map(function(s) { return { label: s.label, val: s.val }; }),
         rateIdx: best.rateIdx || (CH[e.ch] ? CH[e.ch].rateIdx : [1,0]),
-        verdict: best.verdict || ''
+        stopped: best.stopped || false
       };
     })
   };

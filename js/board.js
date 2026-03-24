@@ -53,9 +53,9 @@ function render() {
 }
 
 /* ── Helpers ── */
-function allStopped(e) { return e.variations.every(function(v) { return v.verdict === 'Stop'; }); }
+function allStopped(e) { return e.variations.every(function(v) { return v.stopped; }); }
 function bestVariation(e) {
-  var active = e.variations.filter(function(v) { return v.verdict !== 'Stop'; });
+  var active = e.variations.filter(function(v) { return !v.stopped; });
   if (active.length === 0) return e.variations[0];
   var best = active[0];
   active.forEach(function(v) { if (expRate(v) > expRate(best)) best = v; });
@@ -63,7 +63,7 @@ function bestVariation(e) {
 }
 function expTotalBottom(e) {
   return e.variations.reduce(function(s, v) {
-    if (v.verdict === 'Stop') return s;
+    if (v.stopped) return s;
     return s + (v.stages[v.stages.length - 1] ? v.stages[v.stages.length - 1].val : 0);
   }, 0);
 }
@@ -124,7 +124,8 @@ function renderHome(exps) {
       '<span class="home-health ' + healthCls + '">' + healthLabel + '</span>' +
       '<div class="home-progress"><div class="home-progress-bar"><div class="home-progress-fill" style="width:' + pct + '%"></div></div>' +
       '<span class="home-progress-label">' + sample + '/' + minSample + '</span></div>' +
-      '<span class="home-vars">' + e.variations.filter(function(v) { return v.verdict !== 'Stop'; }).length + ' var</span>' +
+      '<span class="home-vars">' + e.variations.filter(function(v) { return !v.stopped; }).length + ' var</span>' +
+      '<button class="home-btn" onclick="event.stopPropagation();deleteExp(' + e.id + ')">Remove</button>' +
       '</div></div>';
   });
 
@@ -162,7 +163,7 @@ function renderExperimentPage(exps) {
 
   // Variations
   e.variations.forEach(function(v) {
-    var isStopped = v.verdict === 'Stop';
+    var isStopped = v.stopped;
     var vRate = expRateStr(v);
     var hasData = expHasData(v);
 
@@ -228,7 +229,7 @@ function renderIntegrations(exps) {
 
   modeExps.forEach(function(e) {
     e.variations.forEach(function(v) {
-      if (v.verdict === 'Stop') return;
+      if (v.stopped) return;
       v.stages.forEach(function(stg, sIdx) {
         var item = { exp: e, v: v, stg: stg, sIdx: sIdx };
         if (stg.connType && stg.connType !== 'manual') autoStages.push(item);
@@ -339,7 +340,7 @@ function stopVariation(expId, varId) {
   if (!e) return;
   var v = e.variations.find(function(x) { return x.id === varId; });
   if (!v) return;
-  v.verdict = 'Stop';
+  v.stopped = true;
   save(exps); flash(); render();
 }
 
@@ -407,7 +408,7 @@ function confirmVariation(expId) {
     stages: stages,
     rateIdx: best.rateIdx || (info ? info.rateIdx : [1, 0]),
     started: MONTHS[new Date().getMonth()] + ' ' + new Date().getDate(),
-    verdict: '', next: ''
+    stopped: false
   });
 
   save(exps); flash();

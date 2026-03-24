@@ -265,7 +265,7 @@ function generateAllBenchmarks(callback) {
   var needsGen = exps.filter(function(e) {
     if (custom[e.id]) return false;
     if (!e.variations || e.variations.length === 0) return false;
-    var best = e.variations.find(function(v) { return v.verdict !== 'Stop'; }) || e.variations[0];
+    var best = e.variations.find(function(v) { return !v.stopped; }) || e.variations[0];
     return expHasData(best);
   });
 
@@ -276,7 +276,7 @@ function generateAllBenchmarks(callback) {
 
   var done = 0;
   needsGen.forEach(function(e) {
-    var best = e.variations.find(function(v) { return v.verdict !== 'Stop'; }) || e.variations[0];
+    var best = e.variations.find(function(v) { return !v.stopped; }) || e.variations[0];
     if (!best || !best.stages) { done++; if (done >= needsGen.length && callback) callback(); return; }
     var forAI = { id: e.id, name: e.name, ch: e.ch, idea: e.idea, stages: best.stages, rateIdx: best.rateIdx };
     generateBenchmarkAI(forAI, function(bm, err) {

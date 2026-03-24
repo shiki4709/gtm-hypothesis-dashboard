@@ -239,7 +239,7 @@ function createFromChat() {
       stages: stages,
       rateIdx: p.rateIdx || (info ? info.rateIdx : [1, 0]),
       started: MONTHS[now.getMonth()] + ' ' + now.getDate(),
-      verdict: '', next: ''
+      stopped: false
     }]
   });
 

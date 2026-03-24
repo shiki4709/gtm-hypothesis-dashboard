@@ -203,12 +203,21 @@ function renderExperiment(e) {
     }
     var vCls = verdictCls(v.verdict);
 
-    var rateLabel = info.metric ? info.metric.toLowerCase() : 'rate';
+    // Rate formula: show what's being divided
+    var rateFormula = '';
+    if (vRate !== '—' && v.rateIdx) {
+      var numStg = v.stages[v.rateIdx[0]];
+      var denStg = v.stages[v.rateIdx[1]];
+      if (numStg && denStg) {
+        rateFormula = numStg.val + ' ' + numStg.label.toLowerCase() + ' / ' + denStg.val + ' ' + denStg.label.toLowerCase();
+      }
+    }
+
     html += '<div class="var-card">' +
       '<div class="var-head">' +
       '<div class="var-name">' + vDot + v.name + '</div>' +
       '<div class="var-rate-wrap"><span class="var-rate">' + vRate + '</span>' +
-      (vRate !== '—' ? '<span class="var-rate-label">' + rateLabel + '</span>' : '') + '</div>' +
+      (rateFormula ? '<span class="var-rate-label">' + rateFormula + '</span>' : '') + '</div>' +
       '<span class="verdict ' + vCls + '" onclick="event.stopPropagation();cycleVarVerdict(' + e.id + ',\'' + v.id + '\')">' + (v.verdict || '—') + '</span></div>';
 
     // Pipeline — direct editable inputs

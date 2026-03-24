@@ -26,13 +26,64 @@ function render() {
 
   document.getElementById('view-tabs').innerHTML =
     '<button class="vtab ' + (activeView === 'experiments' ? 'active' : '') + '" onclick="setView(\'experiments\')">Experiments</button>' +
+    '<button class="vtab ' + (activeView === 'integrations' ? 'active' : '') + '" onclick="setView(\'integrations\')">Integrations</button>' +
     '<button class="vtab ' + (activeView === 'weekly' ? 'active' : '') + '" onclick="setView(\'weekly\')">Compare</button>';
 
   document.getElementById('view-experiments').style.display = activeView === 'experiments' ? 'block' : 'none';
+  document.getElementById('view-integrations').style.display = activeView === 'integrations' ? 'block' : 'none';
   document.getElementById('view-weekly').style.display = activeView === 'weekly' ? 'block' : 'none';
 
   if (activeView === 'experiments') renderGoalView(exps);
+  else if (activeView === 'integrations') renderIntegrations(exps);
   else if (typeof renderTimeSeries === 'function') renderTimeSeries();
+}
+
+/* ================================================================
+   Integrations View — all data sources in one place
+   ================================================================ */
+
+function renderIntegrations(exps) {
+  var el = document.getElementById('view-integrations');
+  var modeExps = exps.filter(function(e) { return CH[e.ch] && CH[e.ch].mode === activeMode; });
+
+  var totalStages = 0, connected = 0;
+
+  var html = '<div class="integ-header">All data sources for ' + (activeMode === 'outbound' ? 'outbound' : 'inbound') + ' experiments</div>';
+
+  modeExps.forEach(function(e) {
+    var info = CH[e.ch];
+    html += '<div class="integ-exp">' +
+      '<div class="integ-exp-name">' + e.name + '<span class="integ-exp-ch">' + info.label + '</span></div>';
+
+    e.variations.forEach(function(v) {
+      if (v.verdict === 'Stop') return;
+
+      v.stages.forEach(function(stg, sIdx) {
+        totalStages++;
+        var hasSource = stg.source || stg.note || stg.owner;
+        if (hasSource) connected++;
+
+        html += '<div class="integ-row">' +
+          '<div class="integ-stage">' +
+          '<span class="integ-dot ' + (hasSource ? 'integ-dot-on' : '') + '">●</span>' +
+          stg.label + '</div>' +
+          '<div class="integ-val">' + formatNum(stg.val) + '</div>' +
+          '<div class="integ-meta">' +
+          (stg.owner ? '<span class="integ-owner">' + stg.owner + '</span>' : '') +
+          (stg.source ? '<a class="integ-link" href="' + stg.source + '" target="_blank">Source</a>' : '') +
+          (stg.note ? '<span class="integ-note">' + stg.note + '</span>' : '') +
+          (!hasSource ? '<span class="integ-manual">Manual</span>' : '') +
+          '</div>' +
+          '<button class="integ-btn" onclick="openStagePanel(' + e.id + ',\'' + v.id + '\',' + sIdx + ')">Edit</button>' +
+          '</div>';
+      });
+    });
+
+    html += '</div>';
+  });
+
+  html = '<div class="integ-summary">' + connected + ' / ' + totalStages + ' stages connected</div>' + html;
+  el.innerHTML = html;
 }
 
 /* ── Helpers ── */
@@ -224,22 +275,14 @@ function renderExperiment(e) {
         html += '<div class="pipe-arrow ' + convCls + '">' + convText + '</div>';
       }
       var isKey = v.rateIdx && (sIdx === v.rateIdx[0] || sIdx === v.rateIdx[1]);
-      var stageId = 'stg-' + e.id + '-' + v.id + '-' + sIdx;
       var hasNote = stg.note || stg.source;
       html += '<div class="pipe-stage' + (isKey ? ' pipe-stage-key' : '') + (hasNote ? ' pipe-stage-noted' : '') + '">' +
         '<input type="number" class="pipe-input" value="' + stg.val + '" min="0" ' +
         'onfocus="this.select()" ' +
         'onchange="saveStage(' + e.id + ',\'' + v.id + '\',' + sIdx + ',this.value)" ' +
         'onclick="event.stopPropagation()">' +
-        '<div class="pipe-stage-label" onclick="event.stopPropagation();toggleStagePanel(\'' + stageId + '\')">' + stg.label +
-        (hasNote ? ' *' : '') + '</div>' +
-        '<div class="stage-panel" id="' + stageId + '" style="display:none" onclick="event.stopPropagation()">' +
-        '<input type="text" class="stage-note" placeholder="Note..." value="' + (stg.note || '').replace(/"/g, '&quot;') + '" ' +
-        'onchange="saveStageNote(' + e.id + ',\'' + v.id + '\',' + sIdx + ',this.value)">' +
-        '<input type="text" class="stage-source" placeholder="Link to source..." value="' + (stg.source || '').replace(/"/g, '&quot;') + '" ' +
-        'onchange="saveStageSource(' + e.id + ',\'' + v.id + '\',' + sIdx + ',this.value)">' +
-        (stg.source ? '<a class="stage-link" href="' + stg.source + '" target="_blank" onclick="event.stopPropagation()">Open source</a>' : '') +
-        '</div></div>';
+        '<div class="pipe-stage-label" onclick="event.stopPropagation();openStagePanel(' + e.id + ',\'' + v.id + '\',' + sIdx + ')">' + stg.label +
+        (hasNote ? ' *' : '') + '</div></div>';
     });
     html += '</div>';
 
@@ -307,9 +350,45 @@ function saveStage(expId, varId, stgIdx, val) {
   }
 }
 
-function toggleStagePanel(stageId) {
-  var el = document.getElementById(stageId);
-  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+function openStagePanel(expId, varId, stgIdx) {
+  var exps = load();
+  var e = exps.find(function(x) { return x.id === expId; });
+  if (!e) return;
+  var v = e.variations.find(function(x) { return x.id === varId; });
+  if (!v) return;
+  var stg = v.stages[stgIdx];
+  var hint = getTrackingHint(e, stg.label);
+
+  qaOpen = true;
+  document.getElementById('modal').classList.add('open');
+  document.querySelector('.chat').innerHTML =
+    '<div class="qa-panel"><div class="qa-header"><h2 class="qa-title">' + stg.label + '</h2>' +
+    '<button class="chat-close" onclick="closeModal()">&times;</button></div>' +
+    '<div class="qa-body">' +
+    '<div class="qa-field"><label class="qa-label">How to track</label>' +
+    '<div style="font-size:var(--fs-sm);color:var(--text-3);line-height:var(--lh-body);padding:var(--s-8);background:var(--bg-sub);border-radius:var(--radius-sm);border-left:2px solid var(--inbound)">' + hint + '</div></div>' +
+    '<div class="qa-field"><label class="qa-label">Note</label>' +
+    '<input type="text" class="qa-input qa-input-sm" id="stg-note" value="' + (stg.note || '').replace(/"/g, '&quot;') + '" placeholder="e.g. Exported from Phantom weekly"></div>' +
+    '<div class="qa-field"><label class="qa-label">Source URL</label>' +
+    '<input type="text" class="qa-input qa-input-sm" id="stg-source" value="' + (stg.source || '').replace(/"/g, '&quot;') + '" placeholder="https://..."></div>' +
+    '<div class="qa-field"><label class="qa-label">Owner</label>' +
+    '<input type="text" class="qa-input qa-input-sm" id="stg-owner" value="' + (stg.owner || '').replace(/"/g, '&quot;') + '" placeholder="Who updates this? e.g. Maruthi"></div>' +
+    '</div><div class="qa-footer">' +
+    '<button class="qa-cancel" onclick="closeModal()">Cancel</button>' +
+    '<button class="qa-submit" onclick="saveStagePanel(' + expId + ',\'' + varId + '\',' + stgIdx + ')">Save</button></div></div>';
+}
+
+function saveStagePanel(expId, varId, stgIdx) {
+  var exps = load();
+  var e = exps.find(function(x) { return x.id === expId; });
+  var v = e.variations.find(function(x) { return x.id === varId; });
+  var stg = v.stages[stgIdx];
+  stg.note = document.getElementById('stg-note').value.trim();
+  stg.source = document.getElementById('stg-source').value.trim();
+  stg.owner = document.getElementById('stg-owner').value.trim();
+  save(exps);
+  closeModal();
+  render();
 }
 
 function saveStageNote(expId, varId, stgIdx, val) {

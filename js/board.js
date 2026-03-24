@@ -191,9 +191,9 @@ function renderExperiment(e) {
   // Expandable: variations list
   html += '<div class="exp-expand-wrap" id="expand-' + e.id + '"><div class="exp-expand-inner"><div class="exp-detail">';
 
-  // Variations
+  // Variations — show ALL including stopped (dimmed)
   e.variations.forEach(function(v, idx) {
-    if (v.verdict === 'Stop') return;
+    var isStopped = v.verdict === 'Stop';
     var vRate = expRateStr(v);
     var vRateNum = expRate(v);
     var hasData = expHasData(v);
@@ -205,10 +205,13 @@ function renderExperiment(e) {
     }
     var vCls = verdictCls(v.verdict);
 
-    html += '<div class="var-card">' +
+    html += '<div class="var-card' + (isStopped ? ' var-stopped' : '') + '">' +
       '<div class="var-head">' +
-      '<div class="var-name">' + vDot + v.name + '</div>' +
-      '<span class="verdict ' + vCls + '" onclick="event.stopPropagation();cycleVarVerdict(' + e.id + ',\'' + v.id + '\')">' + (v.verdict || '—') + '</span></div>';
+      '<div class="var-name">' + vDot + v.name + (isStopped ? ' <span class="var-stopped-label">stopped</span>' : '') + '</div>' +
+      (isStopped ? '' : '<span class="verdict ' + vCls + '" onclick="event.stopPropagation();cycleVarVerdict(' + e.id + ',\'' + v.id + '\')">' + (v.verdict || '—') + '</span>') +
+      '</div>';
+
+    if (isStopped) { html += '</div>'; return; }
 
     // Pipeline — direct editable inputs with step conversions
     html += '<div class="pipe">';
@@ -278,7 +281,7 @@ function cycleVarVerdict(expId, varId) {
   if (!e) return;
   var v = e.variations.find(function(x) { return x.id === varId; });
   if (!v) return;
-  var opts = ['', 'Keep going', 'Change variables', 'Close, iterate', 'Stop'];
+  var opts = ['', 'Keep going', 'Stop'];
   v.verdict = opts[(opts.indexOf(v.verdict) + 1) % opts.length];
   save(exps); flash(); render();
 }

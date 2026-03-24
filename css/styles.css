@@ -225,6 +225,9 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
 }
 .var-rate-label { font-size: 10px; color: var(--text-4); }
 
+.var-stopped { opacity: 0.4; }
+.var-stopped-label { font-size: var(--fs-xs); color: var(--text-4); font-weight: 400; font-family: var(--ff-body); }
+
 .add-var-trigger {
   display: flex;
   align-items: center;

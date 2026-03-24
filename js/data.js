@@ -23,9 +23,6 @@ var D = [
       {id:'2a', name:'All engagers, Template A',
         stages:[{label:'Posts found',val:12},{label:'Engagers scraped',val:680},{label:'ICP filtered',val:340},{label:'DMs sent',val:340},{label:'Replied',val:48},{label:'Signed up',val:8}],
         rateIdx:[4,3], started:'Mar 24', verdict:'Keep going', next:'Run on 5 more posts'},
-      {id:'2b', name:'Commenters only, Template A',
-        stages:[{label:'Posts found',val:4},{label:'Engagers scraped',val:210},{label:'ICP filtered',val:85},{label:'DMs sent',val:85},{label:'Replied',val:22},{label:'Signed up',val:4}],
-        rateIdx:[4,3], started:'Mar 31', verdict:'Keep going', next:'Higher reply rate — scale this'},
     ]},
 
   {id:3, ch:'li_outreach', name:'Referral Post DMs',
@@ -43,10 +40,7 @@ var D = [
     variations:[
       {id:'4a', name:'Cold DM after seeing engagement',
         stages:[{label:'Influencers tracked',val:5},{label:'AEs surfaced',val:45},{label:'DMs sent',val:30},{label:'Replied',val:4},{label:'Signed up',val:1}],
-        rateIdx:[3,2], started:'Mar 24', verdict:'Change variables', next:''},
-      {id:'4b', name:'Comment on their post first, then DM',
-        stages:[{label:'Influencers tracked',val:5},{label:'AEs surfaced',val:20},{label:'Commented',val:20},{label:'DMs sent',val:15},{label:'Replied',val:4},{label:'Signed up',val:1}],
-        rateIdx:[4,3], started:'Apr 1', verdict:'', next:''},
+        rateIdx:[3,2], started:'Mar 24', verdict:'', next:''},
     ]},
 
   {id:5, ch:'warm_intros', name:'Network Mining',
@@ -84,9 +78,6 @@ var D = [
       {id:'17a', name:'Text posts, daily',
         stages:[{label:'Posts',val:12},{label:'Impressions',val:2400},{label:'Engagements',val:86},{label:'Followers',val:12},{label:'Inbound DMs',val:3}],
         rateIdx:[2,1], started:'Mar 24', verdict:'Keep going', next:'Test carousel format'},
-      {id:'17b', name:'Customer win stories',
-        stages:[{label:'Stories',val:3},{label:'Impressions',val:800},{label:'Engagements',val:52},{label:'Followers',val:5},{label:'Inbound DMs',val:1}],
-        rateIdx:[2,1], started:'Mar 25', verdict:'', next:''},
     ]},
 
   {id:13, ch:'content_seo', name:'AI SEO Sprint',

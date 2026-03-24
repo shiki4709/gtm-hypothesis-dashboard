@@ -324,26 +324,36 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
 }
 .integ-exp-ch { font-size: var(--fs-xs); color: var(--text-4); font-family: var(--ff-body); font-weight: 400; }
 
+.integ-group { margin-bottom: var(--s-24); }
+.integ-group-title {
+  font-family: var(--ff-display); font-size: var(--fs-sm); font-weight: 500;
+  color: var(--text-3); margin-bottom: var(--s-8);
+  padding-bottom: var(--s-4); border-bottom: 1px solid var(--rule-faint);
+}
+
 .integ-row {
-  display: grid; grid-template-columns: 1fr 4rem 1fr auto;
-  gap: var(--s-12); align-items: center;
+  display: flex; align-items: center; gap: var(--s-12);
   padding: var(--s-8) var(--s-12);
   border-bottom: 1px solid var(--rule-faint);
   font-size: var(--fs-sm);
 }
 .integ-row:last-child { border-bottom: none; }
 
-.integ-stage { display: flex; align-items: center; gap: var(--s-6); color: var(--text-2); }
-.integ-dot { font-size: 8px; color: var(--text-4); }
-.integ-dot-on { color: var(--hit); }
-.integ-val { font-family: var(--ff-display); font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; text-align: right; }
+.integ-stage { color: var(--text); font-weight: 500; min-width: 8rem; }
+.integ-exp-label { color: var(--text-4); font-size: var(--fs-xs); min-width: 8rem; }
+.integ-val { font-family: var(--ff-display); font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; min-width: 3rem; text-align: right; }
 
-.integ-meta { display: flex; align-items: center; gap: var(--s-8); font-size: var(--fs-xs); }
-.integ-owner { color: var(--text-3); background: var(--surface); padding: var(--s-2) var(--s-6); border-radius: var(--radius-sm); }
-.integ-link { color: var(--inbound); text-decoration: none; }
+.integ-conn {
+  font-size: var(--fs-xs); font-weight: 600; padding: var(--s-2) var(--s-6);
+  border-radius: var(--radius-sm);
+}
+.integ-conn-auto { color: var(--hit); background: var(--hit-bg); }
+.integ-conn-manual { color: var(--text-4); background: var(--muted-bg); }
+
+.integ-owner { font-size: var(--fs-xs); color: var(--text-3); background: var(--surface); padding: var(--s-2) var(--s-6); border-radius: var(--radius-sm); }
+.integ-no-owner { font-size: var(--fs-xs); color: var(--text-4); font-style: italic; }
+.integ-link { font-size: var(--fs-xs); color: var(--inbound); text-decoration: none; }
 .integ-link:hover { text-decoration: underline; }
-.integ-note { color: var(--text-4); }
-.integ-manual { color: var(--text-4); font-style: italic; }
 
 .integ-btn {
   font-family: var(--ff-body); font-size: var(--fs-xs); color: var(--text-4);

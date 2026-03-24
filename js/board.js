@@ -46,43 +46,51 @@ function renderIntegrations(exps) {
   var el = document.getElementById('view-integrations');
   var modeExps = exps.filter(function(e) { return CH[e.ch] && CH[e.ch].mode === activeMode; });
 
-  var totalStages = 0, connected = 0;
-
-  var html = '<div class="integ-header">All data sources for ' + (activeMode === 'outbound' ? 'outbound' : 'inbound') + ' experiments</div>';
+  var manualStages = [], autoStages = [];
 
   modeExps.forEach(function(e) {
     var info = CH[e.ch];
-    html += '<div class="integ-exp">' +
-      '<div class="integ-exp-name">' + e.name + '<span class="integ-exp-ch">' + info.label + '</span></div>';
-
     e.variations.forEach(function(v) {
       if (v.verdict === 'Stop') return;
-
       v.stages.forEach(function(stg, sIdx) {
-        totalStages++;
-        var hasSource = stg.source || stg.note || stg.owner;
-        if (hasSource) connected++;
-
-        html += '<div class="integ-row">' +
-          '<div class="integ-stage">' +
-          '<span class="integ-dot ' + (hasSource ? 'integ-dot-on' : '') + '">●</span>' +
-          stg.label + '</div>' +
-          '<div class="integ-val">' + formatNum(stg.val) + '</div>' +
-          '<div class="integ-meta">' +
-          (stg.owner ? '<span class="integ-owner">' + stg.owner + '</span>' : '') +
-          (stg.source ? '<a class="integ-link" href="' + stg.source + '" target="_blank">Source</a>' : '') +
-          (stg.note ? '<span class="integ-note">' + stg.note + '</span>' : '') +
-          (!hasSource ? '<span class="integ-manual">Manual</span>' : '') +
-          '</div>' +
-          '<button class="integ-btn" onclick="openStagePanel(' + e.id + ',\'' + v.id + '\',' + sIdx + ')">Edit</button>' +
-          '</div>';
+        var item = { exp: e, v: v, stg: stg, sIdx: sIdx, info: info };
+        if (stg.connType && stg.connType !== 'manual') autoStages.push(item);
+        else manualStages.push(item);
       });
     });
-
-    html += '</div>';
   });
 
-  html = '<div class="integ-summary">' + connected + ' / ' + totalStages + ' stages connected</div>' + html;
+  var total = manualStages.length + autoStages.length;
+  var html = '<div class="integ-summary">' + autoStages.length + ' / ' + total + ' stages connected · ' + manualStages.length + ' need manual update</div>';
+
+  function renderStageRow(item) {
+    var stg = item.stg, e = item.exp, v = item.v, sIdx = item.sIdx;
+    var connLabel = stg.connType === 'sheet' ? 'Sheet' : stg.connType === 'api' ? 'API' : stg.connType === 'webhook' ? 'Webhook' : 'Manual';
+    var connCls = stg.connType && stg.connType !== 'manual' ? 'integ-conn-auto' : 'integ-conn-manual';
+
+    return '<div class="integ-row">' +
+      '<div class="integ-stage">' + stg.label + '</div>' +
+      '<div class="integ-exp-label">' + e.name + '</div>' +
+      '<div class="integ-val">' + formatNum(stg.val) + '</div>' +
+      '<span class="integ-conn ' + connCls + '">' + connLabel + '</span>' +
+      (stg.owner ? '<span class="integ-owner">' + stg.owner + '</span>' : '<span class="integ-no-owner">No owner</span>') +
+      (stg.source ? '<a class="integ-link" href="' + stg.source + '" target="_blank">Source</a>' : '') +
+      '<button class="integ-btn" onclick="openStagePanel(' + e.id + ',\'' + v.id + '\',' + sIdx + ')">Edit</button>' +
+      '</div>';
+  }
+
+  if (manualStages.length > 0) {
+    html += '<div class="integ-group"><div class="integ-group-title">Needs manual update</div>';
+    manualStages.forEach(function(item) { html += renderStageRow(item); });
+    html += '</div>';
+  }
+
+  if (autoStages.length > 0) {
+    html += '<div class="integ-group"><div class="integ-group-title">Connected</div>';
+    autoStages.forEach(function(item) { html += renderStageRow(item); });
+    html += '</div>';
+  }
+
   el.innerHTML = html;
 }
 
@@ -359,20 +367,38 @@ function openStagePanel(expId, varId, stgIdx) {
   var stg = v.stages[stgIdx];
   var hint = getTrackingHint(e, stg.label);
 
+  var connType = stg.connType || 'manual';
+  var lastUpdated = stg.lastUpdated || '';
+
   qaOpen = true;
   document.getElementById('modal').classList.add('open');
   document.querySelector('.chat').innerHTML =
     '<div class="qa-panel"><div class="qa-header"><h2 class="qa-title">' + stg.label + '</h2>' +
     '<button class="chat-close" onclick="closeModal()">&times;</button></div>' +
     '<div class="qa-body">' +
+
+    '<div class="qa-field"><label class="qa-label">Connection type</label>' +
+    '<div class="qa-chips">' +
+    '<button class="qa-chip ' + (connType === 'manual' ? 'active' : '') + '" onclick="document.querySelectorAll(\'#stg-conn-type .qa-chip\').forEach(function(c){c.classList.remove(\'active\')});this.classList.add(\'active\')" id="conn-manual">Manual</button>' +
+    '<button class="qa-chip ' + (connType === 'sheet' ? 'active' : '') + '" onclick="document.querySelectorAll(\'#stg-conn-type .qa-chip\').forEach(function(c){c.classList.remove(\'active\')});this.classList.add(\'active\')" id="conn-sheet">Google Sheet</button>' +
+    '<button class="qa-chip ' + (connType === 'api' ? 'active' : '') + '" onclick="document.querySelectorAll(\'#stg-conn-type .qa-chip\').forEach(function(c){c.classList.remove(\'active\')});this.classList.add(\'active\')" id="conn-api">API</button>' +
+    '<button class="qa-chip ' + (connType === 'webhook' ? 'active' : '') + '" onclick="document.querySelectorAll(\'#stg-conn-type .qa-chip\').forEach(function(c){c.classList.remove(\'active\')});this.classList.add(\'active\')" id="conn-webhook">Webhook</button>' +
+    '</div><div id="stg-conn-type"></div></div>' +
+
     '<div class="qa-field"><label class="qa-label">How to track</label>' +
     '<div style="font-size:var(--fs-sm);color:var(--text-3);line-height:var(--lh-body);padding:var(--s-8);background:var(--bg-sub);border-radius:var(--radius-sm);border-left:2px solid var(--inbound)">' + hint + '</div></div>' +
-    '<div class="qa-field"><label class="qa-label">Note</label>' +
-    '<input type="text" class="qa-input qa-input-sm" id="stg-note" value="' + (stg.note || '').replace(/"/g, '&quot;') + '" placeholder="e.g. Exported from Phantom weekly"></div>' +
-    '<div class="qa-field"><label class="qa-label">Source URL</label>' +
+
+    '<div class="qa-field"><label class="qa-label">Source URL or endpoint</label>' +
     '<input type="text" class="qa-input qa-input-sm" id="stg-source" value="' + (stg.source || '').replace(/"/g, '&quot;') + '" placeholder="https://..."></div>' +
+
     '<div class="qa-field"><label class="qa-label">Owner</label>' +
     '<input type="text" class="qa-input qa-input-sm" id="stg-owner" value="' + (stg.owner || '').replace(/"/g, '&quot;') + '" placeholder="Who updates this? e.g. Maruthi"></div>' +
+
+    '<div class="qa-field"><label class="qa-label">Note</label>' +
+    '<input type="text" class="qa-input qa-input-sm" id="stg-note" value="' + (stg.note || '').replace(/"/g, '&quot;') + '" placeholder="e.g. Exported weekly from Phantom"></div>' +
+
+    (lastUpdated ? '<div style="font-size:var(--fs-xs);color:var(--text-4)">Last updated: ' + lastUpdated + '</div>' : '') +
+
     '</div><div class="qa-footer">' +
     '<button class="qa-cancel" onclick="closeModal()">Cancel</button>' +
     '<button class="qa-submit" onclick="saveStagePanel(' + expId + ',\'' + varId + '\',' + stgIdx + ')">Save</button></div></div>';
@@ -386,6 +412,14 @@ function saveStagePanel(expId, varId, stgIdx) {
   stg.note = document.getElementById('stg-note').value.trim();
   stg.source = document.getElementById('stg-source').value.trim();
   stg.owner = document.getElementById('stg-owner').value.trim();
+
+  // Connection type
+  if (document.getElementById('conn-sheet').classList.contains('active')) stg.connType = 'sheet';
+  else if (document.getElementById('conn-api').classList.contains('active')) stg.connType = 'api';
+  else if (document.getElementById('conn-webhook').classList.contains('active')) stg.connType = 'webhook';
+  else stg.connType = 'manual';
+
+  stg.lastUpdated = new Date().toLocaleDateString();
   save(exps);
   closeModal();
   render();

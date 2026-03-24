@@ -236,21 +236,33 @@ function connectType(expId, type) {
 }
 
 function connectConfigHTML(expId, src) {
+  var e = load().find(function(x) { return x.id === expId; });
+  var stageNames = e ? e.stages.map(function(s) { return s.label; }) : [];
+  var headerRow = 'Date, ' + stageNames.join(', ');
+  var exampleRow = 'YYYY-MM-DD, ' + stageNames.map(function() { return '0'; }).join(', ');
+
+  var template = '<div class="connect-template">' +
+    '<div class="connect-template-label">Your sheet needs these columns:</div>' +
+    '<div class="connect-template-row" onclick="navigator.clipboard.writeText(this.textContent);showToast(\'Copied headers\')">' + headerRow + '</div>' +
+    '<div class="connect-template-hint">Click to copy. Paste as the first row of your sheet.</div></div>';
+
   if (src.type === 'google_sheets') {
-    return '<div class="qa-field"><label class="qa-label">Sheet URL</label>' +
+    return template +
+      '<div class="qa-field"><label class="qa-label">Sheet URL</label>' +
       '<input type="text" class="qa-input qa-input-sm" id="connect-url" value="' + (src.url || '') + '" placeholder="https://docs.google.com/spreadsheets/d/..."></div>' +
       '<div class="qa-field"><label class="qa-label">Sheet Name (optional)</label>' +
       '<input type="text" class="qa-input qa-input-sm" id="connect-sheet" value="' + (src.sheet || '') + '" placeholder="Sheet1"></div>' +
       '<div style="font-size:var(--fs-xs);color:var(--text-4);margin-top:var(--s-4);line-height:var(--lh-body)">' +
-      'Sheet must be public (Share → Anyone with the link). Column headers should match stage names.</div>';
+      'Sheet must be public (Share → Anyone with the link). Dashboard reads the last row.</div>';
   }
   if (src.type === 'api') {
+    var jsonExample = '{ ' + stageNames.map(function(n) { return '"' + n + '": 0'; }).join(', ') + ' }';
     return '<div class="qa-field"><label class="qa-label">API Endpoint</label>' +
       '<input type="text" class="qa-input qa-input-sm" id="connect-url" value="' + (src.endpoint || '') + '" placeholder="https://api.example.com/metrics"></div>' +
       '<div class="qa-field"><label class="qa-label">API Key (optional)</label>' +
       '<input type="text" class="qa-input qa-input-sm" id="connect-key" value="' + (src.apiKey || '') + '" placeholder="Bearer token"></div>' +
-      '<div style="font-size:var(--fs-xs);color:var(--text-4);margin-top:var(--s-4);line-height:var(--lh-body)">' +
-      'Endpoint should return JSON with keys matching stage names (or lowercase_snake_case versions).</div>';
+      '<div class="connect-template"><div class="connect-template-label">Expected JSON response:</div>' +
+      '<div class="connect-template-row" style="font-size:var(--fs-xs)" onclick="navigator.clipboard.writeText(this.textContent);showToast(\'Copied\')">' + jsonExample + '</div></div>';
   }
   return '<div style="font-size:var(--fs-sm);color:var(--text-4);padding:var(--s-8) 0">Click pipeline numbers to update manually.</div>';
 }

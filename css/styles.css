@@ -252,10 +252,14 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
 .ie-step { width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); border: 1.5px solid var(--rule); background: var(--surface); color: var(--text-2); font-size: var(--fs-md); font-weight: 600; cursor: pointer; transition: all var(--dur-fast) var(--ease-out); flex-shrink: 0; font-family: var(--ff-body); }
 .ie-step:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
 .ie-step:active { transform: scale(0.9); }
-.ie-bumps { display: flex; gap: var(--s-4); margin-top: var(--s-6); }
-.ie-bump { padding: var(--s-4) var(--s-8); border-radius: var(--radius-sm); border: 1px solid var(--rule); background: transparent; color: var(--text-3); font-size: var(--fs-xs); font-weight: 600; font-family: var(--ff-body); cursor: pointer; transition: all var(--dur-fast) var(--ease-out); }
-.ie-bump:hover { border-color: var(--hit); color: var(--hit); background: var(--hit-bg); }
 .ie-actions { display: flex; gap: var(--s-6); margin-top: var(--s-8); justify-content: flex-end; }
+/* Connect template */
+.connect-template { margin-bottom: var(--s-12); }
+.connect-template-label { font-size: var(--fs-xs); font-weight: 600; color: var(--text-3); margin-bottom: var(--s-4); }
+.connect-template-row { font-family: monospace; font-size: var(--fs-sm); color: var(--text); background: var(--bg-sub); border: 1px solid var(--rule); border-radius: var(--radius-sm); padding: var(--s-8) var(--s-12); cursor: pointer; transition: background var(--dur-fast) var(--ease-out); line-height: var(--lh-body); word-break: break-all; }
+.connect-template-row:hover { background: var(--surface); }
+.connect-template-hint { font-size: var(--fs-xs); color: var(--text-4); margin-top: var(--s-4); }
+
 .ie-save { padding: var(--s-4) var(--s-16); border-radius: var(--radius-sm); border: none; background: var(--accent); color: oklch(97% 0.008 55); font-size: var(--fs-xs); font-weight: 600; font-family: var(--ff-body); cursor: pointer; }
 .ie-save:hover { opacity: 0.85; }
 .ie-cancel { padding: var(--s-4) var(--s-12); border-radius: var(--radius-sm); border: 1px solid var(--rule); background: transparent; color: var(--text-3); font-size: var(--fs-xs); font-weight: 600; font-family: var(--ff-body); cursor: pointer; }

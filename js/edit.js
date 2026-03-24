@@ -78,24 +78,6 @@ function inlineEdit(el, currentVal, onSave, opts) {
 
   wrap.appendChild(row);
 
-  // Quick increment buttons for numbers
-  if (isNum) {
-    var bumps = document.createElement('div');
-    bumps.className = 'ie-bumps';
-    [1, 5, 10, 50].forEach(function(n) {
-      var btn = document.createElement('button');
-      btn.className = 'ie-bump';
-      btn.textContent = '+' + n;
-      btn.onclick = function(e) {
-        e.stopPropagation();
-        var v = parseInt(input.value) || 0;
-        input.value = v + n;
-        input.focus();
-      };
-      bumps.appendChild(btn);
-    });
-    wrap.appendChild(bumps);
-  }
 
   // Save/cancel row
   var actions = document.createElement('div');

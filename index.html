@@ -21,6 +21,7 @@
       <div class="topbar-mode" id="mode-toggle"></div>
     </div>
     <div class="topbar-right">
+      <button class="sync-all-btn" onclick="syncAll(function(n){showToast(n+' sources synced');render();})" title="Sync all connected sources">Sync</button>
       <button class="settings-btn" onclick="openSettings()" title="Settings">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       </button>
@@ -47,6 +48,7 @@
 <script src="js/data.js"></script>
 <script src="js/store.js"></script>
 <script src="js/benchmarks.js"></script>
+<script src="js/sync.js"></script>
 <script src="js/edit.js"></script>
 <script src="js/board.js"></script>
 <script src="js/weeks.js"></script>

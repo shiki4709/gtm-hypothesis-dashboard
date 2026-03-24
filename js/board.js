@@ -176,10 +176,26 @@ function renderExpRow(e) {
     '<div class="exp-verdict-g"><span class="verdict ' + vCls + '" onclick="event.stopPropagation();cycleVerdict(' + e.id + ')">' + (e.verdict || '—') + '</span></div>' +
     '</div>';
 
-  // Expandable detail — 3 zones: pipeline → AI → actions
+  // Expandable detail — 3 zones: source+pipeline → AI → actions
   html += '<div class="exp-expand-wrap" id="expand-' + e.id + '"><div class="exp-expand-inner"><div class="exp-detail">';
 
-  // 1. PIPELINE — the main thing you came to update
+  // 0. DATA SOURCE bar
+  var src = getSource(e.id);
+  if (src.type !== 'manual') {
+    var ago = src.lastSync ? Math.round((Date.now() - new Date(src.lastSync).getTime()) / 60000) : null;
+    var agoText = ago !== null ? (ago < 60 ? ago + 'm ago' : Math.round(ago / 60) + 'h ago') : 'never';
+    html += '<div class="exp-source">' +
+      '<span class="exp-source-type">' + (src.type === 'google_sheets' ? 'Google Sheets' : 'API') + '</span>' +
+      '<span class="exp-source-sync">Synced ' + agoText + '</span>' +
+      '<button class="exp-source-btn" onclick="event.stopPropagation();syncAndRefresh(' + e.id + ')">Refresh</button>' +
+      '<button class="exp-source-btn" onclick="event.stopPropagation();openConnect(' + e.id + ')">Settings</button></div>';
+  } else {
+    html += '<div class="exp-source exp-source-manual">' +
+      '<span class="exp-source-type">Manual tracking</span>' +
+      '<button class="exp-source-btn" onclick="event.stopPropagation();openConnect(' + e.id + ')">Connect data source</button></div>';
+  }
+
+  // 1. PIPELINE
   html += '<div class="pipe">';
   e.stages.forEach(function(stg, idx) {
     var isKey = e.rateIdx && (idx === e.rateIdx[0] || idx === e.rateIdx[1]);
@@ -216,6 +232,14 @@ function renderExpRow(e) {
   html += '</div>';
   html += '</div></div></div></div>';
   return html;
+}
+
+function syncAndRefresh(id) {
+  showToast('Syncing...');
+  syncExperiment(id, function(err, msg) {
+    showToast(err || msg);
+    render();
+  });
 }
 
 /* ── Editing ── */

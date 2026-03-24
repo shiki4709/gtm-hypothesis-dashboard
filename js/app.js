@@ -17,3 +17,6 @@ document.addEventListener('keydown', function(e) {
 
 // Boot
 render();
+
+// Auto-sync connected sources on load
+syncAll(function(n) { if (n > 0) { showToast(n + ' sources synced'); render(); } });

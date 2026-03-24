@@ -279,6 +279,16 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
 .pipe-input:focus { color: var(--accent); }
 .pipe-stage-label { font-size: 10px; color: var(--text-4); text-align: center; white-space: nowrap; }
 
+/* Conversion arrows between stages */
+.pipe-arrow {
+  font-size: var(--fs-xs); font-weight: 600; font-variant-numeric: tabular-nums;
+  padding: 0 var(--s-2); flex-shrink: 0; text-align: center;
+  display: flex; align-items: center; min-width: 2rem; justify-content: center;
+}
+.pipe-conv-good { color: var(--hit); }
+.pipe-conv-ok   { color: var(--change); }
+.pipe-conv-low  { color: var(--accent); }
+
 /* AI suggestion */
 .exp-ai { font-size: var(--fs-sm); color: var(--text-2); line-height: var(--lh-body); padding: var(--s-8) var(--s-12); background: var(--bg-sub); border-radius: var(--radius-sm); margin-bottom: var(--s-16); border-left: 3px solid var(--inbound); }
 .exp-ai-wait { color: var(--text-4); border-left-color: var(--rule); }

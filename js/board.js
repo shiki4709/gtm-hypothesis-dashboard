@@ -203,26 +203,22 @@ function renderExperiment(e) {
     }
     var vCls = verdictCls(v.verdict);
 
-    // Rate formula: show what's being divided
-    var rateFormula = '';
-    if (vRate !== '—' && v.rateIdx) {
-      var numStg = v.stages[v.rateIdx[0]];
-      var denStg = v.stages[v.rateIdx[1]];
-      if (numStg && denStg) {
-        rateFormula = numStg.val + ' ' + numStg.label.toLowerCase() + ' / ' + denStg.val + ' ' + denStg.label.toLowerCase();
-      }
-    }
-
     html += '<div class="var-card">' +
       '<div class="var-head">' +
       '<div class="var-name">' + vDot + v.name + '</div>' +
-      '<div class="var-rate-wrap"><span class="var-rate">' + vRate + '</span>' +
-      (rateFormula ? '<span class="var-rate-label">' + rateFormula + '</span>' : '') + '</div>' +
       '<span class="verdict ' + vCls + '" onclick="event.stopPropagation();cycleVarVerdict(' + e.id + ',\'' + v.id + '\')">' + (v.verdict || '—') + '</span></div>';
 
-    // Pipeline — direct editable inputs
+    // Pipeline — direct editable inputs with step conversions
     html += '<div class="pipe">';
     v.stages.forEach(function(stg, sIdx) {
+      // Conversion arrow between stages
+      if (sIdx > 0) {
+        var prev = v.stages[sIdx - 1].val;
+        var conv = prev > 0 ? ((stg.val / prev) * 100) : 0;
+        var convText = prev > 0 ? (conv >= 100 ? '×' + (stg.val / prev).toFixed(0) : conv.toFixed(0) + '%') : '—';
+        var convCls = conv >= 50 ? 'pipe-conv-good' : conv >= 20 ? 'pipe-conv-ok' : 'pipe-conv-low';
+        html += '<div class="pipe-arrow ' + convCls + '">' + convText + '</div>';
+      }
       var isKey = v.rateIdx && (sIdx === v.rateIdx[0] || sIdx === v.rateIdx[1]);
       html += '<div class="pipe-stage' + (isKey ? ' pipe-stage-key' : '') + '">' +
         '<input type="number" class="pipe-input" value="' + stg.val + '" min="0" ' +

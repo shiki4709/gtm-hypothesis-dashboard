@@ -176,6 +176,57 @@
     .time-chip:last-child::after { content: ''; margin: 0; }
     .time-chip .dot { width: 7px; height: 7px; border-radius: 50%; opacity: 0.75; }
 
+    /* ── Platform Flow ──────────────────────────────────────── */
+    .flow {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+    }
+    .flow-step {
+      flex: 1;
+      min-width: 80px;
+      padding: 12px 8px;
+      text-align: center;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.2s, background 0.15s;
+    }
+    .flow-step:hover {
+      background: rgba(0,0,0,0.02);
+    }
+    .flow-step.active {
+      border-bottom-color: var(--accent);
+    }
+    .flow-step .flow-name {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.2px;
+    }
+    .flow-step .flow-count {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+    .flow-step .flow-signups {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+    .flow-step .flow-signups.has-data {
+      color: var(--success);
+    }
+    .flow-step .flow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      margin: 0 auto 6px;
+    }
+
     /* ── Channel group ───────────────────────────────────────── */
     .ch-group { margin-bottom: 52px; }
     .ch-header {
@@ -747,6 +798,8 @@
 
 <div class="time-bar" id="time-bar"></div>
 
+<div class="flow" id="flow"></div>
+
 <div id="groups"></div>
 <div class="save-notice" id="saved">Saved</div>
 
@@ -763,35 +816,44 @@
 </div>
 
 <script>
-const K='gtm_v15';
+const K='gtm_v16';
 const CH={
-  outbound: { label:'Outbound', color:'#8a6e5a', metrics:['Sent','Replies','Signups'], rateLabel:'Reply Rate', rateCalc:(m)=>m[0]>0?((m[1]/m[0])*100).toFixed(1)+'%':'—', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>', source:'Dripify / manual count' },
-  social: { label:'Social', color:'#b06a52', metrics:['Posts/Replies','Engagements','Visits'], rateLabel:'Engagement Rate', rateCalc:(m)=>m[0]>0?((m[1]/m[0])*100).toFixed(1)+'%':'—', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>', source:'Manual count' },
-  events: { label:'Events', color:'#c48a3e', metrics:['Conversations','Contacts','Signups'], rateLabel:'Conv Rate', rateCalc:(m)=>m[0]>0?((m[2]/m[0])*100).toFixed(1)+'%':'—', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>', source:'Manual count at event' },
-  retention: { label:'Retention', color:'#7a7568', metrics:['Targeted','Engaged','Reactivated'], rateLabel:'Reactivation', rateCalc:(m)=>m[0]>0?((m[2]/m[0])*100).toFixed(1)+'%':'—', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>', source:'Product analytics' },
-  content: { label:'Content', color:'#9a6858', metrics:['Published','Impressions','Signups'], rateLabel:'Signup Rate', rateCalc:(m)=>m[1]>0?((m[2]/m[1])*100).toFixed(2)+'%':'—', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>', source:'Analytics' },
+  linkedin: { label:'LinkedIn', color:'#2563a8', metrics:['Sent','Replies','Signups'], rateLabel:'Reply Rate', rateCalc:(m)=>m[0]>0?((m[1]/m[0])*100).toFixed(1)+'%':'—', source:'Dripify / manual' },
+  twitter: { label:'Twitter', color:'#b06a52', metrics:['Replies Posted','Engagements','Visits'], rateLabel:'Engagement', rateCalc:(m)=>m[0]>0?((m[1]/m[0])*100).toFixed(1)+'%':'—', source:'Manual count' },
+  reddit: { label:'Reddit', color:'#c45d3e', metrics:['Replies Posted','Reply-backs','Visits'], rateLabel:'Reply-back', rateCalc:(m)=>m[0]>0?((m[1]/m[0])*100).toFixed(1)+'%':'—', source:'Manual count' },
+  events: { label:'Events', color:'#c48a3e', metrics:['Conversations','Contacts','Signups'], rateLabel:'Conv Rate', rateCalc:(m)=>m[0]>0?((m[2]/m[0])*100).toFixed(1)+'%':'—', source:'Manual count' },
+  email: { label:'Email', color:'#5a8a6a', metrics:['Sent','Opened','Signups'], rateLabel:'Open Rate', rateCalc:(m)=>m[0]>0?((m[1]/m[0])*100).toFixed(1)+'%':'—', source:'Email tool' },
+  product: { label:'Product', color:'#7a7568', metrics:['Targeted','Engaged','Activated'], rateLabel:'Activation', rateCalc:(m)=>m[0]>0?((m[2]/m[0])*100).toFixed(1)+'%':'—', source:'Product analytics' },
+  content: { label:'Content', color:'#9a6858', metrics:['Published','Impressions','Signups'], rateLabel:'Signup Rate', rateCalc:(m)=>m[1]>0?((m[2]/m[1])*100).toFixed(2)+'%':'—', source:'Analytics' },
 };
 
 const D=[
-  {id:1,pri:0,ch:'outbound',name:"Autopilot Outbound",idea:"Reads ICP filters, sends connection requests on autopilot via Sales Nav → Dripify drip sequences.",platform:"LinkedIn, Sales Nav, Dripify",goal:"Drive signups from automated outbound",target:">25% accept, >10% reply",scope:"200 requests · 7 days",status:"Testing",next:"",m:[200,17,3],hours:4},
-  {id:2,pri:0,ch:'outbound',name:"Post Engagers",idea:"Scrape engagements from posts like rmeadows. Build lead lists from engagers.",platform:"LinkedIn, PhantomBuster",goal:"Warm leads from post engagement",target:">3x response vs cold",scope:"1 post · 50 leads · 7 days",status:"Working",next:"Run on 5 more posts. Commenters only.",m:[34,8,5],hours:2},
-  {id:3,pri:0,ch:'outbound',name:"Referral Posts",idea:"Find 'calling on my network' posts. DM people asking for tool recs.",platform:"LinkedIn",goal:"Reach buyers actively evaluating",target:">30% DM response",scope:"20 DMs · 7 days",status:"Testing",next:"",m:[20,7,2],hours:1.5},
-  {id:4,pri:0,ch:'outbound',name:"Influencer Monitor",idea:"Follow Mark Roberge etc, see which AEs engage, DM them.",platform:"LinkedIn",goal:"Surface in-market AEs",target:">20% DM response",scope:"5 influencers · 30 DMs · 7 days",status:"Testing",next:"",m:[30,4,1],hours:2},
-  {id:5,pri:0,ch:'outbound',name:"Warm Intros",idea:"Mine LinkedIn network → warm intros to target accounts.",platform:"LinkedIn, Sales Nav",goal:"Convert network into signups",target:">40% meeting rate",scope:"10 intros · 7 days",status:"Working",next:"Draft blurbs for Maruthi.",m:[10,5,3],hours:1},
-  {id:6,pri:0,ch:'outbound',name:"Gift Outreach",idea:"Find interesting thing about AE, send personalized gift.",platform:"LinkedIn, Email",goal:"Test if gifts lift response rate",target:">35% response",scope:"15 AEs · $75 · 7 days",status:"Testing",next:"",m:[15,4,1],hours:3},
-  {id:7,pri:0,ch:'events',name:"Coffee Events",idea:"Coffee at sales meetups, start conversations with AEs.",platform:"In-person events",goal:"Convert conversations into signups",target:">50% conv-to-signup",scope:"2 events · 40 convos",status:"Working",next:"Book 2 more. Test branded cups.",m:[40,18,3],hours:5},
-  {id:8,pri:1,ch:'social',name:"Twitter Outreach",idea:"Reply to right people on Twitter. Surface AEs talking about sales pain.",platform:"Twitter/X",goal:"Build presence + find AEs",target:">15% engagement",scope:"20 replies/day · 7 days",status:"Testing",next:"",m:[100,6,0],hours:2},
-  {id:9,pri:1,ch:'social',name:"Reddit Listening",idea:"Surface Reddit posts about sales pain. Reply with value.",platform:"Reddit",goal:"Find AEs venting about competitors",target:">20% reply-back",scope:"20 replies · 7 days",status:"Testing",next:"",m:[20,4,0],hours:1.5},
-  {id:10,pri:1,ch:'retention',name:"User Segmentation",idea:"Churned / returned / retained users. Segment and re-engage.",platform:"Email, In-App",goal:"Reactivate churned users",target:">5% reactivation",scope:"All churned 90d · 30 days",status:"Testing",next:"Need product data access.",m:[0,0,0],hours:0},
-  {id:11,pri:1,ch:'retention',name:"In-App Nudges",idea:"Slack broadcasts + in-platform messaging for underused features.",platform:"Slack, In-App",goal:"Increase feature adoption",target:">15% usage increase",scope:"3 prompts · 7 days",status:"Testing",next:"Need analytics access.",m:[0,0,0],hours:0},
-  {id:12,pri:1,ch:'retention',name:"Docs Rewrite",idea:"Product documentation and enablement.",platform:"Website",goal:"Reduce time-to-value",target:">30% ticket reduction",scope:"3 docs · 7 days",status:"Testing",next:"Need support data.",m:[0,0,0],hours:0},
+  {id:1,pri:0,ch:'linkedin',name:"Autopilot Outbound",idea:"Reads ICP filters, sends connection requests on autopilot via Sales Nav → Dripify drip sequences.",platform:"Sales Nav, Dripify",goal:"Drive signups from automated outbound",target:">25% accept, >10% reply",scope:"200 requests · 7 days",status:"Testing",next:"",m:[200,17,3],hours:4},
+  {id:2,pri:0,ch:'linkedin',name:"Post Engagers",idea:"Scrape engagements from posts like rmeadows. Build lead lists from engagers.",platform:"PhantomBuster",goal:"Warm leads from post engagement",target:">3x response vs cold",scope:"1 post · 50 leads · 7 days",status:"Working",next:"Run on 5 more posts. Commenters only.",m:[34,8,5],hours:2},
+  {id:3,pri:0,ch:'linkedin',name:"Referral Posts",idea:"Find 'calling on my network' posts. DM people asking for tool recs.",platform:"LinkedIn Search",goal:"Reach buyers actively evaluating",target:">30% DM response",scope:"20 DMs · 7 days",status:"Testing",next:"",m:[20,7,2],hours:1.5},
+  {id:4,pri:0,ch:'linkedin',name:"Influencer Monitor",idea:"Follow Mark Roberge etc, see which AEs engage, DM them.",platform:"LinkedIn",goal:"Surface in-market AEs",target:">20% DM response",scope:"5 influencers · 30 DMs · 7 days",status:"Testing",next:"",m:[30,4,1],hours:2},
+  {id:5,pri:0,ch:'linkedin',name:"Warm Intros",idea:"Mine LinkedIn network → warm intros to target accounts.",platform:"Sales Nav TeamLink",goal:"Convert network into signups",target:">40% meeting rate",scope:"10 intros · 7 days",status:"Working",next:"Draft blurbs for Maruthi.",m:[10,5,3],hours:1},
+  {id:6,pri:0,ch:'email',name:"Gift Outreach",idea:"Find interesting thing about AE, send personalized gift.",platform:"Email, Starbucks",goal:"Test if gifts lift response rate",target:">35% response",scope:"15 AEs · $75 · 7 days",status:"Testing",next:"",m:[15,4,1],hours:3},
+  {id:7,pri:0,ch:'events',name:"Coffee Events",idea:"Coffee at sales meetups, start conversations with AEs.",platform:"In-person",goal:"Convert conversations into signups",target:">50% conv-to-signup",scope:"2 events · 40 convos",status:"Working",next:"Book 2 more. Test branded cups.",m:[40,18,3],hours:5},
+  {id:8,pri:1,ch:'twitter',name:"Twitter Outreach",idea:"Reply to right people on Twitter. Surface AEs talking about sales pain.",platform:"Twitter/X",goal:"Build presence + find AEs",target:">15% engagement",scope:"20 replies/day · 7 days",status:"Testing",next:"",m:[100,6,0],hours:2},
+  {id:9,pri:1,ch:'reddit',name:"Reddit Listening",idea:"Surface Reddit posts about sales pain. Reply with value.",platform:"Reddit",goal:"Find AEs venting about competitors",target:">20% reply-back",scope:"20 replies · 7 days",status:"Testing",next:"",m:[20,4,0],hours:1.5},
+  {id:10,pri:1,ch:'product',name:"User Segmentation",idea:"Churned / returned / retained users. Segment and re-engage.",platform:"Email, In-App",goal:"Reactivate churned users",target:">5% reactivation",scope:"All churned 90d · 30 days",status:"Testing",next:"Need product data access.",m:[0,0,0],hours:0},
+  {id:11,pri:1,ch:'product',name:"In-App Nudges",idea:"Slack broadcasts + in-platform messaging for underused features.",platform:"Slack, In-App",goal:"Increase feature adoption",target:">15% usage increase",scope:"3 prompts · 7 days",status:"Testing",next:"Need analytics access.",m:[0,0,0],hours:0},
+  {id:12,pri:1,ch:'product',name:"Docs Rewrite",idea:"Product documentation and enablement.",platform:"Website",goal:"Reduce time-to-value",target:">30% ticket reduction",scope:"3 docs · 7 days",status:"Testing",next:"Need support data.",m:[0,0,0],hours:0},
   {id:13,pri:2,ch:'content',name:"SEO Sprint",idea:"AI SEO — rank for AE pain keywords.",platform:"Website, Google",goal:"Organic traffic from search",target:">500 imp, >2% CTR",scope:"3 posts · 60 days",status:"Stopped",next:"Parked. Focus outbound first.",m:[0,0,0],hours:0},
   {id:14,pri:2,ch:'content',name:"Content Blitz",idea:"Organic content across LinkedIn, Twitter, Reddit, HN, Quora.",platform:"Multi-channel",goal:"Prospects see Nevara everywhere",target:">50 imp/post",scope:"3 posts × 5 channels",status:"Stopped",next:"Parked. Needs 30+ posts.",m:[0,0,0],hours:0},
 ];
 
+let activeFlow='linkedin';
+
 function load(){const s=localStorage.getItem(K);if(s)return JSON.parse(s);save(D);return D;}
 function save(d){localStorage.setItem(K,JSON.stringify(d));}
 function flash(){document.getElementById('saved').classList.add('show');setTimeout(()=>document.getElementById('saved').classList.remove('show'),1200);}
+
+function setFlow(ch){
+  activeFlow=ch;
+  render();
+}
 
 function render(){
   const exps=load();
@@ -814,20 +876,32 @@ function render(){
     ${Object.entries(timeByChannel).sort((a,b)=>b[1]-a[1]).map(([ch,h])=>`<span class="time-chip"><span class="dot" style="background:${CH[ch].color}"></span>${CH[ch].label} ${h}h</span>`).join('')}
   `;
 
-  // Group by channel type, then by priority within
+  // Group by platform
   const groups={};
   exps.forEach(e=>{
-    const c=e.ch||'outbound';
+    const c=e.ch||'linkedin';
     if(!groups[c])groups[c]=[];
     groups[c].push(e);
   });
 
-  // Order: outbound first (most experiments), then by total signups desc
-  const groupOrder=Object.keys(groups).sort((a,b)=>{
-    const sa=groups[a].reduce((s,e)=>s+(e.m?e.m[2]:0),0);
-    const sb=groups[b].reduce((s,e)=>s+(e.m?e.m[2]:0),0);
-    return sb-sa;
-  });
+  // Render flow chart
+  const flowOrder=['linkedin','twitter','reddit','events','email','product','content'];
+  const flowHtml=flowOrder.filter(k=>groups[k]).map(k=>{
+    const info=CH[k];
+    const gExps=groups[k]||[];
+    const signups=gExps.reduce((s,e)=>s+(e.m?e.m[2]:0),0);
+    const count=gExps.length;
+    return `<div class="flow-step ${activeFlow===k?'active':''}" onclick="setFlow('${k}')">
+      <div class="flow-dot" style="background:${info.color}"></div>
+      <div class="flow-name">${info.label}</div>
+      <div class="flow-count">${count} exp${count!==1?'s':''}</div>
+      <div class="flow-signups ${signups>0?'has-data':''}">${signups}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('flow').innerHTML=flowHtml;
+
+  // Only show active flow group
+  const groupOrder=[activeFlow].filter(k=>groups[k]);
 
   let html='';
   for(const chKey of groupOrder){
@@ -960,9 +1034,9 @@ function editNext(id,el){
 }
 
 // Chat
-const SM={'linkedin':{ch:'outbound',name:'LinkedIn Outbound',target:'>20% reply',scope:'50 · 7 days'},'sales nav':{ch:'outbound',name:'Sales Nav Outbound',target:'>25% accept',scope:'200 · 7 days'},'reddit':{ch:'social',name:'Reddit Listening',target:'>20% reply-back',scope:'20 replies · 7 days'},'twitter':{ch:'social',name:'Twitter Outreach',target:'>15% engagement',scope:'20/day · 7 days'},'event':{ch:'events',name:'Event Marketing',target:'>5 signups/event',scope:'2 events'},'coffee':{ch:'events',name:'Coffee Events',target:'>50% conv-to-signup',scope:'2 events · 40 convos'},'email':{ch:'retention',name:'Email Campaign',target:'>40% open',scope:'100 sends · 7 days'},'churn':{ch:'retention',name:'Win-Back',target:'>5% reactivation',scope:'All churned 90d'},'seo':{ch:'content',name:'SEO Sprint',target:'>500 imp, >2% CTR',scope:'3 posts · 60 days'},'content':{ch:'content',name:'Content Push',target:'>50 imp/post',scope:'3 posts · 7 days'},'slack':{ch:'retention',name:'Slack Broadcast',target:'>15% engagement',scope:'3 messages'},'in-app':{ch:'retention',name:'In-App Nudges',target:'>15% usage increase',scope:'3 prompts · 7 days'},'gift':{ch:'outbound',name:'Gift Outreach',target:'>35% response',scope:'15 · $75 · 7 days'},'influencer':{ch:'outbound',name:'Influencer Monitor',target:'>20% DM response',scope:'5 influencers · 30 DMs'},'warm':{ch:'outbound',name:'Warm Intros',target:'>40% meeting rate',scope:'10 intros · 7 days'},'referral':{ch:'outbound',name:'Referral Posts',target:'>30% DM response',scope:'20 DMs · 7 days'},'scrape':{ch:'outbound',name:'Post Engagers',target:'>3x vs cold',scope:'1 post · 50 leads'},'docs':{ch:'retention',name:'Docs Rewrite',target:'>30% ticket reduction',scope:'3 docs · 7 days'}};
+const SM={'linkedin':{ch:'linkedin',name:'LinkedIn Outbound',target:'>20% reply',scope:'50 · 7 days'},'sales nav':{ch:'linkedin',name:'Sales Nav Outbound',target:'>25% accept',scope:'200 · 7 days'},'reddit':{ch:'reddit',name:'Reddit Listening',target:'>20% reply-back',scope:'20 replies · 7 days'},'twitter':{ch:'twitter',name:'Twitter Outreach',target:'>15% engagement',scope:'20/day · 7 days'},'event':{ch:'events',name:'Event Marketing',target:'>5 signups/event',scope:'2 events'},'coffee':{ch:'events',name:'Coffee Events',target:'>50% conv-to-signup',scope:'2 events · 40 convos'},'email':{ch:'email',name:'Email Campaign',target:'>40% open',scope:'100 sends · 7 days'},'churn':{ch:'product',name:'Win-Back',target:'>5% reactivation',scope:'All churned 90d'},'seo':{ch:'content',name:'SEO Sprint',target:'>500 imp, >2% CTR',scope:'3 posts · 60 days'},'content':{ch:'content',name:'Content Push',target:'>50 imp/post',scope:'3 posts · 7 days'},'slack':{ch:'product',name:'Slack Broadcast',target:'>15% engagement',scope:'3 messages'},'in-app':{ch:'product',name:'In-App Nudges',target:'>15% usage increase',scope:'3 prompts · 7 days'},'gift':{ch:'email',name:'Gift Outreach',target:'>35% response',scope:'15 · $75 · 7 days'},'influencer':{ch:'linkedin',name:'Influencer Monitor',target:'>20% DM response',scope:'5 influencers · 30 DMs'},'warm':{ch:'linkedin',name:'Warm Intros',target:'>40% meeting rate',scope:'10 intros · 7 days'},'referral':{ch:'linkedin',name:'Referral Posts',target:'>30% DM response',scope:'20 DMs · 7 days'},'scrape':{ch:'linkedin',name:'Post Engagers',target:'>3x vs cold',scope:'1 post · 50 leads'},'docs':{ch:'product',name:'Docs Rewrite',target:'>30% ticket reduction',scope:'3 docs · 7 days'}};
 
-function suggest(idea){const l=idea.toLowerCase();let b=null,bs=0;for(const[k,s]of Object.entries(SM)){if(l.includes(k)&&k.length>bs){b=s;bs=k.length;}}return b||{ch:'outbound',name:idea.split(' ').slice(0,3).join(' '),target:'TBD',scope:'7 days'};}
+function suggest(idea){const l=idea.toLowerCase();let b=null,bs=0;for(const[k,s]of Object.entries(SM)){if(l.includes(k)&&k.length>bs){b=s;bs=k.length;}}return b||{ch:'linkedin',name:idea.split(' ').slice(0,3).join(' '),target:'TBD',scope:'7 days'};}
 
 let cp=0,cd={};
 function openModal(){cp=0;cd={};document.getElementById('modal').classList.add('open');document.getElementById('chat-msgs').innerHTML='';resetCI();setTimeout(()=>{addBot("What's the idea? Describe it however you want.");document.getElementById('chat-in').focus();},200);}
@@ -992,7 +1066,7 @@ function skipStep(){if(cp===0){cd.idea='';cp=1;addBot("What's the goal?");}else{
 
 function confirmAdd(){
   const exps=load(),id=exps.reduce((m,e)=>Math.max(m,e.id),0)+1;
-  exps.push({id,pri:1,ch:cd.ch||'outbound',name:cd.name,idea:cd.idea||'',goal:cd.goal||'',platform:'',target:cd.target||'',scope:cd.scope||'',status:'Testing',next:'',m:[0,0,0],hours:0});
+  exps.push({id,pri:1,ch:cd.ch||'linkedin',name:cd.name,idea:cd.idea||'',goal:cd.goal||'',platform:'',target:cd.target||'',scope:cd.scope||'',status:'Testing',next:'',m:[0,0,0],hours:0});
   save(exps);flash();closeModal();render();
   setTimeout(()=>{const c=document.getElementById('exp-'+id);if(c){c.classList.add('highlight');c.scrollIntoView({behavior:'smooth',block:'center'});}},200);
 }

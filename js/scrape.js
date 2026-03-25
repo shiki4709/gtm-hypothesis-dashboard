@@ -85,12 +85,8 @@ function generateDemoLeads(postUrl) {
 
 /* --- Run scrape --- */
 function getApiUrl() {
-  // If served from localhost (Flask server), use same origin
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    return '';
-  }
-  // Otherwise try localhost:5001 (server running separately)
-  return 'http://localhost:5001';
+  // Same origin — works on Vercel, localhost, and any deployment
+  return '';
 }
 
 function runScrape(postUrl, callback) {

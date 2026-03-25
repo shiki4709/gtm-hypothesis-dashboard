@@ -676,7 +676,39 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
   transition: opacity var(--dur-fast) var(--ease-out); white-space: nowrap;
 }
 .scrape-go-btn:hover { opacity: 0.85; }
+.scrape-find-btn {
+  padding: var(--s-12) var(--s-24); font-family: var(--ff-body); font-size: var(--fs-sm);
+  font-weight: 600; color: var(--inbound); background: var(--inbound-bg);
+  border: 1.5px solid var(--inbound); border-radius: var(--radius); cursor: pointer;
+  transition: opacity var(--dur-fast) var(--ease-out); white-space: nowrap;
+}
+.scrape-find-btn:hover { opacity: 0.85; }
 .scrape-hint { font-size: var(--fs-xs); color: var(--text-4); margin-top: var(--s-6); }
+
+/* Found posts */
+.rc-found { margin-bottom: var(--s-24); }
+.rc-found-title {
+  font-size: var(--fs-xs); font-weight: 600; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: var(--s-8);
+}
+.rc-found-post {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: var(--s-12) var(--s-16); border: 1px solid var(--rule-faint);
+  border-radius: var(--radius-sm); margin-bottom: var(--s-6);
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+.rc-found-post:hover { border-color: var(--rule); }
+.rc-found-info { min-width: 0; flex: 1; }
+.rc-found-post-title {
+  font-size: var(--fs-sm); font-weight: 500; color: var(--text);
+  text-transform: capitalize;
+}
+.rc-found-author { font-size: var(--fs-xs); color: var(--text-4); margin-top: var(--s-2); }
+.rc-found-scrape {
+  padding: var(--s-6) var(--s-16); font-size: var(--fs-xs); flex-shrink: 0;
+}
 
 /* ICP config */
 .scrape-icp { margin-bottom: var(--s-24); border: 1px solid var(--rule-faint); border-radius: var(--radius); }

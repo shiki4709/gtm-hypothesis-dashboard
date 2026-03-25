@@ -121,6 +121,8 @@ def _scrape_commenters(post_url, post_id, cookies):
     if resp.status_code != 200:
         return []
 
+    # Force UTF-8 decoding and unescape HTML entities
+    resp.encoding = "utf-8"
     decoded = htmlmod.unescape(resp.text)
     json_blocks = re.findall(r'<code[^>]*>(.*?)</code>', decoded, re.DOTALL)
 
@@ -146,6 +148,23 @@ def _scrape_commenters(post_url, post_id, cookies):
                     headline = headline.get("text", "")
                 nav_url = c.get("navigationUrl", "")
                 comment_text = item.get("commentary", {}).get("text", "")
+
+                # Fix double-encoded UTF-8 (â\x80\x99 → ')
+                if comment_text:
+                    try:
+                        comment_text = comment_text.encode("latin-1").decode("utf-8")
+                    except (UnicodeDecodeError, UnicodeEncodeError):
+                        pass
+                if name:
+                    try:
+                        name = name.encode("latin-1").decode("utf-8")
+                    except (UnicodeDecodeError, UnicodeEncodeError):
+                        pass
+                if headline and isinstance(headline, str):
+                    try:
+                        headline = headline.encode("latin-1").decode("utf-8")
+                    except (UnicodeDecodeError, UnicodeEncodeError):
+                        pass
 
                 if not name or nav_url in seen_urls:
                     continue

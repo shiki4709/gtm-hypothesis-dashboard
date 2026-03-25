@@ -302,54 +302,45 @@ function renderRunner() {
         '</div>';
 
       // ── Lead list: ICP matches shown directly, others collapsed ──
-      if (matched.length > 0) {
-        html += '<div class="rc-leads">';
-        html += '<div class="rc-leads-title">ICP Matches</div>';
-        matched.forEach(function(l) {
-          var profileUrl = l.linkedin_url || '';
-          var comment = l.comment_text ? '<div class="rc-lead-comment">"' + l.comment_text.substring(0, 120) + (l.comment_text.length > 120 ? '...' : '') + '"</div>' : '';
-          html += '<div class="rc-lead">' +
-            '<div class="rc-lead-info">' +
-            '<a href="' + profileUrl + '" target="_blank" rel="noopener" class="rc-lead-name">' + l.name +
-            (l.comment_text ? ' <span class="rc-lead-badge">commented</span>' : '') + '</a>' +
-            '<div class="rc-lead-title">' + (l.title || 'No headline') + '</div>' +
-            comment +
-            '</div>' +
-            '<a href="' + profileUrl + '" target="_blank" rel="noopener" class="runner-msg-btn">Message</a>' +
-            '</div>';
-        });
-        html += '</div>';
-      }
+      // Sort all leads by engagement quality:
+      // 1. ICP + commented, 2. Commented (not ICP), 3. ICP + liked, 4. Liked (not ICP)
+      var sorted = sc.leads.slice().sort(function(a, b) {
+        var scoreA = (a.comment_text ? 2 : 0) + (a.icp_match ? 1 : 0);
+        var scoreB = (b.comment_text ? 2 : 0) + (b.icp_match ? 1 : 0);
+        return scoreB - scoreA;
+      });
 
-      // Others — show first 5, collapse the rest
-      var others = sc.leads.filter(function(l) { return !l.icp_match; });
-      if (others.length > 0) {
-        html += '<div class="rc-leads rc-leads-dim">';
-        html += '<div class="rc-leads-title">All engagers (' + others.length + ')</div>';
-        var preview = others.slice(0, 5);
-        preview.forEach(function(l) {
-          var profileUrl = l.linkedin_url || '';
-          html += '<div class="rc-lead">' +
-            '<div class="rc-lead-info">' +
-            '<a href="' + profileUrl + '" target="_blank" rel="noopener" class="rc-lead-name">' + l.name + '</a>' +
-            '<div class="rc-lead-title">' + (l.title || 'No headline') + '</div>' +
-            '</div></div>';
+      // Show top leads (commenters + ICP likers) directly
+      var topLeads = sorted.filter(function(l) { return l.comment_text || l.icp_match; });
+      var restLeads = sorted.filter(function(l) { return !l.comment_text && !l.icp_match; });
+
+      // All leads in one list, sorted by quality, folded after first batch
+      if (sorted.length > 0) {
+        // Count for summary
+        var commentCount = sorted.filter(function(l) { return l.comment_text; }).length;
+        var icpCount = matched.length;
+
+        html += '<div class="rc-leads">';
+        html += '<div class="rc-leads-title">' + sorted.length + ' engagers · ' + commentCount + ' commented · ' + icpCount + ' ICP</div>';
+
+        // Show first 15, fold the rest
+        var showLimit = 15;
+        sorted.slice(0, showLimit).forEach(function(l) {
+          html += renderLeadRow(l);
         });
-        if (others.length > 5) {
+
+        if (sorted.length > showLimit) {
           html += '<details class="runner-leads"><summary class="runner-leads-toggle">' +
-            (others.length - 5) + ' more</summary>';
-          others.slice(5).forEach(function(l) {
-            var profileUrl = l.linkedin_url || '';
-            html += '<div class="rc-lead">' +
-              '<div class="rc-lead-info">' +
-              '<a href="' + profileUrl + '" target="_blank" rel="noopener" class="rc-lead-name">' + l.name + '</a>' +
-              '<div class="rc-lead-title">' + (l.title || 'No headline') + '</div>' +
-              '</div></div>';
+            (sorted.length - showLimit) + ' more</summary>';
+          sorted.slice(showLimit).forEach(function(l) {
+            html += renderLeadRow(l);
           });
           html += '</details>';
         }
         html += '</div>';
       }
+
+      // (all leads shown in the sorted list above)
 
       html += '</div>';
     });
@@ -391,6 +382,23 @@ function renderPipeArrow(from, to) {
   var text = from > 0 ? conv.toFixed(0) + '%' : '—';
   var cls = conv >= 50 ? 'pipe-conv-good' : conv >= 20 ? 'pipe-conv-ok' : 'pipe-conv-low';
   return '<div class="runner-arrow ' + cls + '">' + text + '</div>';
+}
+
+function renderLeadRow(l) {
+  var profileUrl = l.linkedin_url || '';
+  var badges = '';
+  if (l.icp_match) badges += '<span class="rc-lead-badge">ICP</span>';
+  if (l.comment_text) badges += '<span class="rc-lead-badge rc-lead-badge-comment">commented</span>';
+  var comment = l.comment_text ? '<div class="rc-lead-comment">"' + l.comment_text.substring(0, 150) + (l.comment_text.length > 150 ? '...' : '') + '"</div>' : '';
+  var dimClass = (!l.icp_match && !l.comment_text) ? ' rc-lead-dim' : '';
+  return '<div class="rc-lead' + dimClass + '">' +
+    '<div class="rc-lead-info">' +
+    '<a href="' + profileUrl + '" target="_blank" rel="noopener" class="rc-lead-name">' + l.name + ' ' + badges + '</a>' +
+    '<div class="rc-lead-title">' + (l.title || 'No headline') + '</div>' +
+    comment +
+    '</div>' +
+    '<a href="' + profileUrl + '" target="_blank" rel="noopener" class="runner-msg-btn">Message</a>' +
+    '</div>';
 }
 
 function renderWorkflowGuide(icpCount, dmsSent, replied, signedUp, scIdx) {

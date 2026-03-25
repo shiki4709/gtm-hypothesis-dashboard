@@ -676,6 +676,11 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
   transition: opacity var(--dur-fast) var(--ease-out); white-space: nowrap;
 }
 .scrape-go-btn:hover { opacity: 0.85; }
+.scrape-time-select {
+  padding: var(--s-8) var(--s-12); font-family: var(--ff-body); font-size: var(--fs-xs);
+  border: 1.5px solid var(--rule); border-radius: var(--radius);
+  background: var(--bg); color: var(--text-2); cursor: pointer;
+}
 .scrape-find-btn {
   padding: var(--s-12) var(--s-24); font-family: var(--ff-body); font-size: var(--fs-sm);
   font-weight: 600; color: var(--inbound); background: var(--inbound-bg);
@@ -684,6 +689,9 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
 }
 .scrape-find-btn:hover { opacity: 0.85; }
 .scrape-hint { font-size: var(--fs-xs); color: var(--text-4); margin-top: var(--s-6); }
+.scrape-hint-row { font-size: var(--fs-xs); color: var(--text-4); margin-top: var(--s-6); }
+.scrape-find-link { color: var(--inbound); text-decoration: none; font-weight: 500; }
+.scrape-find-link:hover { text-decoration: underline; }
 
 /* Found posts */
 .rc-found { margin-bottom: var(--s-24); }
@@ -702,10 +710,22 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
 .rc-found-post:hover { border-color: var(--rule); }
 .rc-found-info { min-width: 0; flex: 1; }
 .rc-found-post-title {
-  font-size: var(--fs-sm); font-weight: 500; color: var(--text);
-  text-transform: capitalize;
+  font-size: var(--fs-sm); font-weight: 500; color: var(--inbound);
+  text-decoration: none; display: block;
 }
-.rc-found-author { font-size: var(--fs-xs); color: var(--text-4); margin-top: var(--s-2); }
+.rc-found-post-title:hover { text-decoration: underline; }
+.rc-found-author { font-size: var(--fs-xs); color: var(--text-3); margin-top: var(--s-2); text-transform: capitalize; }
+.rc-found-snippet {
+  font-size: var(--fs-xs); color: var(--text-4); margin-top: var(--s-4);
+  line-height: var(--lh-body); display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.rc-found-actions { display: flex; gap: var(--s-8); flex-shrink: 0; align-items: center; }
+.rc-found-view {
+  font-size: var(--fs-xs); font-weight: 500; color: var(--text-3);
+  text-decoration: none; white-space: nowrap;
+}
+.rc-found-view:hover { color: var(--inbound); text-decoration: underline; }
 .rc-found-scrape {
   padding: var(--s-6) var(--s-16); font-size: var(--fs-xs); flex-shrink: 0;
 }

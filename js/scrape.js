@@ -207,41 +207,22 @@ function renderRunner() {
 
   // ── Find posts + Scrape input ──
   html += '<div class="scrape-input-section">' +
-    // Find posts by keyword
     '<div class="scrape-input-row">' +
-    '<input type="text" class="scrape-url-input" id="find-keywords" ' +
-    'placeholder="Find posts about... (e.g. GTM playbook, sales AI)" ' +
-    'onkeydown="if(event.key===\'Enter\')findPosts()">' +
-    '<button class="scrape-find-btn" id="find-go" onclick="findPosts()">Find Posts</button>' +
-    '</div>' +
-    // Scrape a specific URL
-    '<div class="scrape-input-row" style="margin-top:var(--s-8)">' +
     '<input type="text" class="scrape-url-input" id="scrape-url" ' +
-    'placeholder="Or paste a LinkedIn post URL directly..." ' +
+    'placeholder="Paste a LinkedIn post URL..." ' +
     'onkeydown="if(event.key===\'Enter\')startScrape()">' +
     '<button class="scrape-go-btn" id="scrape-go" onclick="startScrape()">Scrape</button>' +
+    '</div>' +
+    '<div class="scrape-hint-row">' +
+    '<a href="https://www.linkedin.com/search/results/content/?keywords=GTM&sortBy=%22date_posted%22" target="_blank" rel="noopener" class="scrape-find-link">Search LinkedIn for posts</a>' +
+    ' · Copy any post URL and paste it above' +
     '</div>' +
     '<div class="scrape-hint">' +
     '<span onclick="toggleICPConfig()" style="cursor:pointer;text-decoration:underline dotted;color:var(--text-3)">ICP: ' +
     icp.titles.slice(0, 4).join(', ') + (icp.titles.length > 4 ? '...' : '') + '</span></div>' +
     '</div>';
 
-  // ── Found posts (if any) ──
-  var found = getFoundPosts();
-  if (found.length > 0) {
-    html += '<div class="rc-found">';
-    html += '<div class="rc-found-title">Found posts <button class="scrape-remove-btn" onclick="clearFoundPosts()">Clear</button></div>';
-    found.forEach(function(p) {
-      html += '<div class="rc-found-post">' +
-        '<div class="rc-found-info">' +
-        '<div class="rc-found-post-title">' + p.title + '</div>' +
-        '<div class="rc-found-author">@' + p.author + '</div>' +
-        '</div>' +
-        '<button class="scrape-go-btn rc-found-scrape" onclick="scrapeFoundPost(\'' + p.url.replace(/'/g, "\\'") + '\')">Scrape</button>' +
-        '</div>';
-    });
-    html += '</div>';
-  }
+  // (post discovery removed — LinkedIn blocks all search APIs)
 
   // ICP config (hidden by default)
   html += '<div class="scrape-icp-body" id="icp-config" style="display:none;margin-bottom:var(--s-24)">' +
@@ -597,7 +578,8 @@ function findPosts() {
     showToast('Search timed out');
   };
 
-  xhr.send(JSON.stringify({ keywords: keywords }));
+  var timeframe = document.getElementById('find-timeframe').value;
+  xhr.send(JSON.stringify({ keywords: keywords, timeframe: timeframe }));
 }
 
 function scrapeFoundPost(url) {

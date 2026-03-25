@@ -412,6 +412,49 @@ function renderPipeArrow(from, to) {
   return '<div class="runner-arrow ' + cls + '">' + text + '</div>';
 }
 
+/* --- Message tracking --- */
+var MSG_KEY = 'gtm_messaged_v1';
+
+function loadMessaged() {
+  var s = localStorage.getItem(MSG_KEY);
+  return s ? JSON.parse(s) : {};
+}
+
+function saveMessaged(d) {
+  localStorage.setItem(MSG_KEY, JSON.stringify(d));
+}
+
+function markMessaged(profileUrl) {
+  var d = loadMessaged();
+  d[profileUrl] = new Date().toISOString();
+  saveMessaged(d);
+  // Auto-update pipeline DMs Sent count
+  autoUpdatePipelineCounts();
+  render();
+}
+
+function autoUpdatePipelineCounts() {
+  var messaged = loadMessaged();
+  var scrapes = loadScrapes();
+  scrapes.forEach(function(sc) {
+    var count = sc.leads.filter(function(l) { return messaged[l.linkedin_url]; }).length;
+    if (!sc.pipeline) sc.pipeline = {};
+    sc.pipeline.dmsSent = count;
+  });
+  saveScrapes(scrapes);
+}
+
+function unmarkMessaged(profileUrl) {
+  var d = loadMessaged();
+  delete d[profileUrl];
+  saveMessaged(d);
+  render();
+}
+
+function isMessaged(profileUrl) {
+  return !!loadMessaged()[profileUrl];
+}
+
 /* --- Lead filters (per scrape) --- */
 var leadFilters = {};
 
@@ -427,19 +470,57 @@ function toggleLeadFilter(scrapeId, type) {
 
 function renderLeadRow(l) {
   var profileUrl = l.linkedin_url || '';
+  var messaged = isMessaged(profileUrl);
   var badges = '';
   if (l.icp_match) badges += '<span class="rc-lead-badge">ICP</span>';
   if (l.comment_text) badges += '<span class="rc-lead-badge rc-lead-badge-comment">commented</span>';
+  if (messaged) badges += '<span class="rc-lead-badge rc-lead-badge-sent">sent</span>';
   var comment = l.comment_text ? '<div class="rc-lead-comment">"' + l.comment_text.substring(0, 150) + (l.comment_text.length > 150 ? '...' : '') + '"</div>' : '';
   var dimClass = (!l.icp_match && !l.comment_text) ? ' rc-lead-dim' : '';
-  return '<div class="rc-lead' + dimClass + '">' +
+  var sentClass = messaged ? ' rc-lead-sent' : '';
+
+  var firstName = l.name.split(' ')[0];
+  var postTitle = extractPostTitle(l.scraped_from || '');
+
+  var btn = '';
+  if (messaged) {
+    btn = '<button class="runner-undo-btn" onclick="event.stopPropagation();unmarkMessaged(\'' + profileUrl.replace(/'/g, "\\'") + '\')">Undo</button>';
+  } else {
+    btn = '<button class="runner-msg-btn" onclick="event.stopPropagation();messageAndTrack(\'' + profileUrl.replace(/'/g, "\\'") + '\',\'' + firstName.replace(/'/g, "\\'") + '\',\'' + (l.comment_text || '').substring(0, 80).replace(/'/g, "\\'").replace(/\n/g, ' ') + '\',\'' + postTitle.replace(/'/g, "\\'") + '\')">Message</button>';
+  }
+
+  return '<div class="rc-lead' + dimClass + sentClass + '">' +
     '<div class="rc-lead-info">' +
     '<a href="' + profileUrl + '" target="_blank" rel="noopener" class="rc-lead-name">' + l.name + ' ' + badges + '</a>' +
     '<div class="rc-lead-title">' + (l.title || 'No headline') + '</div>' +
     comment +
     '</div>' +
-    '<a href="' + profileUrl + '" target="_blank" rel="noopener" class="runner-msg-btn">Message</a>' +
+    btn +
     '</div>';
+}
+
+function messageAndTrack(profileUrl, firstName, commentText, postTitle) {
+  // Draft a message
+  var msg = '';
+  if (commentText) {
+    msg = 'Hi ' + firstName + ', saw your comment on the "' + postTitle + '" post — "' + commentText + '". Would love to connect and chat about this.';
+  } else {
+    msg = 'Hi ' + firstName + ', noticed you engaged with the "' + postTitle + '" post. Thought we might have a lot to share around this topic — would love to connect.';
+  }
+
+  // Copy to clipboard
+  navigator.clipboard.writeText(msg).then(function() {
+    showToast('Message copied to clipboard');
+  }).catch(function() {
+    // Fallback
+    prompt('Copy this message:', msg);
+  });
+
+  // Mark as messaged
+  markMessaged(profileUrl);
+
+  // Open their profile
+  window.open(profileUrl, '_blank');
 }
 
 function renderWorkflowGuide(icpCount, dmsSent, replied, signedUp, scIdx) {

@@ -905,6 +905,23 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
 }
 .rc-lead-dim .rc-lead-name { color: var(--text-4); }
 .rc-lead-dim .rc-lead-title { color: var(--text-4); opacity: 0.7; }
+.rc-lead-sent { opacity: 0.5; }
+.rc-lead-badge-sent {
+  color: var(--change); background: var(--change-bg);
+}
+.runner-msg-btn {
+  font-family: var(--ff-body); font-size: var(--fs-xs); font-weight: 600;
+  color: var(--inbound); background: transparent; border: 1.5px solid var(--inbound);
+  padding: var(--s-4) var(--s-12); border-radius: var(--radius-sm); cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out); white-space: nowrap;
+}
+.runner-msg-btn:hover { background: var(--inbound-bg); }
+.runner-undo-btn {
+  font-family: var(--ff-body); font-size: var(--fs-xs); color: var(--text-4);
+  background: transparent; border: none; cursor: pointer;
+  padding: var(--s-4) var(--s-6); transition: color var(--dur-fast) var(--ease-out);
+}
+.runner-undo-btn:hover { color: var(--text-2); }
 
 /* Workflow guide */
 .runner-guide { padding: 0 var(--s-16) var(--s-16); }

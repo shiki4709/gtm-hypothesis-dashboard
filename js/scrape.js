@@ -307,10 +307,13 @@ function renderRunner() {
         html += '<div class="rc-leads-title">ICP Matches</div>';
         matched.forEach(function(l) {
           var profileUrl = l.linkedin_url || '';
+          var comment = l.comment_text ? '<div class="rc-lead-comment">"' + l.comment_text.substring(0, 120) + (l.comment_text.length > 120 ? '...' : '') + '"</div>' : '';
           html += '<div class="rc-lead">' +
             '<div class="rc-lead-info">' +
-            '<a href="' + profileUrl + '" target="_blank" rel="noopener" class="rc-lead-name">' + l.name + '</a>' +
+            '<a href="' + profileUrl + '" target="_blank" rel="noopener" class="rc-lead-name">' + l.name +
+            (l.comment_text ? ' <span class="rc-lead-badge">commented</span>' : '') + '</a>' +
             '<div class="rc-lead-title">' + (l.title || 'No headline') + '</div>' +
+            comment +
             '</div>' +
             '<a href="' + profileUrl + '" target="_blank" rel="noopener" class="runner-msg-btn">Message</a>' +
             '</div>';

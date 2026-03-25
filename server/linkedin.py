@@ -108,10 +108,75 @@ def _get_experience(actor_urns, cookies):
     return results
 
 
+def _scrape_commenters(post_url, post_id, cookies):
+    """Scrape commenters from the post page's embedded JSON data."""
+    import html as htmlmod
+    url = f"https://www.linkedin.com/feed/update/urn:li:activity:{post_id}"
+    headers = _build_headers(cookies)
+    try:
+        resp = requests.get(url, cookies=cookies, headers=headers, timeout=30, allow_redirects=False)
+    except Exception:
+        return []
+
+    if resp.status_code != 200:
+        return []
+
+    decoded = htmlmod.unescape(resp.text)
+    json_blocks = re.findall(r'<code[^>]*>(.*?)</code>', decoded, re.DOTALL)
+
+    commenters = []
+    seen_urls = set()
+
+    for block in json_blocks:
+        try:
+            data = json.loads(block)
+            if not isinstance(data, dict):
+                continue
+            for item in data.get("included", []):
+                if not isinstance(item, dict):
+                    continue
+                urn = item.get("entityUrn", "")
+                if "fsd_comment" not in urn or not item.get("commenter"):
+                    continue
+
+                c = item["commenter"]
+                name = c.get("title", {}).get("text", "")
+                headline = c.get("subtitle", "")
+                if isinstance(headline, dict):
+                    headline = headline.get("text", "")
+                nav_url = c.get("navigationUrl", "")
+                comment_text = item.get("commentary", {}).get("text", "")
+
+                if not name or nav_url in seen_urls:
+                    continue
+                seen_urls.add(nav_url)
+
+                company = ""
+                if headline:
+                    for sep in [" @ ", " @", " | ", " at "]:
+                        if sep in headline:
+                            parts = headline.split(sep, 1)
+                            company = parts[1].strip().split("|")[0].strip()
+                            break
+
+                commenters.append({
+                    "name": name,
+                    "title": headline,
+                    "company": company,
+                    "linkedin_url": nav_url,
+                    "comment_text": comment_text,
+                    "scraped_from": post_url,
+                })
+        except (json.JSONDecodeError, TypeError):
+            continue
+
+    return commenters
+
+
 def scrape_post_likers(post_url, cookies):
     """
-    Scrape all likers of a LinkedIn post.
-    Returns list of {name, title, company, linkedin_url, comment_text, icp_match}.
+    Scrape all engagers (likers + commenters) of a LinkedIn post.
+    Returns list of {name, title, company, linkedin_url, comment_text}.
     """
     post_id = _get_post_id(post_url, cookies)
     if not post_id:
@@ -186,7 +251,33 @@ def scrape_post_likers(post_url, cookies):
                 "scraped_from": post_url,
             })
 
-    return {"leads": leads, "total": total, "fetched": len(leads)}
+    # Also scrape commenters from the post page
+    commenters = _scrape_commenters(post_url, post_id, cookies)
+
+    # Merge: commenters first (higher intent), then likers
+    # Deduplicate by LinkedIn URL
+    seen_urls = set()
+    merged = []
+
+    for c in commenters:
+        url = c.get("linkedin_url", "")
+        if url and url not in seen_urls:
+            seen_urls.add(url)
+            merged.append(c)
+
+    for l in leads:
+        url = l.get("linkedin_url", "")
+        if url and url not in seen_urls:
+            seen_urls.add(url)
+            merged.append(l)
+
+    return {
+        "leads": merged,
+        "total": total + len(commenters),
+        "fetched": len(merged),
+        "commenters": len(commenters),
+        "likers": len(leads),
+    }
 
 
 if __name__ == "__main__":

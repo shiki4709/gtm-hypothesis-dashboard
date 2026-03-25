@@ -813,6 +813,15 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
   font-size: var(--fs-xs); color: var(--text-4); margin-top: 1px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.rc-lead-comment {
+  font-size: var(--fs-xs); color: var(--text-3); font-style: italic;
+  margin-top: var(--s-2); line-height: var(--lh-body);
+}
+.rc-lead-badge {
+  font-size: 10px; font-weight: 700; color: var(--hit);
+  background: var(--hit-bg); padding: 1px 5px; border-radius: 10px;
+  margin-left: var(--s-4); font-style: normal; vertical-align: middle;
+}
 .rc-leads-dim .rc-lead-name { color: var(--text-3); }
 .rc-leads-dim .rc-lead-title { color: var(--text-4); }
 

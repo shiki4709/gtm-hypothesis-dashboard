@@ -4,218 +4,212 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Syval — Your GTM team, automated</title>
-  <meta name="description" content="Three AI agents that find your leads, monitor your channels, and create your content. Hawki, Pingi, and Roari. Built for B2B teams.">
+  <meta name="description" content="Three AI agents that find your leads, monitor your channels, and create your content. Built for B2B teams that move fast.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', -apple-system, sans-serif; color: #1a1a1a; background: #fafafa; -webkit-font-smoothing: antialiased; }
+    body { font-family: 'Inter', -apple-system, sans-serif; color: #e4e4e7; background: #09090b; -webkit-font-smoothing: antialiased; }
+    h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; color: #fafafa; }
+    a { color: inherit; text-decoration: none; }
 
-    .nav { max-width: 960px; margin: 0 auto; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
-    .nav-logo { font-size: 20px; font-weight: 700; color: #1a1a1a; text-decoration: none; }
-    .nav-links { display: flex; gap: 24px; align-items: center; }
-    .nav-links a { font-size: 14px; color: #666; text-decoration: none; }
-    .nav-links a:hover { color: #1a1a1a; }
-    .nav-cta { font-size: 14px; font-weight: 600; color: #fff !important; background: #1a1a1a; padding: 8px 20px; border-radius: 6px; }
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+    /* Nav */
+    nav { padding: 20px 0; border-bottom: 1px solid #1c1c22; }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: #fafafa; letter-spacing: -0.02em; }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a { font-size: 14px; color: #71717a; transition: color 0.15s; }
+    .nav-links a:hover { color: #fafafa; }
+    .nav-cta { font-size: 13px; font-weight: 600; color: #09090b !important; background: #fafafa; padding: 8px 20px; border-radius: 6px; transition: opacity 0.15s; }
     .nav-cta:hover { opacity: 0.85; }
 
-    .hero { max-width: 960px; margin: 0 auto; padding: 80px 24px 60px; text-align: center; }
-    .hero-badge { display: inline-block; font-size: 12px; font-weight: 600; color: #e65100; background: #fff3e0; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; }
-    .hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 16px; }
-    .hero p { font-size: 18px; color: #555; max-width: 560px; margin: 0 auto 32px; line-height: 1.6; }
-    .hero-cta { display: inline-block; font-size: 16px; font-weight: 600; color: #fff; background: #1a1a1a; padding: 14px 32px; border-radius: 8px; text-decoration: none; }
+    /* Hero */
+    .hero { padding: 100px 0 80px; text-align: center; }
+    .hero-label { display: inline-block; font-size: 12px; font-weight: 500; color: #a1a1aa; border: 1px solid #27272a; padding: 6px 16px; border-radius: 100px; margin-bottom: 24px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .hero h1 { font-size: clamp(36px, 6vw, 64px); font-weight: 700; line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 20px; }
+    .hero h1 span { background: linear-gradient(135deg, #a78bfa, #60a5fa, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 17px; color: #a1a1aa; max-width: 520px; margin: 0 auto 36px; line-height: 1.6; }
+    .hero-cta { display: inline-block; font-size: 15px; font-weight: 600; color: #09090b; background: #fafafa; padding: 14px 36px; border-radius: 8px; transition: opacity 0.15s; }
     .hero-cta:hover { opacity: 0.85; }
-    .hero-sub { font-size: 13px; color: #999; margin-top: 12px; }
+    .hero-sub { font-size: 13px; color: #52525b; margin-top: 14px; }
 
-    .how { max-width: 960px; margin: 0 auto; padding: 60px 24px; }
-    .how h2 { font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 48px; }
-    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; }
-    .step { text-align: center; }
-    .step-num { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: #f5f5f5; font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; }
-    .step h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
-    .step p { font-size: 14px; color: #666; line-height: 1.5; }
+    /* Agents grid */
+    .agents { padding: 80px 0; }
+    .agents-header { text-align: center; margin-bottom: 48px; }
+    .agents-header h2 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .agents-header p { font-size: 15px; color: #71717a; }
+    .agents-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 768px) { .agents-grid { grid-template-columns: 1fr; } }
 
-    .features { max-width: 960px; margin: 0 auto; padding: 60px 24px; }
-    .features h2 { font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 48px; }
-    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
-    .feature { padding: 24px; background: #fff; border: 1px solid #eee; border-radius: 10px; }
-    .feature h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
-    .feature p { font-size: 14px; color: #666; line-height: 1.5; }
+    .agent-card { background: #111113; border: 1px solid #1c1c22; border-radius: 12px; padding: 32px 28px; transition: border-color 0.2s; }
+    .agent-card:hover { border-color: #27272a; }
+    .agent-icon-svg { width: 48px; height: 48px; margin-bottom: 16px; display: block; }
+    .agent-name { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .agent-tag { font-size: 11px; font-weight: 500; color: #52525b; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+    .agent-desc { font-size: 14px; color: #a1a1aa; line-height: 1.6; margin-bottom: 20px; }
+    .agent-features { list-style: none; }
+    .agent-features li { font-size: 13px; color: #71717a; padding: 6px 0; border-top: 1px solid #1c1c22; display: flex; align-items: center; gap: 8px; }
+    .agent-features li::before { content: ''; width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
 
-    .suite { max-width: 960px; margin: 0 auto; padding: 60px 24px; text-align: center; }
-    .suite h2 { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
-    .suite > p { font-size: 16px; color: #555; margin-bottom: 40px; }
-    .suite-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-    .suite-card { padding: 24px; background: #fff; border: 1px solid #eee; border-radius: 10px; text-align: left; }
-    .suite-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-    .suite-card .tag { font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-    .suite-card p { font-size: 14px; color: #666; line-height: 1.5; }
-    .suite-card.active { border-color: #1a1a1a; }
+    .agent-card.hawki .agent-name { color: #f59e0b; }
+    .agent-card.hawki .agent-features li::before { background: #f59e0b; }
+    .agent-card.pingi .agent-name { color: #60a5fa; }
+    .agent-card.pingi .agent-features li::before { background: #60a5fa; }
+    .agent-card.roari .agent-name { color: #f87171; }
+    .agent-card.roari .agent-features li::before { background: #f87171; }
 
-    .cta-section { max-width: 960px; margin: 0 auto; padding: 80px 24px; text-align: center; }
-    .cta-section h2 { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
-    .cta-section p { font-size: 16px; color: #555; margin-bottom: 24px; }
-    .cta-section a { display: inline-block; font-size: 16px; font-weight: 600; color: #fff; background: #1a1a1a; padding: 14px 32px; border-radius: 8px; text-decoration: none; }
+    /* How it works */
+    .flow { padding: 80px 0; border-top: 1px solid #1c1c22; }
+    .flow h2 { font-size: 28px; font-weight: 700; text-align: center; letter-spacing: -0.02em; margin-bottom: 48px; }
+    .flow-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    @media (max-width: 768px) { .flow-steps { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .flow-steps { grid-template-columns: 1fr; } }
+    .flow-step { text-align: center; }
+    .flow-num { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; border: 1px solid #27272a; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: #71717a; margin-bottom: 14px; }
+    .flow-step h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .flow-step p { font-size: 13px; color: #52525b; line-height: 1.5; }
 
-    .footer { max-width: 960px; margin: 0 auto; padding: 40px 24px; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #999; }
-    .product-section { max-width: 960px; margin: 0 auto; padding: 60px 24px; border-top: 1px solid #eee; }
-    .product-header { text-align: center; margin-bottom: 40px; }
-    .product-badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; }
-    .product-header h2 { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
-    .product-header p { font-size: 16px; color: #555; max-width: 520px; margin: 0 auto 20px; line-height: 1.6; }
-    .product-cta { display: inline-block; font-size: 14px; font-weight: 600; color: #1a1a1a; border: 2px solid #1a1a1a; padding: 10px 24px; border-radius: 6px; text-decoration: none; }
-    .product-cta:hover { background: #1a1a1a; color: #fff; }
+    /* CTA */
+    .bottom-cta { padding: 80px 0; text-align: center; border-top: 1px solid #1c1c22; }
+    .bottom-cta h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .bottom-cta p { font-size: 15px; color: #71717a; margin-bottom: 28px; }
 
-    .footer a { color: #666; text-decoration: none; }
+    /* Footer */
+    footer { padding: 32px 0; border-top: 1px solid #1c1c22; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #3f3f46; }
+    footer a { color: #52525b; transition: color 0.15s; }
+    footer a:hover { color: #a1a1aa; }
 
     @media (max-width: 640px) {
       .nav-links { display: none; }
-      .steps { grid-template-columns: 1fr; }
+      .hero { padding: 60px 0 40px; }
+      .agents { padding: 40px 0; }
     }
   </style>
 </head>
 <body>
 
-<nav class="nav">
-  <a href="/" class="nav-logo">Syval</a>
-  <div class="nav-links">
-    <a href="#products">Products</a>
-    <a href="#how">How it works</a>
-    <a href="https://github.com/shiki4709" class="nav-cta">Get started</a>
-  </div>
-</nav>
+<div class="container">
+  <nav>
+    <div class="nav-inner">
+      <span class="logo">syval</span>
+      <div class="nav-links">
+        <a href="#agents">Agents</a>
+        <a href="#flow">How it works</a>
+        <a href="https://github.com/shiki4709" class="nav-cta">Get started</a>
+      </div>
+    </div>
+  </nav>
+</div>
 
-<section class="hero">
-  <span class="hero-badge">AI-Powered GTM Agents</span>
-  <h1>Your GTM team, automated</h1>
-  <p>Three AI agents that find your leads, monitor your channels, and create your content. Built for B2B teams that move fast.</p>
-  <a href="#products" class="hero-cta">See the products</a>
-  <div class="hero-sub">Open source. No credit card required.</div>
-</section>
+<div class="container">
+  <section class="hero">
+    <span class="hero-label">AI-Powered GTM Agents</span>
+    <h1>Your GTM team,<br><span>automated</span></h1>
+    <p>Three AI agents that find your leads, monitor your channels, and create your content. Built for teams that ship fast.</p>
+    <a href="#agents" class="hero-cta">Meet the agents</a>
+    <div class="hero-sub">Open source. Free to start.</div>
+  </section>
+</div>
 
-<section id="products">
+<div class="container">
+  <section class="agents" id="agents">
+    <div class="agents-header">
+      <h2>The agents</h2>
+      <p>Each one handles a different part of your GTM workflow.</p>
+    </div>
+    <div class="agents-grid">
 
-<section class="product-section">
-  <div class="product-header">
-    <span class="product-badge" style="background:#fff3e0;color:#e65100">Lead Discovery</span>
-    <h2>Hawki</h2>
-    <p>Find leads who engage with content in your space. Scrape LinkedIn post engagers, filter by ICP, draft personalized messages with AI.</p>
-    <a href="https://github.com/shiki4709/hawki" class="product-cta">Get Hawki</a>
-  </div>
-  <div class="feature-grid">
-    <div class="feature">
-      <h3>LinkedIn post scraping</h3>
-      <p>Paste any LinkedIn post URL. Hawki extracts every liker and commenter with their name, headline, and company. 1,000+ leads per post.</p>
-    </div>
-    <div class="feature">
-      <h3>ICP filtering</h3>
-      <p>Set your target titles (AE, SDR, VP Sales). Leads are sorted by engagement quality: ICP commenters first, then ICP likers, then everyone else.</p>
-    </div>
-    <div class="feature">
-      <h3>AI message drafting</h3>
-      <p>Claude AI drafts personalized connection messages that reference the post and their comment. Edit with natural language: "make it shorter", "mention their company".</p>
-    </div>
-    <div class="feature">
-      <h3>Pipeline tracking</h3>
-      <p>Track every lead from scrape to signup. Message tracking auto-updates your pipeline: scraped, ICP, messaged, replied, signed up.</p>
-    </div>
-    <div class="feature">
-      <h3>Influencer watch list</h3>
-      <p>Monitor thought leaders in your space. Check all their recent posts with one click. Track which posts you've already scraped.</p>
-    </div>
-    <div class="feature">
-      <h3>CSV export</h3>
-      <p>Export all leads or ICP-only leads as CSV. Import into your CRM, Dripify, or any outreach tool.</p>
-    </div>
-  </div>
-</section>
+      <div class="agent-card hawki">
+        <svg class="agent-icon-svg" viewBox="0 0 48 48" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M36 12c-4 0-8 2-10 6-2-4-6-6-10-6C8 12 4 20 12 28l12 10 12-10c8-8 4-16-4-16z"/><path d="M24 18v14M20 24l4-6 4 6"/></svg>
+        <div class="agent-tag">Lead Discovery</div>
+        <h3 class="agent-name">Hawki</h3>
+        <p class="agent-desc">Finds leads who engage with content in your space. Scrapes LinkedIn post engagers, filters by ICP, drafts personalized messages.</p>
+        <ul class="agent-features">
+          <li>Scrape 1,000+ engagers per post</li>
+          <li>ICP filtering with custom keywords</li>
+          <li>AI-drafted personalized messages</li>
+          <li>Message tracking + pipeline</li>
+          <li>Influencer watch list</li>
+        </ul>
+      </div>
 
-<section class="product-section">
-  <div class="product-header">
-    <span class="product-badge" style="background:#e3f2fd;color:#1565c0">Engagement Monitoring</span>
-    <h2>Pingi</h2>
-    <p>Never miss a reply. Pingi monitors your social platforms for comments, mentions, and emails that need your response. AI-drafted replies in seconds.</p>
-    <a href="https://github.com/shiki4709/pingi-ai" class="product-cta">Get Pingi</a>
-  </div>
-  <div class="feature-grid">
-    <div class="feature">
-      <h3>Multi-platform monitoring</h3>
-      <p>Gmail, X (Twitter), and LinkedIn in one feed. See everything that needs your attention, prioritized by urgency.</p>
-    </div>
-    <div class="feature">
-      <h3>AI-drafted replies</h3>
-      <p>Claude drafts context-aware responses for every mention and message. Review, edit, and send in seconds instead of minutes.</p>
-    </div>
-    <div class="feature">
-      <h3>Priority scoring</h3>
-      <p>Not every reply is urgent. Pingi scores each item by urgency so you respond to the right people first.</p>
-    </div>
-  </div>
-</section>
+      <div class="agent-card pingi">
+        <svg class="agent-icon-svg" viewBox="0 0 48 48" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="24" cy="26" rx="10" ry="14"/><circle cx="24" cy="16" r="8"/><circle cx="21" cy="14" r="1.5" fill="#60a5fa"/><circle cx="27" cy="14" r="1.5" fill="#60a5fa"/><path d="M20 18c0 0 2 2 4 2s4-2 4-2"/><path d="M14 26c-3 2-4 6-2 8M34 26c3 2 4 6 2 8"/></svg>
+        <div class="agent-tag">Engagement Monitor</div>
+        <h3 class="agent-name">Pingi</h3>
+        <p class="agent-desc">Never miss a reply. Monitors Gmail, X, and LinkedIn for conversations that need your response. AI-drafted replies in seconds.</p>
+        <ul class="agent-features">
+          <li>Multi-platform inbox monitoring</li>
+          <li>Priority-scored notifications</li>
+          <li>AI-drafted context-aware replies</li>
+          <li>Follow-up tracking</li>
+        </ul>
+      </div>
 
-<section class="product-section">
-  <div class="product-header">
-    <span class="product-badge" style="background:#fce4ec;color:#c62828">Content Creation</span>
-    <h2>Roari</h2>
-    <p>Turn any source into platform-native posts. Create content for LinkedIn, X, Substack, and more. Build your brand presence with AI-powered content.</p>
-    <a href="https://github.com/shiki4709/human-content-os" class="product-cta">Get Roari</a>
-  </div>
-  <div class="feature-grid">
-    <div class="feature">
-      <h3>Multi-platform publishing</h3>
-      <p>Write once, publish everywhere. Roari adapts your content for LinkedIn, X, Substack, and Reddit automatically.</p>
-    </div>
-    <div class="feature">
-      <h3>Source-to-post</h3>
-      <p>Drop in an article, video, or idea. Roari turns it into platform-native posts that match each channel's style and audience.</p>
-    </div>
-    <div class="feature">
-      <h3>Brand voice</h3>
-      <p>Your content sounds like you, not a bot. Roari learns your tone and style from your existing posts.</p>
-    </div>
-  </div>
-</section>
+      <div class="agent-card roari">
+        <svg class="agent-icon-svg" viewBox="0 0 48 48" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="10"/><path d="M24 14c-2-4-6-6-6-6M24 14c2-4 6-6 6-6M14 24c-4-2-6-6-6-6M14 24c-4 2-6 6-6 6M34 24c4-2 6-6 6-6M34 24c4 2 6 6 6 6M24 34c-2 4-6 6-6 6M24 34c2 4 6 6 6 6"/><circle cx="21" cy="22" r="1.5" fill="#f87171"/><circle cx="27" cy="22" r="1.5" fill="#f87171"/><path d="M21 27c0 0 1.5 2 3 2s3-2 3-2"/></svg>
+        <div class="agent-tag">Content Creation</div>
+        <h3 class="agent-name">Roari</h3>
+        <p class="agent-desc">Turn any source into platform-native posts. Create content for LinkedIn, X, Substack, and more. Build your brand on autopilot.</p>
+        <ul class="agent-features">
+          <li>Multi-platform publishing</li>
+          <li>Source-to-post conversion</li>
+          <li>Brand voice matching</li>
+          <li>Content calendar</li>
+        </ul>
+      </div>
 
-</section>
+    </div>
+  </section>
+</div>
 
-<section class="how" id="how">
-  <h2>How the suite works together</h2>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <h3>Create content</h3>
-      <p>Roari creates posts for LinkedIn and other channels. Your content attracts your ICP.</p>
+<div class="container">
+  <section class="flow" id="flow">
+    <h2>How they work together</h2>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <h3>Create</h3>
+        <p>Roari publishes content across your channels</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <h3>Discover</h3>
+        <p>Hawki finds leads engaging with relevant posts</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <h3>Engage</h3>
+        <p>AI drafts personalized messages you send directly</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <h3>Follow up</h3>
+        <p>Pingi monitors replies and drafts follow-ups</p>
+      </div>
     </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <h3>Find leads</h3>
-      <p>Hawki scrapes engagers from your posts and competitor posts. Filter by ICP, message them directly.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <h3>Monitor replies</h3>
-      <p>Pingi watches for responses across all channels. Draft follow-ups with AI. Never miss a conversation.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <h3>Close deals</h3>
-      <p>Track your pipeline from first touch to signup. Every interaction is logged and measured.</p>
-    </div>
-  </div>
-</section>
+  </section>
+</div>
 
-<section class="cta-section">
-  <h2>Your GTM team starts here</h2>
-  <p>Open source. Set up in minutes. No subscription required.</p>
-  <a href="https://github.com/shiki4709">View on GitHub</a>
-</section>
+<div class="container">
+  <section class="bottom-cta">
+    <h2>Start with one agent. Scale to three.</h2>
+    <p>Each agent works independently. Use what you need.</p>
+    <a href="https://github.com/shiki4709/hawki" class="hero-cta">Start with Hawki</a>
+  </section>
+</div>
 
-<footer class="footer">
-  <span>Syval &copy; 2026</span>
-  <div>
-    <a href="https://github.com/shiki4709/hawki">GitHub</a>
-  </div>
-</footer>
+<div class="container">
+  <footer>
+    <span>syval 2026</span>
+    <div style="display:flex;gap:24px">
+      <a href="https://github.com/shiki4709/hawki">GitHub</a>
+      <a href="mailto:shiki4709@gmail.com">Contact</a>
+    </div>
+  </footer>
+</div>
 
 </body>
 </html>

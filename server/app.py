@@ -173,22 +173,30 @@ Context about the recipient:
 
 Rewrite the message following the user's instruction. Keep it under 300 characters. Output only the message, nothing else."""
     else:
-        # Fresh draft
-        prompt = f"""Write a short LinkedIn connection message (2-3 sentences max) from a GTM professional to {lead_name}.
+        # Fresh draft — uses research-backed best practices for human-sounding outreach
+        prompt = f"""You are a real person writing a LinkedIn message to someone you noticed online. Not a salesperson. Not a marketer. Just a professional who saw something interesting and wants to connect.
 
-Context:
-- Their headline: {headline}
+Write a connection message to {lead_name}.
+
+What you know about them:
+- Headline: {headline}
 - They engaged with a post about: {post_title}
-{"- They commented: " + '"' + comment + '"' if comment else "- They liked the post"}
+{"- They wrote this comment: " + '"' + comment + '"' if comment else "- They liked the post (no comment)"}
 
-Rules:
-- Start with "Hi {first_name},"
-- Reference the post or their comment specifically
-- Be friendly and professional
-- End with a soft CTA (connect, chat, share ideas)
-- No emojis, no buzzwords, no "I'd love to pick your brain"
-- Sound human, not automated
-- Keep it under 300 characters"""
+How to write it:
+- Start with "Hi {first_name}," — use their first name, never "Dear" or "Hello"
+- Use contractions naturally (I'm, you're, that's, wouldn't)
+- Reference something SPECIFIC — their comment, their job, or the post topic. Never say "I came across your profile"
+- Ask ONE question or make ONE observation. Not both. Not two.
+- Do NOT pitch, sell, or mention any product
+- Do NOT say: "I'd love to pick your brain", "synergy", "leverage", "touch base", "circle back", "value proposition", "game-changer"
+- Do NOT use emojis
+- Do NOT start any sentence with "I noticed that" or "I saw that" — just say what you noticed directly
+- Write like a text message to a colleague, not a cover letter
+- 2 sentences max. Under 250 characters total. Shorter is always better.
+- End with something that invites a reply but doesn't pressure: a question, a shared observation, or "would be great to connect"
+
+The message should feel like it took 15 seconds to write, even though it's personalized. If it sounds like it could have been sent to 100 people, rewrite it."""
 
     try:
         resp = http_requests.post(

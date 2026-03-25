@@ -816,6 +816,16 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
   background: var(--surface); border: 1px solid var(--rule);
   padding: 1px 5px; border-radius: 3px; color: var(--text);
 }
+.onboard-section { margin-bottom: var(--s-24); }
+.onboard-section-title { font-size: var(--fs-sm); font-weight: 700; color: var(--text); margin-bottom: var(--s-4); }
+.onboard-section-desc { font-size: var(--fs-xs); color: var(--text-3); margin-bottom: var(--s-12); }
+.onboard-divider { text-align: center; font-size: var(--fs-xs); color: var(--text-4); margin: var(--s-8) 0; position: relative; }
+.onboard-divider::before, .onboard-divider::after {
+  content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: var(--rule-faint);
+}
+.onboard-divider::before { left: 0; }
+.onboard-divider::after { right: 0; }
+.onboard-text code { font-size: var(--fs-xs); background: var(--surface); padding: 1px 4px; border-radius: 3px; }
 .onboard-input { display: flex; gap: var(--s-8); margin-bottom: var(--s-8); }
 .onboard-note { font-size: 11px; color: var(--text-4); text-align: center; }
 

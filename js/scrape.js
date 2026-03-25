@@ -206,41 +206,63 @@ function renderRunner() {
   if (!localStorage.getItem('hawki_li_at')) {
     el.innerHTML = '<div class="onboard">' +
       '<div class="onboard-title">Welcome to Hawki</div>' +
-      '<div class="onboard-desc">Connect your LinkedIn to start finding leads. Takes 30 seconds.</div>' +
+      '<div class="onboard-desc">Connect your LinkedIn to start finding leads.</div>' +
+
+      // Option A: Extension (recommended)
+      '<div class="onboard-section">' +
+      '<div class="onboard-section-title">Option A: Browser Extension (recommended)</div>' +
+      '<div class="onboard-section-desc">Auto-syncs your LinkedIn cookie every 2 minutes. Set it once, forget it.</div>' +
       '<div class="onboard-steps">' +
 
       '<div class="onboard-step">' +
       '<div class="onboard-num">1</div>' +
       '<div class="onboard-text">' +
-      '<strong>Open LinkedIn</strong> in another tab and make sure you\'re logged in' +
+      '<strong>Download the extension</strong> — <a href="https://github.com/shiki4709/hawki/tree/main/extension" target="_blank" style="color:var(--inbound)">Get it from GitHub</a> → download the <code>extension</code> folder' +
       '</div></div>' +
 
       '<div class="onboard-step">' +
       '<div class="onboard-num">2</div>' +
       '<div class="onboard-text">' +
-      '<strong>Open DevTools</strong> — press <kbd>Cmd+Option+I</kbd> (Mac) or <kbd>Ctrl+Shift+I</kbd> (Windows)' +
+      'Open <strong>chrome://extensions</strong> → enable <strong>Developer mode</strong> (top right) → click <strong>Load unpacked</strong> → select the extension folder' +
       '</div></div>' +
 
       '<div class="onboard-step">' +
       '<div class="onboard-num">3</div>' +
       '<div class="onboard-text">' +
-      'Click the <strong>Application</strong> tab at the top' +
+      'Make sure you\'re <strong>logged into LinkedIn</strong> → click the Hawki icon in your toolbar → click <strong>Sync Now</strong>' +
       '</div></div>' +
 
       '<div class="onboard-step">' +
       '<div class="onboard-num">4</div>' +
       '<div class="onboard-text">' +
-      'In the left sidebar, expand <strong>Cookies</strong> → click <strong>https://www.linkedin.com</strong>' +
+      '<strong>Refresh this page</strong> — you\'re ready to scrape' +
       '</div></div>' +
 
+      '</div></div>' +
+
+      // Divider
+      '<div class="onboard-divider">or</div>' +
+
+      // Option B: Manual
+      '<div class="onboard-section">' +
+      '<div class="onboard-section-title">Option B: Paste cookie manually</div>' +
+      '<div class="onboard-section-desc">Quick but expires every ~30 minutes. You\'ll need to re-paste when it expires.</div>' +
+      '<div class="onboard-steps">' +
+
       '<div class="onboard-step">' +
-      '<div class="onboard-num">5</div>' +
+      '<div class="onboard-num">1</div>' +
       '<div class="onboard-text">' +
-      'Find the row named <strong>li_at</strong> → double-click the <strong>Value</strong> column → copy it' +
+      'Open <strong>LinkedIn</strong> → press <kbd>Cmd+Option+I</kbd> (Mac) or <kbd>Ctrl+Shift+I</kbd> (Windows)' +
       '</div></div>' +
 
       '<div class="onboard-step">' +
-      '<div class="onboard-num">6</div>' +
+      '<div class="onboard-num">2</div>' +
+      '<div class="onboard-text">' +
+      'Click <strong>Application</strong> tab → <strong>Cookies</strong> → <strong>linkedin.com</strong> → find <strong>li_at</strong> → copy the value' +
+      '</div></div>' +
+
+      '<div class="onboard-step">' +
+      '<div class="onboard-num">3</div>' +
       '<div class="onboard-text">' +
       'Paste it below and click <strong>Connect</strong>' +
       '</div></div>' +
@@ -251,6 +273,9 @@ function renderRunner() {
       '<input type="password" class="scrape-url-input" id="onboard-cookie" placeholder="Paste your li_at cookie here...">' +
       '<button class="scrape-go-btn" onclick="saveOnboardCookie()">Connect</button>' +
       '</div>' +
+
+      '</div>' +
+
       '<div class="onboard-note">Your cookie stays in your browser. It\'s never stored on our servers.</div>' +
       '</div>';
     return;

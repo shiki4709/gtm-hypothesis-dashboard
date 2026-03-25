@@ -524,7 +524,10 @@ function showDraftModal(profileUrl, lead, commentText, postTitle, apiKey) {
     templateDraft(firstName, commentText, postTitle) + '</textarea>' +
     '</div>' +
     '<div class="draft-actions">' +
-    '<button class="draft-ai-btn" id="draft-ai-btn" onclick="regenerateDraft(\'' + profileUrl.replace(/'/g, "\\'") + '\',\'' + fullName.replace(/'/g, "\\'") + '\',\'' + (headline || '').replace(/'/g, "\\'").replace(/\n/g, ' ') + '\',\'' + (commentText || '').substring(0, 100).replace(/'/g, "\\'").replace(/\n/g, ' ') + '\',\'' + postTitle.replace(/'/g, "\\'") + '\')">Rewrite with AI</button>' +
+    '<input type="text" class="draft-instruct-input" id="draft-instruction" ' +
+    'placeholder="e.g. make it shorter, mention their company, more casual..." ' +
+    'onkeydown="if(event.key===\'Enter\')regenerateDraft(\'' + profileUrl.replace(/'/g, "\\'") + '\',\'' + fullName.replace(/'/g, "\\'") + '\',\'' + (headline || '').replace(/'/g, "\\'").replace(/\n/g, ' ') + '\',\'' + (commentText || '').substring(0, 100).replace(/'/g, "\\'").replace(/\n/g, ' ') + '\',\'' + postTitle.replace(/'/g, "\\'") + '\')">' +
+    '<button class="draft-ai-btn" id="draft-ai-btn" onclick="regenerateDraft(\'' + profileUrl.replace(/'/g, "\\'") + '\',\'' + fullName.replace(/'/g, "\\'") + '\',\'' + (headline || '').replace(/'/g, "\\'").replace(/\n/g, ' ') + '\',\'' + (commentText || '').substring(0, 100).replace(/'/g, "\\'").replace(/\n/g, ' ') + '\',\'' + postTitle.replace(/'/g, "\\'") + '\')">Rewrite</button>' +
     '</div>' +
     '</div>' +
     '<div class="qa-footer">' +
@@ -570,12 +573,20 @@ function regenerateDraft(profileUrl, name, headline, comment, postTitle) {
     btn.disabled = false;
   };
 
+  var instruction = '';
+  var instrEl = document.getElementById('draft-instruction');
+  if (instrEl) instruction = instrEl.value.trim();
+
+  var currentDraft = textarea ? textarea.value : '';
+
   xhr.send(JSON.stringify({
     api_key: apiKey,
     name: name,
     headline: headline,
     comment: comment,
     post_title: postTitle,
+    instruction: instruction,
+    current_draft: instruction ? currentDraft : '',
   }));
 }
 

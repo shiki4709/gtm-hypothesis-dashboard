@@ -935,7 +935,14 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
   color: var(--text); background: var(--bg);
 }
 .draft-textarea:focus { outline: none; border-color: var(--accent); }
-.draft-actions { display: flex; gap: var(--s-8); margin-top: var(--s-8); }
+.draft-actions { display: flex; gap: var(--s-8); margin-top: var(--s-8); align-items: center; }
+.draft-instruct-input {
+  flex: 1; padding: var(--s-6) var(--s-12); font-family: var(--ff-body);
+  font-size: var(--fs-xs); border: 1.5px solid var(--rule); border-radius: var(--radius-sm);
+  background: var(--bg); color: var(--text); outline: none;
+}
+.draft-instruct-input:focus { border-color: var(--inbound); }
+.draft-instruct-input::placeholder { color: var(--text-4); }
 .draft-ai-btn {
   font-family: var(--ff-body); font-size: var(--fs-xs); font-weight: 600;
   color: var(--inbound); background: var(--inbound-bg);

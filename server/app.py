@@ -155,9 +155,26 @@ def draft_message():
     headline = data.get("headline", "")
     comment = data.get("comment", "")
     post_title = data.get("post_title", "")
-    tone = data.get("tone", "friendly and professional")
+    instruction = data.get("instruction", "")
+    current_draft = data.get("current_draft", "")
 
-    prompt = f"""Write a short LinkedIn connection message (2-3 sentences max) from a GTM professional to {lead_name}.
+    if instruction and current_draft:
+        # User wants to modify the existing draft
+        prompt = f"""Here is a LinkedIn message draft:
+
+"{current_draft}"
+
+The user wants you to: {instruction}
+
+Context about the recipient:
+- Name: {lead_name}
+- Headline: {headline}
+{"- They commented: " + '"' + comment + '"' if comment else "- They liked a post about: " + post_title}
+
+Rewrite the message following the user's instruction. Keep it under 300 characters. Output only the message, nothing else."""
+    else:
+        # Fresh draft
+        prompt = f"""Write a short LinkedIn connection message (2-3 sentences max) from a GTM professional to {lead_name}.
 
 Context:
 - Their headline: {headline}
@@ -167,7 +184,7 @@ Context:
 Rules:
 - Start with "Hi {first_name},"
 - Reference the post or their comment specifically
-- Be {tone}
+- Be friendly and professional
 - End with a soft CTA (connect, chat, share ideas)
 - No emojis, no buzzwords, no "I'd love to pick your brain"
 - Sound human, not automated

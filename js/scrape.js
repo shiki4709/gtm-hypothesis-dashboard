@@ -245,6 +245,9 @@ function renderRunner() {
 
       html += '</div>';
 
+      // Workflow guide — contextual next step
+      html += renderWorkflowGuide(matched.length, dmsSent, replied, signedUp, scIdx);
+
       // Expandable lead table
       html += '<details class="runner-leads"><summary class="runner-leads-toggle">' +
         matched.length + ' ICP leads · ' + (total - matched.length) + ' others</summary>';
@@ -291,6 +294,61 @@ function renderPipeArrow(from, to) {
   var text = from > 0 ? conv.toFixed(0) + '%' : '—';
   var cls = conv >= 50 ? 'pipe-conv-good' : conv >= 20 ? 'pipe-conv-ok' : 'pipe-conv-low';
   return '<div class="runner-arrow ' + cls + '">' + text + '</div>';
+}
+
+function renderWorkflowGuide(icpCount, dmsSent, replied, signedUp, scIdx) {
+  // Show the right next step based on pipeline state
+  if (icpCount === 0) {
+    return '<div class="runner-guide">' +
+      '<div class="runner-guide-step">No ICP matches. Try adjusting your ICP keywords above.</div></div>';
+  }
+
+  if (dmsSent === 0) {
+    return '<div class="runner-guide">' +
+      '<div class="runner-guide-step">' +
+      '<span class="runner-guide-num">1</span>' +
+      '<div class="runner-guide-text">' +
+      '<strong>Export & load into Dripify</strong>' +
+      '<div class="runner-guide-detail">Click CSV above → Open <a href="https://dripify.io" target="_blank" rel="noopener">Dripify</a> → ' +
+      'Create Campaign → Import CSV → Pick a message template → Start</div>' +
+      '</div></div>' +
+      '<div class="runner-guide-step">' +
+      '<span class="runner-guide-num">2</span>' +
+      '<div class="runner-guide-text">' +
+      '<strong>Update DMs Sent</strong>' +
+      '<div class="runner-guide-detail">Once Dripify starts sending, update the "DMs Sent" number above from your Dripify dashboard</div>' +
+      '</div></div></div>';
+  }
+
+  if (replied === 0) {
+    return '<div class="runner-guide">' +
+      '<div class="runner-guide-step">' +
+      '<span class="runner-guide-num">→</span>' +
+      '<div class="runner-guide-text">' +
+      '<strong>Waiting for replies</strong>' +
+      '<div class="runner-guide-detail">' + dmsSent + ' DMs sent. Check Dripify for reply count and update the "Replied" number above.</div>' +
+      '</div></div></div>';
+  }
+
+  if (signedUp === 0) {
+    return '<div class="runner-guide">' +
+      '<div class="runner-guide-step">' +
+      '<span class="runner-guide-num">→</span>' +
+      '<div class="runner-guide-text">' +
+      '<strong>' + replied + ' replies — convert them</strong>' +
+      '<div class="runner-guide-detail">Reply personally to warm leads. Track signups in your CRM and update "Signed Up" above.</div>' +
+      '</div></div></div>';
+  }
+
+  // Pipeline complete
+  var convRate = dmsSent > 0 ? ((signedUp / dmsSent) * 100).toFixed(1) : '0';
+  return '<div class="runner-guide runner-guide-done">' +
+    '<div class="runner-guide-step">' +
+    '<span class="runner-guide-num">✓</span>' +
+    '<div class="runner-guide-text">' +
+    '<strong>' + signedUp + ' signup' + (signedUp !== 1 ? 's' : '') + ' from this batch</strong>' +
+    '<div class="runner-guide-detail">' + convRate + '% conversion from DM to signup. Scrape another post to keep the pipeline fed.</div>' +
+    '</div></div></div>';
 }
 
 function updatePipeline(scrapeId, field, val) {

@@ -777,6 +777,27 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
 .runner-arrow.pipe-conv-ok { color: var(--change); }
 .runner-arrow.pipe-conv-low { color: var(--accent); }
 
+/* Workflow guide */
+.runner-guide { padding: 0 var(--s-16) var(--s-16); }
+.runner-guide-step {
+  display: flex; align-items: flex-start; gap: var(--s-12);
+  padding: var(--s-8) var(--s-12); background: var(--bg-sub);
+  border-radius: var(--radius-sm); margin-bottom: var(--s-6);
+}
+.runner-guide-num {
+  font-size: var(--fs-xs); font-weight: 700; color: var(--accent);
+  background: var(--accent-bg); width: 1.5rem; height: 1.5rem;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; flex-shrink: 0; margin-top: 1px;
+}
+.runner-guide-text { min-width: 0; }
+.runner-guide-text strong { font-size: var(--fs-sm); color: var(--text); }
+.runner-guide-detail { font-size: var(--fs-xs); color: var(--text-3); margin-top: var(--s-2); line-height: var(--lh-body); }
+.runner-guide-detail a { color: var(--inbound); text-decoration: none; }
+.runner-guide-detail a:hover { text-decoration: underline; }
+.runner-guide-done .runner-guide-step { background: var(--hit-bg); }
+.runner-guide-done .runner-guide-num { color: var(--hit); background: transparent; }
+
 .runner-leads { padding: 0 var(--s-16) var(--s-12); }
 .runner-leads-toggle {
   font-size: var(--fs-xs); color: var(--text-4); cursor: pointer;

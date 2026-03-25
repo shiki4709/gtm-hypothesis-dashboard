@@ -173,30 +173,34 @@ Context about the recipient:
 
 Rewrite the message following the user's instruction. Keep it under 300 characters. Output only the message, nothing else."""
     else:
-        # Fresh draft — uses research-backed best practices for human-sounding outreach
-        prompt = f"""You are a real person writing a LinkedIn message to someone you noticed online. Not a salesperson. Not a marketer. Just a professional who saw something interesting and wants to connect.
+        # Fresh draft — based on templates with 49-78% acceptance rates
+        # Key insight: the best messages are SHORT, SIMPLE, and feel EFFORTLESS.
+        # They don't try to be clever. They state one shared thing and move on.
+        prompt = f"""Write a LinkedIn connection request to {lead_name}. Max 250 characters.
 
-Write a connection message to {lead_name}.
-
-What you know about them:
+About them:
 - Headline: {headline}
-- They engaged with a post about: {post_title}
-{"- They wrote this comment: " + '"' + comment + '"' if comment else "- They liked the post (no comment)"}
+- Post topic: {post_title}
+{"- Their comment: " + '"' + comment + '"' if comment else ""}
 
-How to write it:
-- Start with "Hi {first_name}," — use their first name, never "Dear" or "Hello"
-- Use contractions naturally (I'm, you're, that's, wouldn't)
-- Reference something SPECIFIC — their comment, their job, or the post topic. Never say "I came across your profile"
-- Ask ONE question or make ONE observation. Not both. Not two.
-- Do NOT pitch, sell, or mention any product
-- Do NOT say: "I'd love to pick your brain", "synergy", "leverage", "touch base", "circle back", "value proposition", "game-changer"
-- Do NOT use emojis
-- Do NOT start any sentence with "I noticed that" or "I saw that" — just say what you noticed directly
-- Write like a text message to a colleague, not a cover letter
-- 2 sentences max. Under 250 characters total. Shorter is always better.
-- End with something that invites a reply but doesn't pressure: a question, a shared observation, or "would be great to connect"
+Here are REAL examples that get 60-78% acceptance rates. Pick a style that fits — DO NOT copy the same one every time. Vary your approach:
 
-The message should feel like it took 15 seconds to write, even though it's personalized. If it sounds like it could have been sent to 100 people, rewrite it."""
+"Hey Sarah, since we're both in the GTM space, thought it'd be cool to connect."
+"Hi Joe, your comment about collapsing silos — spot on. Would love to have you in my network."
+"Hi Marcus, always good to connect with folks doing solid work at Gong."
+"Hey Lisa, we're in the same world — would be great to connect."
+"Hi David, your take on that GTM post matched what I've been seeing too. Let's connect."
+"Hey Nina, noticed we're both deep in the sales ops world. Would be good to be connected."
+
+Now write ONE message for {first_name}. IMPORTANT — vary the structure, don't always use the same pattern. Rules:
+- Max 2 sentences, under 250 characters
+- Mention ONE thing you have in common (industry, post, comment, role)
+- End with "would be great to connect" or "thought it'd be cool to connect" or similar
+- Do NOT ask questions
+- Do NOT pitch anything
+- Do NOT use words: resonated, insightful, curious, fascinating, intrigued, align, synergy, leverage
+- Sound like you typed this in 5 seconds on your phone
+- Output ONLY the message text, nothing else"""
 
     try:
         resp = http_requests.post(

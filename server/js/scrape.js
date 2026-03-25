@@ -199,29 +199,10 @@ function downloadCSV(leads, filename) {
 
 function renderRunner() {
   var el = document.getElementById('view-scrape');
-  var scrapes = loadScrapes();
-  var icp = loadICP();
-
-  var html = '';
-
-  // ── Find posts + Scrape input ──
-  html += '<div class="scrape-input-section">' +
-    '<div class="scrape-input-row">' +
-    '<input type="text" class="scrape-url-input" id="scrape-url" ' +
-    'placeholder="Paste a LinkedIn post URL..." ' +
-    'onkeydown="if(event.key===\'Enter\')startScrape()">' +
-    '<button class="scrape-go-btn" id="scrape-go" onclick="startScrape()">Scrape</button>' +
-    '</div>' +
-    '<div class="scrape-hint-row">' +
-    '<a href="https://www.linkedin.com/search/results/content/?keywords=GTM&sortBy=%22date_posted%22" target="_blank" rel="noopener" class="scrape-find-link">Search LinkedIn for posts</a>' +
-    ' · Copy any post URL and paste it above · ' +
-    '<span onclick="openSettings()" style="cursor:pointer;color:var(--text-3);text-decoration:underline dotted">Settings</span>' +
-    '</div>' +
-    '</div>';
 
   // ── Onboarding (show when no cookie set) ──
   if (!localStorage.getItem('hawki_li_at')) {
-    html += '<div class="onboard">' +
+    el.innerHTML = '<div class="onboard">' +
       '<div class="onboard-title">Welcome to Hawki</div>' +
       '<div class="onboard-desc">Connect your LinkedIn to start finding leads. Takes 30 seconds.</div>' +
       '<div class="onboard-steps">' +
@@ -270,10 +251,28 @@ function renderRunner() {
       '</div>' +
       '<div class="onboard-note">Your cookie stays in your browser. It\'s never stored on our servers.</div>' +
       '</div>';
-
-    el.innerHTML = html;
     return;
   }
+
+  var scrapes = loadScrapes();
+  var icp = loadICP();
+
+  var html = '';
+
+  // ── Scrape input ──
+  html += '<div class="scrape-input-section">' +
+    '<div class="scrape-input-row">' +
+    '<input type="text" class="scrape-url-input" id="scrape-url" ' +
+    'placeholder="Paste a LinkedIn post URL..." ' +
+    'onkeydown="if(event.key===\'Enter\')startScrape()">' +
+    '<button class="scrape-go-btn" id="scrape-go" onclick="startScrape()">Scrape</button>' +
+    '</div>' +
+    '<div class="scrape-hint-row">' +
+    '<a href="https://www.linkedin.com/search/results/content/?keywords=GTM&sortBy=%22date_posted%22" target="_blank" rel="noopener" class="scrape-find-link">Search LinkedIn for posts</a>' +
+    ' · Copy any post URL and paste it above · ' +
+    '<span onclick="openSettings()" style="cursor:pointer;color:var(--text-3);text-decoration:underline dotted">Settings</span>' +
+    '</div>' +
+    '</div>';
 
   // ── Watch List ──
   var watchList = loadWatchList();

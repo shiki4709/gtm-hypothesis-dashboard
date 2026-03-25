@@ -15,7 +15,7 @@ from linkedin import scrape_post_likers, load_cookies
 # Serve the dashboard from the parent directory
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 app = Flask(__name__, static_folder=None)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 COOKIES = None
 

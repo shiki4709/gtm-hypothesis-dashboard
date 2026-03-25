@@ -224,26 +224,30 @@ function renderRunner() {
   var watchList = loadWatchList();
   html += '<div class="rc-watch">';
   html += '<div class="rc-watch-header">' +
-    '<span class="rc-watch-title">Watch List</span>' +
+    '<span class="rc-watch-title">Influencer Watch List</span>' +
     '<div class="rc-watch-add">' +
     '<input type="text" class="rc-watch-input" id="watch-input" ' +
-    'placeholder="Paste an influencer profile URL..." ' +
+    'placeholder="Paste a LinkedIn profile URL..." ' +
     'onkeydown="if(event.key===\'Enter\')addToWatchList()">' +
     '<button class="scrape-find-btn" onclick="addToWatchList()">Add</button>' +
     '</div></div>';
 
   if (watchList.length > 0) {
+    html += '<div class="rc-watch-hint">Click the bell icon on their LinkedIn profile to get notified when they post. Then paste the post URL above to scrape engagers.</div>';
     watchList.forEach(function(w) {
       html += '<div class="rc-watch-item">' +
         '<div class="rc-watch-info">' +
-        '<span class="rc-watch-name">' + w.name + '</span>' +
+        '<a href="' + w.url + '" target="_blank" rel="noopener" class="rc-watch-name">' + w.name + '</a>' +
         (w.headline ? '<span class="rc-watch-headline">' + w.headline.substring(0, 60) + '</span>' : '') +
         '</div>' +
         '<div class="rc-watch-actions">' +
-        '<a href="' + w.url + '/recent-activity/all/" target="_blank" rel="noopener" class="rc-watch-view">View posts</a>' +
+        '<a href="' + w.url + '/recent-activity/all/" target="_blank" rel="noopener" class="rc-watch-view">Posts</a>' +
+        '<a href="' + w.url + '" target="_blank" rel="noopener" class="rc-watch-bell" title="Go to profile and click the bell icon">Follow</a>' +
         '<button class="scrape-remove-btn" onclick="removeFromWatchList(\'' + w.username + '\')">Remove</button>' +
         '</div></div>';
     });
+  } else {
+    html += '<div class="rc-watch-hint">Add influencers to monitor. When they post, scrape the engagers to find your ICP.</div>';
   }
   html += '</div>';
 

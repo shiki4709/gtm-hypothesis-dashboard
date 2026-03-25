@@ -813,8 +813,9 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
 .rc-watch-name { font-size: var(--fs-sm); font-weight: 500; color: var(--text); text-transform: capitalize; }
 .rc-watch-headline { font-size: var(--fs-xs); color: var(--text-4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rc-watch-actions { display: flex; gap: var(--s-8); flex-shrink: 0; align-items: center; }
-.rc-watch-view { font-size: var(--fs-xs); font-weight: 500; color: var(--inbound); text-decoration: none; white-space: nowrap; }
-.rc-watch-view:hover { text-decoration: underline; }
+.rc-watch-hint { font-size: var(--fs-xs); color: var(--text-4); margin-bottom: var(--s-8); line-height: var(--lh-body); }
+.rc-watch-view, .rc-watch-bell { font-size: var(--fs-xs); font-weight: 500; color: var(--inbound); text-decoration: none; white-space: nowrap; }
+.rc-watch-view:hover, .rc-watch-bell:hover { text-decoration: underline; }
 
 /* ── Runner pipeline cards ── */
 .runner-card {

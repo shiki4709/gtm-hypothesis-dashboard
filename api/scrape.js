@@ -7,8 +7,10 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { url, li_at } = req.body;
-  if (!url || !url.includes('linkedin.com')) return res.status(400).json({ error: 'Invalid LinkedIn URL' });
+  const body = req.body || {};
+  const url = (body.url || '').trim();
+  const li_at = body.li_at || '';
+  if (!url || !url.includes('linkedin.com')) return res.status(400).json({ error: 'Invalid LinkedIn URL', received: url });
   if (!li_at) return res.status(400).json({ error: 'No LinkedIn connection. Go to Settings and paste your li_at cookie.' });
 
   try {
@@ -23,11 +25,12 @@ async function scrapePost(postUrl, liAt) {
   const cookies = { li_at: liAt };
   const headers = buildHeaders(cookies);
 
-  // Extract activity ID from URL
-  const actMatch = postUrl.match(/activity[- ](\d+)/);
-  const ugcMatch = postUrl.match(/ugcPost[- ](\d+)/);
-  const postId = actMatch ? actMatch[1] : (ugcMatch ? ugcMatch[1] : null);
-  if (!postId) return { error: 'Could not find post ID from URL' };
+  // Extract activity ID from URL — try multiple patterns
+  const actMatch = postUrl.match(/activity[- :_](\d{15,25})/);
+  const ugcMatch = postUrl.match(/ugcPost[- :_](\d{15,25})/);
+  const anyNumMatch = postUrl.match(/(\d{19,20})/);
+  const postId = actMatch ? actMatch[1] : (ugcMatch ? ugcMatch[1] : (anyNumMatch ? anyNumMatch[1] : null));
+  if (!postId) return { error: 'Could not find post ID from URL: ' + postUrl.substring(0, 100) };
 
   // Try both URN types
   let data = null, urnType = null;

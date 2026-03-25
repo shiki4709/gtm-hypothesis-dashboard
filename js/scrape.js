@@ -233,7 +233,10 @@ function renderRunner() {
     '</div></div>';
 
   if (watchList.length > 0) {
-    html += '<div class="rc-watch-hint">Click the bell icon on their LinkedIn profile to get notified when they post. Then paste the post URL above to scrape engagers.</div>';
+    html += '<div class="rc-watch-hint">' +
+      '<button class="rc-watch-check-btn" onclick="checkAllInfluencers()">Check all for new posts</button>' +
+      'Opens each profile\'s posts in a new tab. Copy any post URL and paste above to scrape.' +
+      '</div>';
     watchList.forEach(function(w) {
       html += '<div class="rc-watch-item">' +
         '<div class="rc-watch-info">' +
@@ -552,6 +555,16 @@ function addToWatchList() {
   };
 
   xhr.send(JSON.stringify({ username: username }));
+}
+
+function checkAllInfluencers() {
+  var list = loadWatchList();
+  list.forEach(function(w, i) {
+    setTimeout(function() {
+      window.open(w.url + '/recent-activity/all/', '_blank');
+    }, i * 600);
+  });
+  showToast('Opening ' + list.length + ' profiles...');
 }
 
 function removeFromWatchList(username) {

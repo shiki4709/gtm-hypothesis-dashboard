@@ -186,7 +186,7 @@ About them:
 Here are REAL examples that get 60-78% acceptance rates. Pick a style that fits — DO NOT copy the same one every time. Vary your approach:
 
 "Hey Sarah, since we're both in the GTM space, thought it'd be cool to connect."
-"Hi Joe, your comment about collapsing silos — spot on. Would love to have you in my network."
+"Hi Joe, your comment about collapsing silos, spot on. Would love to have you in my network."
 "Hi Marcus, always good to connect with folks doing solid work at Gong."
 "Hey Lisa, we're in the same world — would be great to connect."
 "Hi David, your take on that GTM post matched what I've been seeing too. Let's connect."
@@ -199,6 +199,7 @@ Now write ONE message for {first_name}. IMPORTANT — vary the structure, don't 
 - Do NOT ask questions
 - Do NOT pitch anything
 - Do NOT use words: resonated, insightful, curious, fascinating, intrigued, align, synergy, leverage
+- Do NOT use em dashes (—). Use commas or periods instead
 - Sound like you typed this in 5 seconds on your phone
 - Output ONLY the message text, nothing else"""
 

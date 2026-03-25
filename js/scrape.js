@@ -143,7 +143,10 @@ function runScrape(postUrl, callback) {
     callback('Scrape timed out. The post may have too many engagers.');
   };
 
-  xhr.send(JSON.stringify({ url: postUrl }));
+  var payload = { url: postUrl };
+  var liAt = localStorage.getItem('hawki_li_at');
+  if (liAt) payload.li_at = liAt;
+  xhr.send(JSON.stringify(payload));
 }
 
 function runDemoScrape(postUrl, callback) {

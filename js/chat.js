@@ -308,12 +308,20 @@ function openSettings() {
     'value="' + icp.exclude.join(', ') + '" placeholder="Recruiter, Student...">' +
     '<div style="font-size:var(--fs-xs);color:var(--text-4);margin-top:var(--s-4)">People with these words are always excluded from ICP.</div></div>' +
 
+    // LinkedIn Cookie
+    '<div class="qa-field"><label class="qa-label">LinkedIn Connection</label>' +
+    '<input type="password" class="qa-input qa-input-sm" id="settings-li-at" ' +
+    'placeholder="Paste your li_at cookie..." value="' + (localStorage.getItem('hawki_li_at') || '') + '">' +
+    '<div style="font-size:var(--fs-xs);color:var(--text-4);margin-top:var(--s-4)">' +
+    (localStorage.getItem('hawki_li_at') ? 'Connected' : 'Required for scraping. Go to LinkedIn → DevTools (Cmd+Option+I) → Application → Cookies → copy <b>li_at</b> value') +
+    '</div></div>' +
+
     // Claude API Key
     '<div class="qa-field"><label class="qa-label">AI Message Drafting</label>' +
     '<input type="password" class="qa-input qa-input-sm" id="settings-claude-key" ' +
     'placeholder="sk-ant-..." value="' + claudeKey + '">' +
     '<div style="font-size:var(--fs-xs);color:var(--text-4);margin-top:var(--s-4)">' +
-    (claudeKey ? 'Connected: ' + masked + ' · Messages are drafted by AI' : 'Optional. Paste your Anthropic API key to enable AI-drafted messages. Get one at <a href="https://console.anthropic.com" target="_blank" style="color:var(--inbound)">console.anthropic.com</a>') +
+    (claudeKey ? 'Connected: ' + masked + ' · Messages are drafted by AI' : 'Optional. Paste your Anthropic API key for AI-drafted messages. Get one at <a href="https://console.anthropic.com" target="_blank" style="color:var(--inbound)">console.anthropic.com</a>') +
     '</div></div>' +
 
     '</div><div class="qa-footer"><button class="qa-cancel" onclick="closeModal()">Cancel</button>' +
@@ -341,6 +349,20 @@ function saveSettings() {
     localStorage.setItem('hawki_claude_key', key);
   } else {
     localStorage.removeItem('hawki_claude_key');
+  }
+
+  // Save LinkedIn cookie and sync to server
+  var liAt = document.getElementById('settings-li-at').value.trim();
+  if (liAt) {
+    localStorage.setItem('hawki_li_at', liAt);
+    // Send to server so it can scrape
+    var apiUrl = typeof getApiUrl === 'function' ? getApiUrl() : '';
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', apiUrl + '/api/update-cookies');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({ li_at: liAt }));
+  } else {
+    localStorage.removeItem('hawki_li_at');
   }
 
   flash();

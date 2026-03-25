@@ -34,11 +34,18 @@ def get_cookies():
 
 @app.route("/api/scrape", methods=["POST"])
 def scrape():
-    cookies = get_cookies()
-    if not cookies:
-        return jsonify({"error": "No cookies.json found. Export your LinkedIn cookies first."}), 400
-
     data = request.get_json()
+
+    # User can send their own cookie from the frontend
+    li_at = data.get("li_at", "")
+    if li_at:
+        cookies = {"li_at": li_at, "JSESSIONID": ""}
+    else:
+        cookies = get_cookies()
+
+    if not cookies:
+        return jsonify({"error": "No LinkedIn connection. Go to Settings and paste your li_at cookie."}), 400
+
     url = data.get("url", "").strip()
     if not url or "linkedin.com" not in url:
         return jsonify({"error": "Invalid LinkedIn URL"}), 400

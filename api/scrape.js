@@ -27,12 +27,20 @@ async function scrapePost(postUrl, liAt) {
   const cookies = { li_at: liAt, JSESSIONID: jsessionid };
   const headers = buildHeaders(cookies);
 
-  // Extract activity ID from URL — try multiple patterns
+  // Extract post ID from URL
   const actMatch = postUrl.match(/activity[- :_](\d{15,25})/);
   const ugcMatch = postUrl.match(/ugcPost[- :_](\d{15,25})/);
+  const shareMatch = postUrl.match(/share[- :_](\d{15,25})/);
   const anyNumMatch = postUrl.match(/(\d{19,20})/);
-  const postId = actMatch ? actMatch[1] : (ugcMatch ? ugcMatch[1] : (anyNumMatch ? anyNumMatch[1] : null));
+  let postId = actMatch ? actMatch[1] : (ugcMatch ? ugcMatch[1] : (shareMatch ? shareMatch[1] : (anyNumMatch ? anyNumMatch[1] : null)));
   if (!postId) return { error: 'Could not find post ID from URL: ' + postUrl.substring(0, 100) };
+
+  // If it's a share URL, look up the real activity ID
+  const isShare = !actMatch && (shareMatch || postUrl.includes('share'));
+  if (isShare) {
+    const realId = await resolveShareToActivity(postId, cookies, headers);
+    if (realId) postId = realId;
+  }
 
   // Try both URN types
   let data = null, urnType = null;
@@ -160,6 +168,19 @@ async function scrapeCommenters(postUrl, postId, cookies, headers) {
     return commenters;
   } catch (e) {
     return [];
+  }
+}
+
+async function resolveShareToActivity(shareId, cookies, headers) {
+  try {
+    const url = `https://www.linkedin.com/voyager/api/feed/updates/urn:li:share:${shareId}`;
+    const resp = await fetch(url, { headers, redirect: 'manual' });
+    if (resp.status !== 200) return null;
+    const text = await resp.text();
+    const match = text.match(/urn:li:activity:(\d+)/);
+    return match ? match[1] : null;
+  } catch (e) {
+    return null;
   }
 }
 

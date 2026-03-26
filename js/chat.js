@@ -308,13 +308,7 @@ function openSettings() {
     'value="' + icp.exclude.join(', ') + '" placeholder="Recruiter, Student...">' +
     '<div style="font-size:var(--fs-xs);color:var(--text-4);margin-top:var(--s-4)">People with these words are always excluded from ICP.</div></div>' +
 
-    // LinkedIn Session
-    '<div class="qa-field"><label class="qa-label">LinkedIn Session</label>' +
-    '<input type="password" class="qa-input qa-input-sm" id="settings-li-at" ' +
-    'placeholder="Paste your li_at token..." value="' + (localStorage.getItem('hawki_li_at') || '') + '">' +
-    '<div style="font-size:var(--fs-xs);color:var(--text-4);margin-top:var(--s-4)">' +
-    (localStorage.getItem('hawki_li_at') ? 'Connected — sessions refresh every ~30 min' : 'Required. Go to LinkedIn → DevTools (Cmd+Option+I) → Application → Cookies → copy <b>li_at</b> value') +
-    '</div></div>' +
+    // (LinkedIn cookie removed — Apify handles scraping without cookies)
 
     '</div><div class="qa-footer"><button class="qa-cancel" onclick="closeModal()">Cancel</button>' +
     '<button class="qa-submit" onclick="saveSettings()">Save</button></div></div>';
@@ -334,20 +328,6 @@ function saveSettings() {
     });
   });
   saveScrapes(scrapes);
-
-  // Save LinkedIn cookie and sync to server
-  var liAt = document.getElementById('settings-li-at').value.trim();
-  if (liAt) {
-    localStorage.setItem('hawki_li_at', liAt);
-    // Send to server so it can scrape
-    var apiUrl = typeof getApiUrl === 'function' ? getApiUrl() : '';
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', apiUrl + '/api/update-cookies');
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(JSON.stringify({ li_at: liAt }));
-  } else {
-    localStorage.removeItem('hawki_li_at');
-  }
 
   flash();
   closeModal();

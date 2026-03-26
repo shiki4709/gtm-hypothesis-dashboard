@@ -130,7 +130,7 @@ function runScrape(postUrl, callback) {
   };
 
   xhr.onerror = function() {
-    runDemoScrape(postUrl, callback);
+    callback('Could not reach server. Check your connection and try again.');
   };
 
   xhr.ontimeout = function() {
@@ -708,7 +708,7 @@ function renderLeadRow(l) {
   if (messaged) {
     btn = '<button class="runner-undo-btn" onclick="event.stopPropagation();unmarkMessaged(\'' + profileUrl.replace(/'/g, "\\'") + '\')">Undo</button>';
   } else {
-    btn = '<button class="runner-msg-btn" onclick="event.stopPropagation();messageAndTrack(\'' + profileUrl.replace(/'/g, "\\'") + '\',\'' + firstName.replace(/'/g, "\\'") + '\',\'' + (l.comment_text || '').substring(0, 80).replace(/'/g, "\\'").replace(/\n/g, ' ') + '\',\'' + postTitle.replace(/'/g, "\\'") + '\')">Message</button>';
+    btn = '<button class="runner-msg-btn" onclick="event.stopPropagation();messageAndTrack(\'' + profileUrl.replace(/'/g, "\\'") + '\',\'' + firstName.replace(/'/g, "\\'") + '\',\'' + (l.comment_text || '').substring(0, 80).replace(/'/g, "\\'").replace(/\n/g, ' ') + '\',\'' + postTitle.replace(/'/g, "\\'") + '\')">Draft DM</button>';
   }
 
   return '<div class="rc-lead' + dimClass + sentClass + '">' +
@@ -793,19 +793,30 @@ function regenerateDraft(profileUrl, name, headline, comment, postTitle) {
     btn.textContent = 'Rewrite with AI';
     btn.disabled = false;
     if (xhr.status === 200) {
-      var result = JSON.parse(xhr.responseText);
-      textarea.value = result.message;
+      try {
+        var result = JSON.parse(xhr.responseText);
+        if (result.message) textarea.value = result.message;
+      } catch (e) {}
+    } else {
+      try {
+        var err = JSON.parse(xhr.responseText);
+        showToast(err.error || 'AI drafting failed');
+      } catch (e) {
+        showToast('AI drafting failed — check API key in Settings');
+      }
     }
   };
 
   xhr.onerror = function() {
     btn.textContent = 'Rewrite with AI';
     btn.disabled = false;
+    showToast('AI drafting unavailable — using template');
   };
 
   xhr.ontimeout = function() {
     btn.textContent = 'Rewrite with AI';
     btn.disabled = false;
+    showToast('AI draft timed out — using template');
   };
 
   var instruction = '';
@@ -1112,11 +1123,7 @@ function checkCookieStatus() {
   xhr.send(JSON.stringify({ li_at: liAt }));
 }
 
-// Auto-check on first load
-if (localStorage.getItem('hawki_li_at') && !window._hawkiCheckedConn) {
-  window._hawkiCheckedConn = true;
-  setTimeout(checkCookieStatus, 500);
-}
+// (Cookie auto-check removed — Apify handles scraping without cookies)
 
 function saveOnboardCookie() {
   var cookie = document.getElementById('onboard-cookie').value.trim();

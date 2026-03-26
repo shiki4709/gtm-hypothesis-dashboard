@@ -49,12 +49,19 @@ async function startScrape(postUrl, token) {
     }).then(r => r.json()),
   ]);
 
+  const commDs = commRun.data?.defaultDatasetId;
+  const commId = commRun.data?.id;
+  const likeDs = likeRun.data?.defaultDatasetId;
+  const likeId = likeRun.data?.id;
+
+  if (!commDs || !commId || !likeDs || !likeId) {
+    const errMsg = commRun.error || likeRun.error || 'Apify failed to start. Check the post URL and try again.';
+    throw new Error(errMsg);
+  }
+
   return {
     status: 'started',
-    pollId: [
-      commRun.data?.defaultDatasetId, commRun.data?.id,
-      likeRun.data?.defaultDatasetId, likeRun.data?.id,
-    ].join(','),
+    pollId: [commDs, commId, likeDs, likeId].join(','),
   };
 }
 
@@ -69,12 +76,19 @@ async function checkRuns(pollId, token) {
     try {
       const resp = await fetch(`https://api.apify.com/v2/actor-runs/${rid}?token=${token}`);
       if (resp.ok) {
-        const s = (await resp.json()).data?.status;
-        if (s !== 'SUCCEEDED' && s !== 'FAILED' && s !== 'ABORTED') {
+        const runData = (await resp.json()).data;
+        const s = runData?.status;
+        if (s === 'FAILED' || s === 'ABORTED') {
+          return { status: 'done', leads: [], total: 0, fetched: 0, error: 'Scrape run ' + s.toLowerCase() + ': ' + (runData?.statusMessage || 'unknown error') };
+        }
+        if (s !== 'SUCCEEDED') {
           return { status: 'running', leads: [], fetched: 0 };
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      // Network error checking run status — treat as still running
+      return { status: 'running', leads: [], fetched: 0 };
+    }
   }
 
   // Both done — fetch results
@@ -82,11 +96,15 @@ async function checkRuns(pollId, token) {
   try {
     const r = await fetch(`https://api.apify.com/v2/datasets/${commDs}/items?token=${token}`);
     if (r.ok) commItems = await r.json();
-  } catch (e) {}
+  } catch (e) {
+    console.error('Failed to fetch commenters:', e.message);
+  }
   try {
     const r = await fetch(`https://api.apify.com/v2/datasets/${likeDs}/items?token=${token}`);
     if (r.ok) likeItems = await r.json();
-  } catch (e) {}
+  } catch (e) {
+    console.error('Failed to fetch likers:', e.message);
+  }
 
   // Parse and merge — commenters first, then likers, deduplicated
   const leads = [];

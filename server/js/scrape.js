@@ -204,81 +204,34 @@ function renderRunner() {
 
   // ── Onboarding (show when no cookie set) ──
   if (!localStorage.getItem('hawki_li_at')) {
-    // Ask extension for cookie (content script will inject it)
-    if (!window._hawkiAskedExtension) {
-      window._hawkiAskedExtension = true;
-      window.postMessage({ type: 'HAWKI_GET_COOKIE' }, '*');
-      window.addEventListener('message', function(e) {
-        if (e.data && e.data.type === 'HAWKI_COOKIE_READY') {
-          render();
-        }
-      });
-      // Also check after a delay in case content script already injected
-      setTimeout(function() {
-        if (localStorage.getItem('hawki_li_at')) render();
-      }, 2000);
-    }
     el.innerHTML = '<div class="onboard">' +
       '<div class="onboard-title">Welcome to Hawki</div>' +
-      '<div class="onboard-desc">Connect your LinkedIn to start finding leads.</div>' +
+      '<div class="onboard-desc">Connect your LinkedIn to start finding leads. Takes 30 seconds.</div>' +
 
-      // Option A: Extension (recommended)
-      '<div class="onboard-section">' +
-      '<div class="onboard-section-title">Option A: Browser Extension (recommended)</div>' +
-      '<div class="onboard-section-desc">Auto-syncs your LinkedIn cookie every 2 minutes. Set it once, forget it.</div>' +
       '<div class="onboard-steps">' +
 
       '<div class="onboard-step">' +
       '<div class="onboard-num">1</div>' +
       '<div class="onboard-text">' +
-      '<strong>Download the extension</strong> — <a href="https://github.com/shiki4709/hawki/tree/main/extension" target="_blank" style="color:var(--inbound)">Get it from GitHub</a> → download the <code>extension</code> folder' +
+      'Open <a href="https://www.linkedin.com" target="_blank" style="color:var(--inbound);font-weight:600">linkedin.com</a> and make sure you\'re logged in' +
       '</div></div>' +
 
       '<div class="onboard-step">' +
       '<div class="onboard-num">2</div>' +
       '<div class="onboard-text">' +
-      'Open <strong>chrome://extensions</strong> → enable <strong>Developer mode</strong> (top right) → click <strong>Load unpacked</strong> → select the extension folder' +
+      'Press <kbd>Cmd+Option+I</kbd> (Mac) or <kbd>Ctrl+Shift+I</kbd> (Windows) to open DevTools' +
       '</div></div>' +
 
       '<div class="onboard-step">' +
       '<div class="onboard-num">3</div>' +
       '<div class="onboard-text">' +
-      'Make sure you\'re <strong>logged into LinkedIn</strong> → click the Hawki icon in your toolbar → click <strong>Sync Now</strong>' +
+      'Click <strong>Application</strong> tab → expand <strong>Cookies</strong> → click <strong>https://www.linkedin.com</strong>' +
       '</div></div>' +
 
       '<div class="onboard-step">' +
       '<div class="onboard-num">4</div>' +
       '<div class="onboard-text">' +
-      '<strong>Refresh this page</strong> — you\'re ready to scrape' +
-      '</div></div>' +
-
-      '</div></div>' +
-
-      // Divider
-      '<div class="onboard-divider">or</div>' +
-
-      // Option B: Manual
-      '<div class="onboard-section">' +
-      '<div class="onboard-section-title">Option B: Paste cookie manually</div>' +
-      '<div class="onboard-section-desc">Quick but expires every ~30 minutes. You\'ll need to re-paste when it expires.</div>' +
-      '<div class="onboard-steps">' +
-
-      '<div class="onboard-step">' +
-      '<div class="onboard-num">1</div>' +
-      '<div class="onboard-text">' +
-      'Open <strong>LinkedIn</strong> → press <kbd>Cmd+Option+I</kbd> (Mac) or <kbd>Ctrl+Shift+I</kbd> (Windows)' +
-      '</div></div>' +
-
-      '<div class="onboard-step">' +
-      '<div class="onboard-num">2</div>' +
-      '<div class="onboard-text">' +
-      'Click <strong>Application</strong> tab → <strong>Cookies</strong> → <strong>linkedin.com</strong> → find <strong>li_at</strong> → copy the value' +
-      '</div></div>' +
-
-      '<div class="onboard-step">' +
-      '<div class="onboard-num">3</div>' +
-      '<div class="onboard-text">' +
-      'Paste it below and click <strong>Connect</strong>' +
+      'Find <strong>li_at</strong> in the list → double-click the <strong>Value</strong> → copy it' +
       '</div></div>' +
 
       '</div>' +
@@ -287,10 +240,7 @@ function renderRunner() {
       '<input type="password" class="scrape-url-input" id="onboard-cookie" placeholder="Paste your li_at cookie here...">' +
       '<button class="scrape-go-btn" onclick="saveOnboardCookie()">Connect</button>' +
       '</div>' +
-
-      '</div>' +
-
-      '<div class="onboard-note">Your cookie stays in your browser. It\'s never stored on our servers.</div>' +
+      '<div class="onboard-note">Your cookie stays in your browser only. Sessions refresh every ~30 min — we\'ll let you know when to reconnect.</div>' +
       '</div>';
     return;
   }
@@ -1030,22 +980,20 @@ function showCookieExpired() {
   qaOpen = true;
   document.getElementById('modal').classList.add('open');
   document.querySelector('.chat').innerHTML =
-    '<div class="qa-panel"><div class="qa-header"><h2 class="qa-title">Cookie Expired</h2>' +
+    '<div class="qa-panel"><div class="qa-header"><h2 class="qa-title">Session expired</h2>' +
     '<button class="chat-close" onclick="closeModal()">&times;</button></div>' +
     '<div class="qa-body">' +
-    '<div style="font-size:var(--fs-sm);color:var(--text-2);margin-bottom:var(--s-16)">Your LinkedIn session expired. This happens every ~30 minutes. Quick refresh:</div>' +
-    '<div class="onboard-steps">' +
-    '<div class="onboard-step"><div class="onboard-num">1</div><div class="onboard-text">' +
-    'Go to <a href="https://www.linkedin.com" target="_blank" style="color:var(--inbound);font-weight:600">linkedin.com</a> (make sure you\'re logged in)</div></div>' +
-    '<div class="onboard-step"><div class="onboard-num">2</div><div class="onboard-text">' +
-    'Press <kbd>Cmd+Option+I</kbd> → <strong>Application</strong> → <strong>Cookies</strong> → <strong>linkedin.com</strong> → copy <strong>li_at</strong> value</div></div>' +
+    '<div style="font-size:var(--fs-sm);color:var(--text-2);margin-bottom:var(--s-16);line-height:1.6">' +
+    'LinkedIn sessions refresh every ~30 minutes. Quick reconnect:' +
+    '<br><br>' +
+    '<a href="https://www.linkedin.com" target="_blank" style="color:var(--inbound);font-weight:600">Open LinkedIn</a> → ' +
+    '<kbd>Cmd+Option+I</kbd> → <strong>Application</strong> → <strong>Cookies</strong> → <strong>li_at</strong> → copy value' +
     '</div>' +
-    '<div class="onboard-input" style="margin-top:var(--s-12)">' +
-    '<input type="password" class="qa-input qa-input-sm" id="refresh-cookie" placeholder="Paste new li_at cookie...">' +
+    '<div style="display:flex;gap:var(--s-8)">' +
+    '<input type="password" class="qa-input qa-input-sm" id="refresh-cookie" placeholder="Paste li_at cookie..." style="flex:1" ' +
+    'onkeydown="if(event.key===\'Enter\')refreshCookie()">' +
+    '<button class="qa-submit" onclick="refreshCookie()" style="flex-shrink:0">Reconnect</button>' +
     '</div>' +
-    '</div><div class="qa-footer">' +
-    '<button class="qa-cancel" onclick="closeModal()">Cancel</button>' +
-    '<button class="qa-submit" onclick="refreshCookie()">Reconnect</button>' +
     '</div></div>';
 }
 

@@ -40,12 +40,12 @@ async function startScrape(postUrl, token) {
     fetch(startUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: apifyUrl, type: 'commenters', iterations: 100, start: 0 }),
+      body: JSON.stringify({ url: apifyUrl, type: 'commenters', iterations: 50, start: 0 }),
     }).then(r => r.json()),
     fetch(startUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: apifyUrl, type: 'likers', iterations: 100, start: 0 }),
+      body: JSON.stringify({ url: apifyUrl, type: 'likers', iterations: 50, start: 0 }),
     }).then(r => r.json()),
   ]);
 

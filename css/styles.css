@@ -690,6 +690,18 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
 .scrape-find-btn:hover { opacity: 0.85; }
 .scrape-hint { font-size: var(--fs-xs); color: var(--text-4); margin-top: var(--s-6); }
 .scrape-hint-row { font-size: var(--fs-xs); color: var(--text-4); margin-top: var(--s-6); }
+.scrape-icp-bar {
+  margin-top: var(--s-8); padding: var(--s-8) var(--s-12);
+  background: var(--bg-sub); border-radius: var(--radius-sm);
+  font-size: var(--fs-xs); color: var(--text-3); cursor: pointer;
+  display: flex; align-items: center; gap: var(--s-4); flex-wrap: wrap;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.scrape-icp-bar:hover { background: var(--surface); }
+.scrape-icp-label-text { font-weight: 600; color: var(--text-2); }
+.scrape-icp-keywords { color: var(--text-3); }
+.scrape-icp-exclude { color: var(--text-4); font-style: italic; }
+.scrape-icp-edit { margin-left: auto; color: var(--inbound); font-weight: 500; }
 .scrape-find-link { color: var(--inbound); text-decoration: none; font-weight: 500; }
 .scrape-find-link:hover { text-decoration: underline; }
 

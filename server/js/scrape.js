@@ -260,8 +260,13 @@ function renderRunner() {
     '</div>' +
     '<div class="scrape-hint-row">' +
     '<a href="https://www.linkedin.com/search/results/content/?keywords=GTM&sortBy=%22date_posted%22" target="_blank" rel="noopener" class="scrape-find-link">Search LinkedIn for posts</a>' +
-    ' · Copy any post URL and paste it above · ' +
-    '<span onclick="openSettings()" style="cursor:pointer;color:var(--text-3);text-decoration:underline dotted">Settings</span>' +
+    ' · <span onclick="openSettings()" style="cursor:pointer;color:var(--text-3);text-decoration:underline dotted">Settings</span>' +
+    '</div>' +
+    '<div class="scrape-icp-bar" onclick="openSettings()">' +
+    '<span class="scrape-icp-label-text">ICP:</span> ' +
+    '<span class="scrape-icp-keywords">' + icp.titles.join(', ') + '</span>' +
+    (icp.exclude.length > 0 ? ' <span class="scrape-icp-exclude">Exclude: ' + icp.exclude.join(', ') + '</span>' : '') +
+    '<span class="scrape-icp-edit">Edit</span>' +
     '</div>' +
     '</div>';
 

@@ -996,7 +996,6 @@ function startScrape() {
   var url = input.value.trim();
   if (!url) return;
 
-  // Basic LinkedIn URL validation
   if (url.indexOf('linkedin.com') < 0) {
     showToast('Please paste a LinkedIn URL');
     return;
@@ -1011,16 +1010,51 @@ function startScrape() {
     btn.textContent = 'Scrape';
     btn.disabled = false;
     btn.style.opacity = '1';
-    input.value = '';
 
     if (err) {
-      showToast(err);
+      if (err.toLowerCase().indexOf('cookie') >= 0 || err.toLowerCase().indexOf('expired') >= 0) {
+        showCookieExpired();
+      } else {
+        showToast(err);
+      }
     } else {
+      input.value = '';
       var matched = scrape.leads.filter(function(l) { return l.icp_match; });
       showToast(scrape.leads.length + ' engagers found · ' + matched.length + ' ICP matches');
     }
     render();
   });
+}
+
+function showCookieExpired() {
+  qaOpen = true;
+  document.getElementById('modal').classList.add('open');
+  document.querySelector('.chat').innerHTML =
+    '<div class="qa-panel"><div class="qa-header"><h2 class="qa-title">Cookie Expired</h2>' +
+    '<button class="chat-close" onclick="closeModal()">&times;</button></div>' +
+    '<div class="qa-body">' +
+    '<div style="font-size:var(--fs-sm);color:var(--text-2);margin-bottom:var(--s-16)">Your LinkedIn session expired. This happens every ~30 minutes. Quick refresh:</div>' +
+    '<div class="onboard-steps">' +
+    '<div class="onboard-step"><div class="onboard-num">1</div><div class="onboard-text">' +
+    'Go to <a href="https://www.linkedin.com" target="_blank" style="color:var(--inbound);font-weight:600">linkedin.com</a> (make sure you\'re logged in)</div></div>' +
+    '<div class="onboard-step"><div class="onboard-num">2</div><div class="onboard-text">' +
+    'Press <kbd>Cmd+Option+I</kbd> → <strong>Application</strong> → <strong>Cookies</strong> → <strong>linkedin.com</strong> → copy <strong>li_at</strong> value</div></div>' +
+    '</div>' +
+    '<div class="onboard-input" style="margin-top:var(--s-12)">' +
+    '<input type="password" class="qa-input qa-input-sm" id="refresh-cookie" placeholder="Paste new li_at cookie...">' +
+    '</div>' +
+    '</div><div class="qa-footer">' +
+    '<button class="qa-cancel" onclick="closeModal()">Cancel</button>' +
+    '<button class="qa-submit" onclick="refreshCookie()">Reconnect</button>' +
+    '</div></div>';
+}
+
+function refreshCookie() {
+  var cookie = document.getElementById('refresh-cookie').value.trim();
+  if (!cookie) { showToast('Paste your li_at cookie'); return; }
+  localStorage.setItem('hawki_li_at', cookie);
+  closeModal();
+  showToast('Reconnected! Try scraping again.');
 }
 
 function removeScrape(id) {

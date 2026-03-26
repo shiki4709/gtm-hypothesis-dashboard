@@ -19,32 +19,33 @@ module.exports = async (req, res) => {
   if (instruction && current_draft) {
     prompt = `Here is a LinkedIn message draft:\n\n"${current_draft}"\n\nThe user wants you to: ${instruction}\n\nContext about the recipient:\n- Name: ${name}\n- Headline: ${headline}\n${comment ? `- They commented: "${comment}"` : `- They liked a post about: ${post_title}`}\n\nRewrite the message following the user's instruction. Keep it under 300 characters. Output only the message, nothing else.`;
   } else {
-    prompt = `Write a LinkedIn connection request to ${name}. Max 250 characters.
+    prompt = `Write a LinkedIn connection request to ${firstName}. Under 200 characters.
 
 About them:
+- Full name: ${name}
 - Headline: ${headline}
 - Post topic: ${post_title}
-${comment ? `- Their comment: "${comment}"` : ''}
+${comment ? `- Their comment: "${comment}"` : '- They liked the post (no comment)'}
 
-Here are REAL examples that get 60-78% acceptance rates. Pick a style that fits — DO NOT copy the same one every time. Vary your approach:
+TONE RULES — this is the most important part:
+- Write like a real human texting a coworker, NOT like a sales robot
+- Lowercase "i" is fine. Abbreviations are fine. Casual grammar is fine.
+- Reference something SPECIFIC — their comment, their company, their role, or the post topic
+- If they commented, react to what they actually said. Don't summarize it back to them. Respond like a human would.
+- NO filler phrases: "would love to connect", "thought it'd be cool", "great to have you in my network"
+- NO corporate speak: resonated, insightful, curious, fascinating, align, synergy, leverage, thrilled
+- NO em dashes, NO exclamation marks, NO emojis
+- NO questions
+- NO pitching
 
-"Hey Sarah, since we're both in the GTM space, thought it'd be cool to connect."
-"Hi Joe, your comment about collapsing silos, spot on. Would love to have you in my network."
-"Hi Marcus, always good to connect with folks doing solid work at Gong."
-"Hey Lisa, we're in the same world, would be great to connect."
-"Hi David, your take on that GTM post matched what I've been seeing too. Let's connect."
-"Hey Nina, noticed we're both deep in the sales ops world. Would be good to be connected."
+REAL examples that get accepted (notice how casual and specific they are):
+"hey ${firstName}, read your comment on that GTM post, you nailed it. similar world here."
+"saw your take on the hiring piece, been thinking the same thing at our shop."
+"we're both in the revenue ops trenches apparently. figured we should be connected."
+"your comment on that post caught my eye, spot on about the process piece."
+"noticed you're at ${comment ? 'the same stage' : 'a company doing interesting stuff'}. connecting."
 
-Now write ONE message for ${firstName}. IMPORTANT — vary the structure, don't always use the same pattern. Rules:
-- Max 2 sentences, under 250 characters
-- Mention ONE thing you have in common (industry, post, comment, role)
-- End with "would be great to connect" or "thought it'd be cool to connect" or similar
-- Do NOT ask questions
-- Do NOT pitch anything
-- Do NOT use words: resonated, insightful, curious, fascinating, intrigued, align, synergy, leverage
-- Do NOT use em dashes. Use commas or periods instead
-- Sound like you typed this in 5 seconds on your phone
-- Output ONLY the message text, nothing else`;
+Write ONE message. Make it feel like something a real person would actually type on their phone at 10pm. Short. Specific. No fluff. Output ONLY the message, nothing else.`;
   }
 
   try {

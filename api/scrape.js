@@ -32,9 +32,7 @@ async function scrapeWithApify(postUrl, token) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      postUrls: [postUrl],
-      scrapeReactions: true,
-      scrapeComments: true,
+      url: postUrl,
     }),
     timeout: 120000,
   });

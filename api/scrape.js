@@ -28,11 +28,21 @@ async function scrapeWithApify(postUrl, token) {
   // Run the actor synchronously and get dataset items
   const apiUrl = `https://api.apify.com/v2/acts/${actorId}/run-sync-get-dataset-items?token=${token}`;
 
+  // Convert post URL to feed/update format that Apify expects
+  let apifyUrl = postUrl;
+  const actMatch = postUrl.match(/activity[- ](\d+)/);
+  const shareMatch = postUrl.match(/share[- ](\d+)/);
+  if (actMatch) {
+    apifyUrl = `https://www.linkedin.com/feed/update/urn:li:activity:${actMatch[1]}/`;
+  } else if (shareMatch) {
+    apifyUrl = `https://www.linkedin.com/feed/update/urn:li:share:${shareMatch[1]}/`;
+  }
+
   const resp = await fetch(apiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      url: postUrl,
+      url: apifyUrl,
     }),
     timeout: 120000,
   });

@@ -105,7 +105,7 @@ function runScrape(postUrl, callback) {
 
         // Async mode: scrape started, need to poll
         if (result.status === 'started' && result.pollId) {
-          showToast('Scraping... this takes 15-30 seconds');
+          showToast('Scraping... this takes 30-90 seconds for large posts');
           pollForResults(postUrl, result.pollId, callback, 0);
           return;
         }
@@ -141,7 +141,7 @@ function runScrape(postUrl, callback) {
 }
 
 function pollForResults(postUrl, pollId, callback, attempt) {
-  if (attempt > 30) { callback('Scrape timed out after polling'); return; }
+  if (attempt > 60) { callback('Scrape timed out after polling'); return; }
 
   setTimeout(function() {
     var apiUrl = getApiUrl();
@@ -158,7 +158,8 @@ function pollForResults(postUrl, pollId, callback, attempt) {
         } else if (result.status === 'done' && result.leads && result.leads.length > 0) {
           finishScrape(postUrl, result.leads, callback);
         } else if (result.status === 'running') {
-          showToast('Still scraping... (' + (attempt + 1) * 3 + 's)');
+          var progress = result.progress ? ' [' + result.progress + ' batches]' : '';
+          showToast('Still scraping... (' + (attempt + 1) * 3 + 's)' + progress);
           pollForResults(postUrl, pollId, callback, attempt + 1);
         } else {
           callback('No leads found for this post');

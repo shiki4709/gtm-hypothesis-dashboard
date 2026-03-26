@@ -35,112 +35,115 @@ async function startScrape(postUrl, token) {
   if (actMatch) apifyUrl = `https://www.linkedin.com/feed/update/urn:li:activity:${actMatch[1]}/`;
   else if (shareMatch) apifyUrl = `https://www.linkedin.com/feed/update/urn:li:share:${shareMatch[1]}/`;
 
-  // Start both commenters and likers runs
-  const [commRun, likeRun] = await Promise.all([
+  // Start multiple offset batches for both commenters and likers
+  // Each batch scrapes 18 pages (~100 results). We run offsets 0, 100, 200, 300, 400
+  // to cover ~500 results per type (1000+ total)
+  const batchSize = 18;
+  const offsets = [0, 100, 200, 300, 400];
+
+  const startRun = (type, start) =>
     fetch(startUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: apifyUrl, type: 'commenters', iterations: 18, start: 0 }),
-    }).then(r => r.json()),
-    fetch(startUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: apifyUrl, type: 'likers', iterations: 18, start: 0 }),
-    }).then(r => r.json()),
+      body: JSON.stringify({ url: apifyUrl, type, iterations: batchSize, start }),
+    }).then(r => r.json());
+
+  const allRuns = await Promise.all([
+    ...offsets.map(s => startRun('commenters', s)),
+    ...offsets.map(s => startRun('likers', s)),
   ]);
 
-  const commDs = commRun.data?.defaultDatasetId;
-  const commId = commRun.data?.id;
-  const likeDs = likeRun.data?.defaultDatasetId;
-  const likeId = likeRun.data?.id;
-
-  if (!commDs || !commId || !likeDs || !likeId) {
-    const rawErr = commRun.error || likeRun.error || '';
-    const errMsg = typeof rawErr === 'string' ? rawErr : JSON.stringify(rawErr);
-    const debugInfo = JSON.stringify({ commStatus: commRun.status, likeStatus: likeRun.status, commData: !!commRun.data, likeData: !!likeRun.data });
-    throw new Error(errMsg || 'Apify failed to start (' + debugInfo + ')');
+  // Collect all valid run IDs
+  const runIds = [];
+  for (const run of allRuns) {
+    const ds = run.data?.defaultDatasetId;
+    const id = run.data?.id;
+    if (ds && id) runIds.push({ ds, id });
   }
+
+  if (runIds.length === 0) {
+    const rawErr = allRuns[0]?.error || '';
+    const errMsg = typeof rawErr === 'string' ? rawErr : JSON.stringify(rawErr);
+    throw new Error(errMsg || 'Apify failed to start any runs');
+  }
+
+  // Encode all run IDs as pollId string: ds1,id1,ds2,id2,...
+  const pollId = runIds.map(r => r.ds + ',' + r.id).join('|');
 
   return {
     status: 'started',
-    pollId: [commDs, commId, likeDs, likeId].join(','),
+    pollId,
+    totalBatches: runIds.length,
   };
 }
 
 async function checkRuns(pollId, token) {
-  const parts = pollId.split(',');
-  const commDs = parts[0], commRunId = parts[1];
-  const likeDs = parts[2], likeRunId = parts[3];
+  // pollId format: "ds1,id1|ds2,id2|ds3,id3|..."
+  const batches = pollId.split('|').map(b => {
+    const [ds, id] = b.split(',');
+    return { ds, id };
+  });
 
-  // Check if both runs finished
-  for (const rid of [commRunId, likeRunId]) {
-    if (!rid) continue;
+  // Check if ALL runs finished
+  let anyRunning = false;
+  let succeededCount = 0;
+  for (const batch of batches) {
+    if (!batch.id) continue;
     try {
-      const resp = await fetch(`https://api.apify.com/v2/actor-runs/${rid}?token=${token}`);
+      const resp = await fetch(`https://api.apify.com/v2/actor-runs/${batch.id}?token=${token}`);
       if (resp.ok) {
         const runData = (await resp.json()).data;
         const s = runData?.status;
-        if (s === 'FAILED' || s === 'ABORTED') {
-          return { status: 'done', leads: [], total: 0, fetched: 0, error: 'Scrape run ' + s.toLowerCase() + ': ' + (runData?.statusMessage || 'unknown error') };
-        }
-        if (s !== 'SUCCEEDED') {
-          return { status: 'running', leads: [], fetched: 0 };
+        if (s === 'SUCCEEDED') {
+          succeededCount++;
+        } else if (s === 'FAILED' || s === 'ABORTED') {
+          // Skip failed batches, don't abort the whole scrape
+          succeededCount++;
+        } else {
+          anyRunning = true;
         }
       }
     } catch (e) {
-      // Network error checking run status — treat as still running
-      return { status: 'running', leads: [], fetched: 0 };
+      anyRunning = true;
     }
   }
 
-  // Both done — fetch results
-  let commItems = [], likeItems = [];
-  try {
-    const r = await fetch(`https://api.apify.com/v2/datasets/${commDs}/items?token=${token}`);
-    if (r.ok) commItems = await r.json();
-  } catch (e) {
-    console.error('Failed to fetch commenters:', e.message);
-  }
-  try {
-    const r = await fetch(`https://api.apify.com/v2/datasets/${likeDs}/items?token=${token}`);
-    if (r.ok) likeItems = await r.json();
-  } catch (e) {
-    console.error('Failed to fetch likers:', e.message);
+  if (anyRunning) {
+    return { status: 'running', leads: [], fetched: 0, progress: succeededCount + '/' + batches.length };
   }
 
-  // Parse and merge — commenters first, then likers, deduplicated
+  // All done — fetch and merge results from all datasets
+  let allItems = [];
+  for (const batch of batches) {
+    if (!batch.ds) continue;
+    try {
+      const r = await fetch(`https://api.apify.com/v2/datasets/${batch.ds}/items?token=${token}`);
+      if (r.ok) {
+        const items = await r.json();
+        allItems = allItems.concat(items);
+      }
+    } catch (e) {
+      console.error('Failed to fetch dataset ' + batch.ds + ':', e.message);
+    }
+  }
+
+  // Deduplicate by profile URL, commenters get priority (they have comment text)
   const leads = [];
   const seen = new Set();
   let commentCount = 0, likerCount = 0;
 
-  // Commenters — use content field for comment text
-  for (const item of commItems) {
+  for (const item of allItems) {
     const profileUrl = item.url_profile || '';
     if (!profileUrl || seen.has(profileUrl)) continue;
     seen.add(profileUrl);
-    commentCount++;
+    const hasComment = !!(item.content);
+    if (hasComment) commentCount++; else likerCount++;
     leads.push({
       name: item.name || '',
       title: item.subtitle || '',
       company: extractCompany(item.subtitle || ''),
       linkedin_url: profileUrl,
       comment_text: item.content || '',
-      scraped_from: '',
-    });
-  }
-
-  // Likers — no comment text
-  for (const item of likeItems) {
-    const profileUrl = item.url_profile || '';
-    if (!profileUrl || seen.has(profileUrl)) continue;
-    seen.add(profileUrl);
-    likerCount++;
-    leads.push({
-      name: item.name || '',
-      title: item.subtitle || '',
-      company: extractCompany(item.subtitle || ''),
-      linkedin_url: profileUrl,
-      comment_text: '',
       scraped_from: '',
     });
   }

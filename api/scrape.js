@@ -22,7 +22,9 @@ module.exports = async (req, res) => {
 };
 
 async function scrapePost(postUrl, liAt) {
-  const cookies = { li_at: liAt };
+  // Get a valid JSESSIONID from LinkedIn
+  const jsessionid = await getSessionId(liAt);
+  const cookies = { li_at: liAt, JSESSIONID: jsessionid };
   const headers = buildHeaders(cookies);
 
   // Extract activity ID from URL — try multiple patterns
@@ -162,16 +164,36 @@ async function scrapeCommenters(postUrl, postId, cookies, headers) {
 }
 
 function buildHeaders(cookies) {
-  const csrf = (cookies.JSESSIONID || '').replace(/"/g, '');
+  const csrf = (cookies.JSESSIONID || 'ajax:0').replace(/"/g, '');
   return {
     'accept': 'application/vnd.linkedin.normalized+json+2.1',
+    'accept-encoding': 'gzip, deflate, br',
     'accept-language': 'en-US,en;q=0.9',
     'csrf-token': csrf,
     'x-li-lang': 'en_US',
     'x-restli-protocol-version': '2.0.0',
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-    'cookie': `li_at=${cookies.li_at}`,
+    'cookie': `li_at=${cookies.li_at}; JSESSIONID="${csrf}"`,
   };
+}
+
+// First fetch the LinkedIn page to get a valid JSESSIONID
+async function getSessionId(liAt) {
+  try {
+    const resp = await fetch('https://www.linkedin.com/', {
+      headers: {
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        'cookie': `li_at=${liAt}`,
+      },
+      redirect: 'manual',
+    });
+    const setCookies = resp.headers.raw()['set-cookie'] || [];
+    for (const c of setCookies) {
+      const match = c.match(/JSESSIONID="?([^";]+)/);
+      if (match) return match[1];
+    }
+  } catch (e) {}
+  return 'ajax:0';
 }
 
 async function voyagerFetch(url, cookies, headers) {

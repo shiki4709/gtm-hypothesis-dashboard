@@ -39,7 +39,7 @@ async function startScrape(postUrl, token) {
   // Each batch scrapes 18 pages (~100 results). We run offsets 0, 100, 200, 300, 400
   // to cover ~500 results per type (1000+ total)
   const batchSize = 18;
-  const offsets = [0, 100, 200, 300, 400];
+  const offsets = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900];
 
   const startRun = (type, start) =>
     fetch(startUrl, {

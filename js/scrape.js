@@ -252,8 +252,18 @@ function renderRunner() {
 
   // ── Connection status ──
   var liAt = localStorage.getItem('hawki_li_at') || '';
-  var statusDot = liAt ? '<span class="status-dot status-dot-on"></span> Connected' : '<span class="status-dot status-dot-off"></span> Not connected';
-  html += '<div class="conn-status" onclick="checkCookieStatus()">' + statusDot + '</div>';
+  var connState = localStorage.getItem('hawki_conn_state') || 'unknown';
+  var statusHtml = '';
+  if (!liAt) {
+    statusHtml = '<span class="status-dot status-dot-off"></span> Not connected';
+  } else if (connState === 'valid') {
+    statusHtml = '<span class="status-dot status-dot-on"></span> Connected';
+  } else if (connState === 'expired') {
+    statusHtml = '<span class="status-dot status-dot-expired"></span> Session expired — click to refresh';
+  } else {
+    statusHtml = '<span class="status-dot status-dot-checking"></span> Checking...';
+  }
+  html += '<div class="conn-status" onclick="' + (connState === 'expired' ? 'showCookieExpired()' : 'checkCookieStatus()') + '">' + statusHtml + '</div>';
 
   // ── Scrape input ──
   html += '<div class="scrape-input-section">' +
@@ -1043,8 +1053,10 @@ function refreshCookie() {
   var cookie = document.getElementById('refresh-cookie').value.trim();
   if (!cookie) { showToast('Paste your li_at cookie'); return; }
   localStorage.setItem('hawki_li_at', cookie);
+  localStorage.setItem('hawki_conn_state', 'unknown');
   closeModal();
-  showToast('Reconnected! Try scraping again.');
+  showToast('Reconnected! Checking...');
+  checkCookieStatus();
 }
 
 function removeScrape(id) {
@@ -1074,7 +1086,9 @@ function checkCookieStatus() {
   var liAt = localStorage.getItem('hawki_li_at');
   if (!liAt) { showToast('No cookie set'); return; }
 
-  showToast('Checking connection...');
+  localStorage.setItem('hawki_conn_state', 'unknown');
+  render();
+
   var apiUrl = getApiUrl();
   var xhr = new XMLHttpRequest();
   xhr.open('POST', apiUrl + '/api/get-cookie');
@@ -1085,17 +1099,28 @@ function checkCookieStatus() {
     if (xhr.status === 200) {
       var result = JSON.parse(xhr.responseText);
       if (result.valid) {
-        showToast('Connection active');
+        localStorage.setItem('hawki_conn_state', 'valid');
       } else {
-        showCookieExpired();
+        localStorage.setItem('hawki_conn_state', 'expired');
       }
     } else {
-      showToast('Could not verify');
+      localStorage.setItem('hawki_conn_state', 'expired');
     }
+    render();
   };
 
-  xhr.onerror = function() { showToast('Could not reach server'); };
+  xhr.onerror = function() {
+    localStorage.setItem('hawki_conn_state', 'expired');
+    render();
+  };
+
   xhr.send(JSON.stringify({ li_at: liAt }));
+}
+
+// Auto-check on first load
+if (localStorage.getItem('hawki_li_at') && !window._hawkiCheckedConn) {
+  window._hawkiCheckedConn = true;
+  setTimeout(checkCookieStatus, 500);
 }
 
 function saveOnboardCookie() {

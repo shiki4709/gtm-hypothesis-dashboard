@@ -153,13 +153,14 @@ function pollForResults(postUrl, pollId, callback, attempt) {
     xhr.onload = function() {
       if (xhr.status === 200) {
         var result = JSON.parse(xhr.responseText);
-        if (result.status === 'done' && result.leads && result.leads.length > 0) {
+        if (result.error) {
+          callback(typeof result.error === 'string' ? result.error : 'Scrape failed');
+        } else if (result.status === 'done' && result.leads && result.leads.length > 0) {
           finishScrape(postUrl, result.leads, callback);
         } else if (result.status === 'running') {
           showToast('Still scraping... (' + (attempt + 1) * 3 + 's)');
           pollForResults(postUrl, pollId, callback, attempt + 1);
         } else {
-          // Done but no leads
           callback('No leads found for this post');
         }
       } else {

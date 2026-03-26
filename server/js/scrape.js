@@ -102,23 +102,21 @@ function runScrape(postUrl, callback) {
       try {
         var result = JSON.parse(xhr.responseText);
         if (result.error) { callback(result.error); return; }
-        if (!result.leads || !result.leads.length) { callback('No leads found. Cookie may be expired.'); return; }
-        var leads = result.leads.map(function(l) {
-          l.icp_match = matchesICP(l.title);
-          l.scraped_from = postUrl;
-          return l;
-        });
-        var scrape = {
-          id: Date.now(),
-          url: postUrl,
-          date: new Date().toISOString(),
-          leads: leads,
-          mode: 'live'
-        };
-        var scrapes = loadScrapes();
-        scrapes.unshift(scrape);
-        saveScrapes(scrapes);
-        callback(null, scrape);
+
+        // Async mode: scrape started, need to poll
+        if (result.status === 'started' && result.runs) {
+          var datasetIds = result.runs.map(function(r) { return r.datasetId; }).join(',');
+          showToast('Scraping... this takes 15-30 seconds');
+          pollForResults(postUrl, datasetIds, callback, 0);
+          return;
+        }
+
+        // Direct results
+        if (result.leads && result.leads.length) {
+          finishScrape(postUrl, result.leads, callback);
+        } else {
+          callback('No leads found');
+        }
       } catch (e) {
         callback('Failed to parse response: ' + e.message);
       }
@@ -133,15 +131,69 @@ function runScrape(postUrl, callback) {
   };
 
   xhr.onerror = function() {
-    // Server not running — fall back to demo mode
     runDemoScrape(postUrl, callback);
   };
 
   xhr.ontimeout = function() {
-    callback('Scrape timed out. The post may have too many engagers.');
+    callback('Scrape timed out');
   };
 
   xhr.send(JSON.stringify({ url: postUrl }));
+}
+
+function pollForResults(postUrl, datasetIds, callback, attempt) {
+  if (attempt > 20) { callback('Scrape timed out after polling'); return; }
+
+  setTimeout(function() {
+    var apiUrl = getApiUrl();
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', apiUrl + '/api/scrape');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.timeout = 10000;
+
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        var result = JSON.parse(xhr.responseText);
+        if (result.status === 'done' && result.leads && result.leads.length > 0) {
+          finishScrape(postUrl, result.leads, callback);
+        } else if (result.status === 'running' || (result.leads && result.leads.length === 0)) {
+          showToast('Still scraping... (' + (attempt + 1) * 3 + 's)');
+          pollForResults(postUrl, datasetIds, callback, attempt + 1);
+        } else {
+          finishScrape(postUrl, result.leads || [], callback);
+        }
+      } else {
+        pollForResults(postUrl, datasetIds, callback, attempt + 1);
+      }
+    };
+
+    xhr.onerror = function() {
+      pollForResults(postUrl, datasetIds, callback, attempt + 1);
+    };
+
+    xhr.send(JSON.stringify({ runId: datasetIds }));
+  }, 3000);
+}
+
+function finishScrape(postUrl, rawLeads, callback) {
+  var leads = rawLeads.map(function(l) {
+    l.icp_match = matchesICP(l.title);
+    l.scraped_from = postUrl;
+    return l;
+  });
+  var scrape = {
+    id: Date.now(),
+    url: postUrl,
+    date: new Date().toISOString(),
+    leads: leads,
+    mode: 'live'
+  };
+  var scrapes = loadScrapes();
+  scrapes.unshift(scrape);
+  saveScrapes(scrapes);
+  var matched = leads.filter(function(l) { return l.icp_match; });
+  showToast(leads.length + ' leads found · ' + matched.length + ' ICP matches');
+  callback(null, scrape);
 }
 
 function runDemoScrape(postUrl, callback) {

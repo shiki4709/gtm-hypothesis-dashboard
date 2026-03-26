@@ -875,8 +875,12 @@ body { font-family: var(--ff-body); font-size: var(--fs-base); line-height: var(
   border-radius: var(--radius-sm); margin-bottom: var(--s-4);
 }
 .rc-watch-info { display: flex; align-items: center; gap: var(--s-8); min-width: 0; }
-.rc-watch-name { font-size: var(--fs-sm); font-weight: 500; color: var(--text); text-transform: capitalize; }
-.rc-watch-headline { font-size: var(--fs-xs); color: var(--text-4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rc-watch-top { display: flex; align-items: center; gap: var(--s-6); }
+.rc-watch-name { font-size: var(--fs-sm); font-weight: 500; color: var(--inbound); text-transform: capitalize; text-decoration: none; }
+.rc-watch-name:hover { text-decoration: underline; }
+.rc-watch-num { font-size: 10px; font-weight: 700; color: var(--text-4); background: var(--surface); padding: 1px 6px; border-radius: 10px; }
+.rc-watch-headline { font-size: var(--fs-xs); color: var(--text-3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rc-watch-oneliner { font-size: var(--fs-xs); color: var(--text-2); font-weight: 500; margin-top: 2px; }
 .rc-watch-actions { display: flex; gap: var(--s-8); flex-shrink: 0; align-items: center; }
 .rc-watch-hint { font-size: var(--fs-xs); color: var(--text-4); margin-bottom: var(--s-8); line-height: var(--lh-body); display: flex; align-items: center; gap: var(--s-8); }
 .rc-watch-check-btn {

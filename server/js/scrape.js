@@ -287,7 +287,7 @@ function renderRunner() {
       '<button class="rc-watch-check-btn" onclick="checkAllInfluencers()">Check all for new posts</button>' +
       'Opens each profile\'s posts in a new tab. Copy any post URL and paste above to scrape.' +
       '</div>';
-    watchList.forEach(function(w) {
+    watchList.forEach(function(w, wIdx) {
       // Count how many posts from this influencer we've already scraped
       var scrapedPosts = scrapes.filter(function(sc) {
         return sc.url && sc.url.indexOf(w.username) >= 0;
@@ -296,8 +296,12 @@ function renderRunner() {
 
       html += '<div class="rc-watch-item">' +
         '<div class="rc-watch-info">' +
+        '<div class="rc-watch-top">' +
         '<a href="' + w.url + '" target="_blank" rel="noopener" class="rc-watch-name">' + w.name + '</a>' +
-        (w.headline ? '<span class="rc-watch-headline">' + w.headline.substring(0, 60) + '</span>' : '') +
+        '<span class="rc-watch-num">#' + (wIdx + 1) + '</span>' +
+        '</div>' +
+        (w.headline ? '<div class="rc-watch-headline">' + w.headline.substring(0, 80) + '</div>' : '') +
+        (w.oneliner ? '<div class="rc-watch-oneliner">' + w.oneliner + '</div>' : '') +
         '<span class="rc-watch-stats">' +
         (scrapedPosts.length > 0 ? scrapedPosts.length + ' scraped · last ' + lastScraped : 'Not scraped yet') +
         '</span>' +
@@ -574,28 +578,33 @@ function addToWatchList() {
   xhr.timeout = 15000;
 
   xhr.onload = function() {
+    var name = username.replace(/-/g, ' ');
+    var headline = '';
     if (xhr.status === 200) {
       var result = JSON.parse(xhr.responseText);
-      list.unshift({
-        username: username,
-        name: result.name || username,
-        headline: result.headline || '',
-        url: 'https://www.linkedin.com/in/' + username,
-        added: new Date().toISOString(),
-      });
-    } else {
-      // Add with just the username
-      list.unshift({
-        username: username,
-        name: username.replace(/-/g, ' '),
-        headline: '',
-        url: 'https://www.linkedin.com/in/' + username,
-        added: new Date().toISOString(),
-      });
+      name = result.name || name;
+      headline = result.headline || '';
     }
+
+    // Generate a one-liner about why you're watching them
+    var oneliner = '';
+    if (headline) {
+      // Simple one-liner from headline
+      var parts = headline.split('|')[0].split('@')[0].split(' at ')[0].trim();
+      oneliner = parts;
+    }
+
+    list.unshift({
+      username: username,
+      name: name,
+      headline: headline,
+      oneliner: oneliner,
+      url: 'https://www.linkedin.com/in/' + username,
+      added: new Date().toISOString(),
+    });
     saveWatchList(list);
     input.value = '';
-    showToast('Added to watch list');
+    showToast('#' + list.length + ' ' + name + ' added');
     render();
   };
 
@@ -604,6 +613,7 @@ function addToWatchList() {
       username: username,
       name: username.replace(/-/g, ' '),
       headline: '',
+      oneliner: '',
       url: 'https://www.linkedin.com/in/' + username,
       added: new Date().toISOString(),
     });

@@ -129,7 +129,7 @@ async function checkRun(runId, token) {
 
     const name = item.name || '';
     const headline = item.subtitle || item.headline || '';
-    const comment = item.comment || '';
+    const comment = item.content || item.comment || '';
     const type = item.type || '';
     const company = extractCompany(headline);
 

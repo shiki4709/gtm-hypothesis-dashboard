@@ -9,15 +9,15 @@ module.exports = async (req, res) => {
 
   const body = req.body || {};
   const url = (body.url || '').trim();
-  const runId = body.runId || '';
+  const pollId = body.runId || '';
 
   const apifyToken = process.env.APIFY_TOKEN || '';
   if (!apifyToken) return res.status(400).json({ error: 'Apify not configured' });
 
-  // If runId provided, check status and get results
-  if (runId) {
+  // Poll for results
+  if (pollId) {
     try {
-      const result = await checkRun(runId, apifyToken);
+      const result = await checkRun(pollId, apifyToken);
       return res.json(result);
     } catch (e) {
       return res.status(500).json({ error: e.message });
@@ -37,6 +37,7 @@ module.exports = async (req, res) => {
 
 async function startScrape(postUrl, token) {
   const actorId = 'scraping_solutions~linkedin-posts-engagers-likers-and-commenters-no-cookies';
+  const startUrl = `https://api.apify.com/v2/acts/${actorId}/runs?token=${token}`;
 
   // Convert URL format
   let apifyUrl = postUrl;
@@ -48,73 +49,45 @@ async function startScrape(postUrl, token) {
     apifyUrl = `https://www.linkedin.com/feed/update/urn:li:share:${shareMatch[1]}/`;
   }
 
-  // Start async runs for both commenters and likers
-  const startUrl = `https://api.apify.com/v2/acts/${actorId}/runs?token=${token}`;
+  // Single run — the "commenters" type actually returns both commenters AND likers
+  const run = await fetch(startUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url: apifyUrl, type: 'commenters', iterations: 18, start: 0 }),
+  }).then(r => r.json());
 
-  const [commRun, likeRun] = await Promise.all([
-    fetch(startUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: apifyUrl, type: 'commenters', iterations: 18, start: 0 }),
-    }).then(r => r.json()),
-    fetch(startUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: apifyUrl, type: 'likers', iterations: 18, start: 0 }),
-    }).then(r => r.json()),
-  ]);
-
-  const commId = commRun.data?.id || '';
-  const likeId = likeRun.data?.id || '';
-  const commDs = commRun.data?.defaultDatasetId || '';
-  const likeDs = likeRun.data?.defaultDatasetId || '';
+  const runId = run.data?.id || '';
+  const datasetId = run.data?.defaultDatasetId || '';
 
   return {
     status: 'started',
-    pollId: `${commDs},${likeDs}|${commId},${likeId}`,
-    runs: [
-      { id: commId, type: 'commenters', datasetId: commDs },
-      { id: likeId, type: 'likers', datasetId: likeDs },
-    ],
+    pollId: `${datasetId}|${runId}`,
   };
 }
 
-async function checkRun(runId, token) {
-  // runId format: "datasetId1,datasetId2|runId1,runId2"
-  const parts = runId.split('|');
-  const datasetIds = parts[0].split(',');
-  const runIds = parts[1] ? parts[1].split(',') : [];
+async function checkRun(pollId, token) {
+  const [datasetId, runId] = pollId.split('|');
 
-  // Check if all runs are finished
-  let allFinished = true;
-  for (const rid of runIds) {
-    if (!rid) continue;
+  // Check if run is finished
+  if (runId) {
     try {
-      const resp = await fetch(`https://api.apify.com/v2/actor-runs/${rid}?token=${token}`);
+      const resp = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${token}`);
       if (resp.ok) {
         const run = await resp.json();
         const status = run.data?.status;
         if (status !== 'SUCCEEDED' && status !== 'FAILED' && status !== 'ABORTED') {
-          allFinished = false;
+          return { status: 'running', leads: [], fetched: 0 };
         }
       }
     } catch (e) {}
   }
 
-  if (!allFinished) {
-    return { status: 'running', leads: [], fetched: 0 };
-  }
+  // Run finished — get items
+  const resp = await fetch(`https://api.apify.com/v2/datasets/${datasetId}/items?token=${token}`);
+  if (!resp.ok) return { leads: [], total: 0, fetched: 0, commenters: 0, likers: 0 };
 
-  // All runs done — get items from datasets
-  let items = [];
-  for (const dsId of datasetIds) {
-    if (!dsId) continue;
-    const resp = await fetch(`https://api.apify.com/v2/datasets/${dsId}/items?token=${token}`);
-    if (resp.ok) {
-      const data = await resp.json();
-      items = items.concat(data);
-    }
-  }
+  const items = await resp.json();
+  if (!items || items.length === 0) return { leads: [], total: 0, fetched: 0, commenters: 0, likers: 0 };
 
   // Parse results
   const leads = [];
@@ -123,25 +96,30 @@ async function checkRun(runId, token) {
   let likerCount = 0;
 
   for (const item of items) {
-    const profileUrl = item.url_profile || item.profileUrl || '';
+    const profileUrl = item.url_profile || '';
     if (!profileUrl || seen.has(profileUrl)) continue;
     seen.add(profileUrl);
 
     const name = item.name || '';
-    const headline = item.subtitle || item.headline || '';
-    const comment = item.content || item.comment || '';
-    const type = item.type || '';
+    const headline = item.subtitle || '';
+    const commentText = item.content || '';
     const company = extractCompany(headline);
 
-    if (type === 'commenters' || comment) commentCount++;
+    // Has comment text = commenter, empty = liker
+    if (commentText) commentCount++;
     else likerCount++;
 
     leads.push({
-      name, title: headline, company, linkedin_url: profileUrl,
-      comment_text: comment, scraped_from: '',
+      name,
+      title: headline,
+      company,
+      linkedin_url: profileUrl,
+      comment_text: commentText,
+      scraped_from: '',
     });
   }
 
+  // Sort: commenters first
   leads.sort((a, b) => {
     if (a.comment_text && !b.comment_text) return -1;
     if (!a.comment_text && b.comment_text) return 1;
@@ -149,9 +127,12 @@ async function checkRun(runId, token) {
   });
 
   return {
-    status: items.length > 0 ? 'done' : 'running',
-    leads, total: leads.length, fetched: leads.length,
-    commenters: commentCount, likers: likerCount,
+    status: 'done',
+    leads,
+    total: leads.length,
+    fetched: leads.length,
+    commenters: commentCount,
+    likers: likerCount,
   };
 }
 

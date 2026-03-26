@@ -250,6 +250,11 @@ function renderRunner() {
 
   var html = '';
 
+  // ── Connection status ──
+  var liAt = localStorage.getItem('hawki_li_at') || '';
+  var statusDot = liAt ? '<span class="status-dot status-dot-on"></span> Connected' : '<span class="status-dot status-dot-off"></span> Not connected';
+  html += '<div class="conn-status" onclick="checkCookieStatus()">' + statusDot + '</div>';
+
   // ── Scrape input ──
   html += '<div class="scrape-input-section">' +
     '<div class="scrape-input-row">' +
@@ -1063,6 +1068,34 @@ function saveClaudeKey() {
     showToast('API key removed — using templates');
   }
   render();
+}
+
+function checkCookieStatus() {
+  var liAt = localStorage.getItem('hawki_li_at');
+  if (!liAt) { showToast('No cookie set'); return; }
+
+  showToast('Checking connection...');
+  var apiUrl = getApiUrl();
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', apiUrl + '/api/get-cookie');
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.timeout = 10000;
+
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      var result = JSON.parse(xhr.responseText);
+      if (result.valid) {
+        showToast('Connection active');
+      } else {
+        showCookieExpired();
+      }
+    } else {
+      showToast('Could not verify');
+    }
+  };
+
+  xhr.onerror = function() { showToast('Could not reach server'); };
+  xhr.send(JSON.stringify({ li_at: liAt }));
 }
 
 function saveOnboardCookie() {

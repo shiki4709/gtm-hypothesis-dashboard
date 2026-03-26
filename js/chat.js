@@ -308,12 +308,12 @@ function openSettings() {
     'value="' + icp.exclude.join(', ') + '" placeholder="Recruiter, Student...">' +
     '<div style="font-size:var(--fs-xs);color:var(--text-4);margin-top:var(--s-4)">People with these words are always excluded from ICP.</div></div>' +
 
-    // LinkedIn Cookie
-    '<div class="qa-field"><label class="qa-label">LinkedIn Connection</label>' +
+    // LinkedIn Session
+    '<div class="qa-field"><label class="qa-label">LinkedIn Session</label>' +
     '<input type="password" class="qa-input qa-input-sm" id="settings-li-at" ' +
-    'placeholder="Paste your li_at cookie..." value="' + (localStorage.getItem('hawki_li_at') || '') + '">' +
+    'placeholder="Paste your li_at token..." value="' + (localStorage.getItem('hawki_li_at') || '') + '">' +
     '<div style="font-size:var(--fs-xs);color:var(--text-4);margin-top:var(--s-4)">' +
-    (localStorage.getItem('hawki_li_at') ? 'Connected' : 'Required for scraping. Go to LinkedIn → DevTools (Cmd+Option+I) → Application → Cookies → copy <b>li_at</b> value') +
+    (localStorage.getItem('hawki_li_at') ? 'Connected — sessions refresh every ~30 min' : 'Required. Go to LinkedIn → DevTools (Cmd+Option+I) → Application → Cookies → copy <b>li_at</b> value') +
     '</div></div>' +
 
     '</div><div class="qa-footer"><button class="qa-cancel" onclick="closeModal()">Cancel</button>' +

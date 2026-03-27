@@ -1053,7 +1053,8 @@ function findPosts() {
     if (xhr.status === 200) {
       var result = JSON.parse(xhr.responseText);
       foundPosts = result.posts || [];
-      var debugMsg = result.debug ? ' [' + (result.debug.totalResults || 0) + ' raw, ' + (result.source || '?') + (result.debug.error ? ', err: ' + result.debug.error : '') + ']' : '';
+      var debugMsg = result.debug ? ' [' + (result.debug.totalResults || 0) + ' raw, q: ' + (result.debug.queryUsed || '?') + (result.debug.error ? ', err: ' + result.debug.error : '') + ']' : '';
+      if (result.debug && result.debug.sampleUrls) console.log('Brave sample URLs:', result.debug.sampleUrls);
       showToast(foundPosts.length + ' posts found' + debugMsg);
       render();
     } else {

@@ -18,8 +18,7 @@ module.exports = async (req, res) => {
   else if (timeframe === 'month') freshness = '&freshness=pm';
   else if (timeframe === 'year') freshness = '&freshness=py';
 
-  // Use site: for API (works well), drop it for HTML fallback
-  const apiQuery = `site:linkedin.com/posts/ ${keywords.trim()}`;
+  const apiQuery = `linkedin.com/posts/ ${keywords.trim()}`;
   const fallbackQuery = `linkedin post ${keywords.trim()}`;
 
   if (braveKey) {
@@ -33,8 +32,10 @@ module.exports = async (req, res) => {
       if (resp.ok) {
         const data = await resp.json();
         const posts = parseBraveAPIResults(data);
-        const totalResults = (data.web?.results || []).length;
-        return res.json({ posts, query: keywords.trim(), source: 'brave-api', debug: { totalResults, hasWebResults: !!data.web, queryUsed: query } });
+        const allResults = data.web?.results || [];
+        const totalResults = allResults.length;
+        const sampleUrls = allResults.slice(0, 5).map(r => r.url);
+        return res.json({ posts, query: keywords.trim(), source: 'brave-api', debug: { totalResults, queryUsed: apiQuery, sampleUrls } });
       } else {
         const errText = await resp.text();
         return res.json({ posts: [], query: keywords.trim(), source: 'brave-api', debug: { status: resp.status, error: errText.substring(0, 200) } });

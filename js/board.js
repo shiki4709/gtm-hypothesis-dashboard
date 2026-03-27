@@ -129,10 +129,7 @@ function saveUnifiedSetup() {
 
 function renderDashboard() {
   var el = document.getElementById('view-dashboard');
-  var icp = loadICP();
   var scrapes = loadScrapes();
-  var xAccounts = JSON.parse(localStorage.getItem('hawki_x_watch_v1') || '[]');
-  var xTopics = JSON.parse(localStorage.getItem('hawki_x_topics_v1') || '[]');
   var messaged = JSON.parse(localStorage.getItem('gtm_messaged_v1') || '{}');
 
   var totalLeads = 0, totalICP = 0;
@@ -144,81 +141,57 @@ function renderDashboard() {
 
   var html = '';
 
-  // Header
-  html += '<div class="dash-header">' +
-    '<div class="tab-intro-title">Your GTM Setup</div>' +
-    '<div class="tab-intro-desc">Everything you\'re tracking across all tools.</div>' +
-    '</div>';
-
-  // ICP card
-  html += '<div class="dash-card">' +
-    '<div class="dash-card-header">' +
-    '<span class="dash-card-label">Target ICP</span>' +
-    '<span class="dash-card-edit" onclick="openSettings()">Edit</span>' +
+  // Stats
+  html += '<div class="dash-stats-row">' +
+    '<div class="dash-stat-card">' +
+      '<div class="dash-stat-num">' + totalLeads + '</div>' +
+      '<div class="dash-stat-label">Leads found</div>' +
     '</div>' +
-    '<div class="dash-tags">';
-  icp.titles.forEach(function(t) {
-    html += '<span class="dash-tag">' + escapeHtml(t) + '</span>';
-  });
-  html += '</div>';
-  if (icp.exclude.length > 0) {
-    html += '<div class="dash-exclude">Excluding: ' + icp.exclude.map(escapeHtml).join(', ') + '</div>';
-  }
-  html += '</div>';
-
-  // X Accounts card
-  html += '<div class="dash-card">' +
-    '<div class="dash-card-header">' +
-    '<span class="dash-card-label">X Accounts Watched</span>' +
-    '<span class="dash-card-edit" onclick="switchTab(\'x-engage\')">Manage</span>' +
-    '</div>';
-  if (xAccounts.length > 0) {
-    html += '<div class="dash-tags">';
-    xAccounts.forEach(function(a) {
-      html += '<span class="dash-tag">@' + escapeHtml(a) + '</span>';
-    });
-    html += '</div>';
-  } else {
-    html += '<div class="dash-empty">No accounts yet — <span onclick="switchTab(\'x-engage\')" style="color:var(--accent);cursor:pointer">add some</span></div>';
-  }
-  html += '</div>';
-
-  // X Topics card
-  html += '<div class="dash-card">' +
-    '<div class="dash-card-header">' +
-    '<span class="dash-card-label">X Topics Monitored</span>' +
-    '<span class="dash-card-edit" onclick="switchTab(\'x-engage\')">Manage</span>' +
-    '</div>';
-  if (xTopics.length > 0) {
-    html += '<div class="dash-tags">';
-    xTopics.forEach(function(t) {
-      html += '<span class="dash-tag">' + escapeHtml(t) + '</span>';
-    });
-    html += '</div>';
-  } else {
-    html += '<div class="dash-empty">No topics yet — <span onclick="switchTab(\'x-engage\')" style="color:var(--accent);cursor:pointer">add some</span></div>';
-  }
-  html += '</div>';
-
-  // Activity summary
-  html += '<div class="dash-card">' +
-    '<div class="dash-card-header">' +
-    '<span class="dash-card-label">Activity</span>' +
+    '<div class="dash-stat-card">' +
+      '<div class="dash-stat-num">' + totalICP + '</div>' +
+      '<div class="dash-stat-label">ICP matches</div>' +
     '</div>' +
-    '<div class="dash-stats">' +
-    '<div class="dash-stat"><div class="dash-stat-num">' + scrapes.length + '</div><div class="dash-stat-label">Scrapes</div></div>' +
-    '<div class="dash-stat"><div class="dash-stat-num">' + totalLeads + '</div><div class="dash-stat-label">Leads found</div></div>' +
-    '<div class="dash-stat"><div class="dash-stat-num">' + totalICP + '</div><div class="dash-stat-label">ICP matches</div></div>' +
-    '<div class="dash-stat"><div class="dash-stat-num">' + totalMessaged + '</div><div class="dash-stat-label">DMs sent</div></div>' +
+    '<div class="dash-stat-card">' +
+      '<div class="dash-stat-num">' + totalMessaged + '</div>' +
+      '<div class="dash-stat-label">DMs sent</div>' +
+    '</div>' +
+    '<div class="dash-stat-card">' +
+      '<div class="dash-stat-num">' + scrapes.length + '</div>' +
+      '<div class="dash-stat-label">Posts scraped</div>' +
     '</div>' +
     '</div>';
 
-  // Quick actions
-  html += '<div class="dash-actions">' +
-    '<button class="scrape-go-btn" onclick="switchTab(\'leads\')">Find Leads</button>' +
-    '<button class="scrape-go-btn" style="background:var(--text-2)" onclick="switchTab(\'x-engage\')">Engage on X</button>' +
-    '<button class="scrape-go-btn" style="background:var(--text-3)" onclick="switchTab(\'content\')">Create Content</button>' +
+  // Three tool cards
+  html += '<div class="dash-tools">';
+
+  // Find Leads
+  var recentScrape = scrapes.length > 0 ? scrapes[0] : null;
+  html += '<div class="dash-tool-card" onclick="switchTab(\'leads\')">' +
+    '<div class="dash-tool-name">Find Leads</div>' +
+    '<div class="dash-tool-platform">LinkedIn</div>' +
+    (recentScrape
+      ? '<div class="dash-tool-info">Last scrape: ' + timeAgo(recentScrape.date) + ' · ' +
+        recentScrape.leads.filter(function(l) { return l.icp_match; }).length + ' ICP matches</div>'
+      : '<div class="dash-tool-info">No scrapes yet</div>') +
     '</div>';
+
+  // X Engage
+  var xAccounts = JSON.parse(localStorage.getItem('hawki_x_watch_v1') || '[]');
+  var xTopics = JSON.parse(localStorage.getItem('hawki_x_topics_v1') || '[]');
+  html += '<div class="dash-tool-card" onclick="switchTab(\'x-engage\')">' +
+    '<div class="dash-tool-name">X Engage</div>' +
+    '<div class="dash-tool-platform">Replies</div>' +
+    '<div class="dash-tool-info">' + xAccounts.length + ' accounts · ' + xTopics.length + ' topics</div>' +
+    '</div>';
+
+  // Content
+  html += '<div class="dash-tool-card" onclick="switchTab(\'content\')">' +
+    '<div class="dash-tool-name">Content</div>' +
+    '<div class="dash-tool-platform">Multi-platform</div>' +
+    '<div class="dash-tool-info">Generate LinkedIn + X posts</div>' +
+    '</div>';
+
+  html += '</div>';
 
   el.innerHTML = html;
 }

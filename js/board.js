@@ -6,8 +6,9 @@
    2. Pipelines (each scrape becomes a tracked pipeline)
    ================================================================ */
 
-function render() {
+var activeTab = window._activeTab || 'leads';
 
+function render() {
   // Hide mode toggle — not needed
   document.getElementById('mode-toggle').innerHTML = '';
 
@@ -17,14 +18,35 @@ function render() {
   document.getElementById('view-integrations').style.display = 'none';
   document.getElementById('view-weekly').style.display = 'none';
 
-  // Show unified view
-  document.getElementById('view-scrape').style.display = 'block';
+  // Tab navigation
+  var tabs = [
+    { id: 'leads', label: 'Find Leads', view: 'view-scrape' },
+    { id: 'x-engage', label: 'X Engage', view: 'view-x-engage' },
+    { id: 'content', label: 'Content', view: 'view-content' },
+  ];
 
-  // No tabs — single page
-  document.getElementById('view-tabs').innerHTML = '';
+  var tabHtml = '';
+  tabs.forEach(function(t) {
+    tabHtml += '<button class="vtab' + (activeTab === t.id ? ' active' : '') +
+      '" onclick="switchTab(\'' + t.id + '\')">' + t.label + '</button>';
+  });
+  document.getElementById('view-tabs').innerHTML = tabHtml;
 
-  // Render the unified view
-  renderRunner();
+  // Show active view, hide others
+  tabs.forEach(function(t) {
+    document.getElementById(t.view).style.display = (activeTab === t.id) ? 'block' : 'none';
+  });
+
+  // Render active tab content
+  if (activeTab === 'leads') renderRunner();
+  else if (activeTab === 'x-engage') renderXEngage();
+  else if (activeTab === 'content') renderContent();
+}
+
+function switchTab(tabId) {
+  activeTab = tabId;
+  window._activeTab = tabId;
+  render();
 }
 
 /* ── Helpers ── */

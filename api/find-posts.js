@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
   else if (timeframe === 'month') freshness = '&freshness=pm';
   else if (timeframe === 'year') freshness = '&freshness=py';
 
-  const apiQuery = `linkedin.com/posts/ ${keywords.trim()}`;
+  const apiQuery = `site:www.linkedin.com/posts ${keywords.trim()}`;
   const fallbackQuery = `linkedin post ${keywords.trim()}`;
 
   if (braveKey) {

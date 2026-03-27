@@ -1053,10 +1053,11 @@ function findPosts() {
     if (xhr.status === 200) {
       var result = JSON.parse(xhr.responseText);
       foundPosts = result.posts || [];
-      showToast(foundPosts.length + ' posts found');
+      var debugMsg = result.debug ? ' [' + (result.debug.totalResults || 0) + ' raw, ' + (result.source || '?') + (result.debug.error ? ', err: ' + result.debug.error : '') + ']' : '';
+      showToast(foundPosts.length + ' posts found' + debugMsg);
       render();
     } else {
-      showToast('Search failed');
+      showToast('Search failed: ' + xhr.status);
     }
   };
 

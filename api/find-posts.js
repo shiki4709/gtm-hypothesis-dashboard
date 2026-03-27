@@ -32,10 +32,14 @@ module.exports = async (req, res) => {
       if (resp.ok) {
         const data = await resp.json();
         const posts = parseBraveAPIResults(data);
-        return res.json({ posts, query: keywords.trim(), source: 'brave-api' });
+        const totalResults = (data.web?.results || []).length;
+        return res.json({ posts, query: keywords.trim(), source: 'brave-api', debug: { totalResults, hasWebResults: !!data.web, queryUsed: query } });
+      } else {
+        const errText = await resp.text();
+        return res.json({ posts: [], query: keywords.trim(), source: 'brave-api', debug: { status: resp.status, error: errText.substring(0, 200) } });
       }
     } catch (e) {
-      // Fall through to scraping
+      return res.json({ posts: [], query: keywords.trim(), source: 'brave-api', debug: { error: e.message } });
     }
   }
 

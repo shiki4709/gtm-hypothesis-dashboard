@@ -8,6 +8,33 @@
 
 var activeTab = window._activeTab || 'leads';
 
+// ICP-to-X-suggestions mapping
+var ICP_X_SUGGESTIONS = {
+  'VP Engineering': { accounts: ['kelseyhightower', 'dhaboross', 'GergelyOrosz'], topics: ['engineering leadership', 'tech hiring'] },
+  'CTO': { accounts: ['kelseyhightower', 'dhaboross', 'GergelyOrosz'], topics: ['engineering leadership', 'CTO decisions'] },
+  'VP Sales': { accounts: ['markroberge', 'jaaborin', 'samblond'], topics: ['B2B sales', 'sales leadership'] },
+  'Head of Growth': { accounts: ['andrewchen', 'lennysan', 'agazdecki'], topics: ['GTM strategy', 'growth'] },
+  'Founder': { accounts: ['garaboross', 'paulg', 'jasonfried'], topics: ['startup', 'founder lessons'] },
+  'CEO': { accounts: ['garaboross', 'paulg', 'jasonfried'], topics: ['startup', 'leadership'] },
+  '_default': { accounts: ['markroberge', 'jaaborin', 'samblond'], topics: ['GTM strategy', 'B2B sales', 'outbound'] },
+};
+
+function suggestXFromICP(icp) {
+  var accounts = new Set();
+  var topics = new Set();
+  (icp.titles || []).forEach(function(title) {
+    var match = ICP_X_SUGGESTIONS[title] || ICP_X_SUGGESTIONS['_default'];
+    match.accounts.forEach(function(a) { accounts.add(a); });
+    match.topics.forEach(function(t) { topics.add(t); });
+  });
+  if (accounts.size === 0) {
+    var def = ICP_X_SUGGESTIONS['_default'];
+    def.accounts.forEach(function(a) { accounts.add(a); });
+    def.topics.forEach(function(t) { topics.add(t); });
+  }
+  return { accounts: Array.from(accounts).slice(0, 5), topics: Array.from(topics).slice(0, 4) };
+}
+
 function render() {
   // Hide mode toggle — not needed
   document.getElementById('mode-toggle').innerHTML = '';
@@ -17,6 +44,16 @@ function render() {
   document.getElementById('view-experiment').style.display = 'none';
   document.getElementById('view-integrations').style.display = 'none';
   document.getElementById('view-weekly').style.display = 'none';
+
+  // ── Unified onboarding — gate all tabs until ICP is set ──
+  if (!localStorage.getItem('gtm_icp_v1')) {
+    document.getElementById('view-tabs').innerHTML = '';
+    document.getElementById('view-scrape').style.display = 'block';
+    document.getElementById('view-x-engage').style.display = 'none';
+    document.getElementById('view-content').style.display = 'none';
+    showUnifiedOnboarding();
+    return;
+  }
 
   // Tab navigation
   var tabs = [
@@ -42,6 +79,50 @@ function render() {
   if (activeTab === 'leads') renderRunner();
   else if (activeTab === 'x-engage') renderXEngage();
   else if (activeTab === 'content') renderContent();
+}
+
+function showUnifiedOnboarding() {
+  var el = document.getElementById('view-scrape');
+  el.innerHTML = '<div class="onboard">' +
+    '<div class="onboard-title">Who are you trying to reach?</div>' +
+    '<div class="onboard-desc">Tell us your target buyer. This configures all three tools — LinkedIn lead filtering, X account suggestions, and content targeting.</div>' +
+
+    '<div class="onboard-steps" style="border:none;padding:0">' +
+    '<div class="scrape-icp-field" style="margin-bottom:var(--s-16)">' +
+    '<label class="scrape-icp-label" style="font-weight:600;color:var(--text)">Target titles</label>' +
+    '<input type="text" class="qa-input qa-input-sm" id="setup-titles" ' +
+    'value="VP Engineering, CTO, Head of Engineering, VP Product, Head of Product, Director Engineering" ' +
+    'placeholder="e.g. VP Engineering, CTO, Head of Product...">' +
+    '<div style="font-size:11px;color:var(--text-4);margin-top:4px">Comma-separated. Used to filter LinkedIn leads, suggest X accounts to watch, and target content.</div>' +
+    '</div>' +
+    '<div class="scrape-icp-field" style="margin-bottom:var(--s-16)">' +
+    '<label class="scrape-icp-label" style="font-weight:600;color:var(--text)">Exclude (optional)</label>' +
+    '<input type="text" class="qa-input qa-input-sm" id="setup-exclude" value="Student, Intern, Recruiter" ' +
+    'placeholder="e.g. Student, Intern, Recruiter...">' +
+    '</div>' +
+    '</div>' +
+
+    '<div class="onboard-input">' +
+    '<button class="scrape-go-btn" onclick="saveUnifiedSetup()" style="width:100%">Set up my GTM tools</button>' +
+    '</div>' +
+    '</div>';
+}
+
+function saveUnifiedSetup() {
+  var titles = document.getElementById('setup-titles').value.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+  if (titles.length === 0) { showToast('Enter at least one title'); return; }
+  var exclude = document.getElementById('setup-exclude').value.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+
+  // Save ICP (used by Find Leads tab)
+  saveICP({ titles: titles, exclude: exclude });
+
+  // Generate X suggestions from ICP and save (used by X Engage tab)
+  var suggestions = suggestXFromICP({ titles: titles });
+  localStorage.setItem('hawki_x_watch_v1', JSON.stringify(suggestions.accounts));
+  localStorage.setItem('hawki_x_topics_v1', JSON.stringify(suggestions.topics));
+
+  showToast('All tools configured! Start finding leads, engaging on X, or creating content.');
+  render();
 }
 
 function switchTab(tabId) {

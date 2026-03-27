@@ -273,11 +273,7 @@ function downloadCSV(leads, filename) {
 function renderRunner() {
   var el = document.getElementById('view-scrape');
 
-  // ── Onboarding (show when no ICP set — first time user) ──
-  if (!localStorage.getItem(ICP_KEY)) {
-    showUseCasePicker();
-    return;
-  }
+  // Onboarding handled by unified setup in board.js
 
   var scrapes = loadScrapes();
   var icp = loadICP();

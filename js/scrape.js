@@ -235,6 +235,26 @@ function leadsToCSV(leads) {
   return rows.join('\n');
 }
 
+function leadsToSalesNavCSV(leads) {
+  var headers = ['First Name', 'Last Name', 'Title', 'Company', 'LinkedIn URL'];
+  var rows = [headers.join(',')];
+
+  leads.forEach(function(l) {
+    var parts = (l.name || '').trim().split(/\s+/);
+    var firstName = parts[0] || '';
+    var lastName = parts.slice(1).join(' ') || '';
+    rows.push([
+      '"' + firstName.replace(/"/g, '""') + '"',
+      '"' + lastName.replace(/"/g, '""') + '"',
+      '"' + (l.title || '').replace(/"/g, '""') + '"',
+      '"' + (l.company || '').replace(/"/g, '""') + '"',
+      '"' + (l.linkedin_url || '').replace(/"/g, '""') + '"'
+    ].join(','));
+  });
+
+  return rows.join('\n');
+}
+
 function downloadCSV(leads, filename) {
   var csv = leadsToCSV(leads);
   var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -375,6 +395,7 @@ function renderRunner() {
         '<div class="rc-hero-actions">' +
         '<button class="scrape-csv-btn" onclick="downloadScrapeCSV(' + scIdx + ',false)">All CSV</button>' +
         '<button class="scrape-csv-btn scrape-csv-icp" onclick="downloadScrapeCSV(' + scIdx + ',true)">ICP CSV</button>' +
+        '<button class="scrape-csv-btn scrape-csv-icp" onclick="downloadSalesNavCSV(' + scIdx + ')">Sales Nav</button>' +
         '<button class="scrape-remove-btn" onclick="removeScrape(' + sc.id + ')">Remove</button>' +
         '</div></div>';
 
@@ -947,6 +968,21 @@ function downloadScrapeCSV(idx, icpOnly) {
     leads = leads.filter(function(l) { return l.icp_match; });
   }
   downloadCSV(leads, icpOnly ? 'icp-leads.csv' : 'scraped-leads.csv');
+}
+
+function downloadSalesNavCSV(idx) {
+  var scrapes = loadScrapes();
+  if (!scrapes[idx]) return;
+  var leads = scrapes[idx].leads.filter(function(l) { return l.icp_match; });
+  var csv = leadsToSalesNavCSV(leads);
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  var link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'sales-nav-import-' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast(leads.length + ' ICP leads exported for Sales Nav');
 }
 
 /* --- Find posts --- */

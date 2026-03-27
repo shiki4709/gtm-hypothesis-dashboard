@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GTM Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: #f8fafb; }
+
+  .tabs {
+    display: flex; gap: 0; background: #fff;
+    border-bottom: 1.5px solid #d8e2ea;
+    position: sticky; top: 0; z-index: 100;
+    padding: 0 24px;
+  }
+  .tab {
+    font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600;
+    color: #9aa0b3; padding: 14px 20px; cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab:hover { color: #3a4058; }
+  .tab.active { color: #1a1e2e; border-bottom-color: #2196F3; }
+  .tab-desc {
+    font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 400;
+    color: #9aa0b3; margin-left: 6px;
+  }
+  .tab.active .tab-desc { color: #6a7088; }
+
+  .frame-wrap {
+    position: absolute; top: 49px; left: 0; right: 0; bottom: 0;
+  }
+  .frame-wrap iframe {
+    width: 100%; height: 100%; border: none; display: none;
+  }
+  .frame-wrap iframe.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab(0)">Find Leads <span class="tab-desc">LinkedIn</span></div>
+  <div class="tab" onclick="switchTab(1)">Engage on X <span class="tab-desc">Replies</span></div>
+  <div class="tab" onclick="switchTab(2)">Create Content <span class="tab-desc">Multi-platform</span></div>
+</div>
+
+<div class="frame-wrap">
+  <iframe src="/" class="active" id="frame-0"></iframe>
+  <iframe data-src="https://pingi-ai.vercel.app" id="frame-1"></iframe>
+  <iframe data-src="https://foxxi-azure.vercel.app" id="frame-2"></iframe>
+</div>
+
+<script>
+var tabs = document.querySelectorAll('.tab');
+var frames = document.querySelectorAll('.frame-wrap iframe');
+
+function switchTab(idx) {
+  tabs.forEach(function(t, i) { t.classList.toggle('active', i === idx); });
+  frames.forEach(function(f, i) {
+    f.classList.toggle('active', i === idx);
+    // Lazy load iframe on first click
+    if (i === idx && f.dataset.src && !f.src.includes(f.dataset.src)) {
+      f.src = f.dataset.src;
+    }
+  });
+}
+</script>
+
+</body>
+</html>
